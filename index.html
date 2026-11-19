@@ -440,6 +440,28 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
 @keyframes cvSway{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
 @keyframes cvFloat{from{transform:translateY(0) rotate(0);opacity:0}10%{opacity:1}90%{opacity:1}to{transform:translateY(-110vh) rotate(25deg);opacity:0}}
 @media (max-width:600px){#cover .inner{padding:44px 8px}#cover .emblem{width:96px;height:96px}#cover .kicker{letter-spacing:.22em}#cover .skip{display:none}#cover .corner{display:none}#cover .frame{border-radius:22px}}
+
+/* ---------- v7 features ---------- */
+.exskip td{opacity:.45}.exskip td:nth-child(2){opacity:.8}
+.when.skip{color:var(--muted);border-style:dashed}
+.dl{display:block;font-size:12px;color:var(--muted);margin-top:3px;white-space:normal}.dl b{color:var(--gold);font-weight:600}
+.attn{display:flex;align-items:center;gap:8px}.attn .ab{all:unset;cursor:pointer;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;border:1px solid var(--line);color:var(--fg);font-weight:700}.attn .ab:hover{border-color:var(--teal)}
+.attn .n{font-family:var(--mono);font-weight:700;min-width:44px;text-align:center}.attn.warn .n{color:var(--gold)}.attn.over .n{color:var(--coral)}
+.abar{height:4px;border-radius:4px;background:var(--line);overflow:hidden;margin:4px 0 2px}.abar i{display:block;height:100%;background:var(--teal)}.attn-w .abar i{background:var(--gold)}.attn-o .abar i{background:var(--coral)}
+.star{all:unset;cursor:pointer;font-size:18px;line-height:1;color:var(--muted);padding:2px 4px;flex:none}.star.on{color:var(--gold);text-shadow:0 0 10px color-mix(in srgb,var(--gold) 60%,transparent)}
+.halacha{font-size:14px;margin-top:4px;color:var(--fg);border-inline-start:2px solid var(--teal);padding-inline-start:8px}
+#caseImp.on{background:color-mix(in srgb,var(--gold) 18%,transparent);border-color:var(--gold);color:var(--fg)}
+.planTop{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}.planTop .card{padding:16px}.planTop b.big{font:800 30px/1 var(--mono);display:block;margin-bottom:4px}
+.tgrp{margin-top:12px}.tgrp h4{margin:0 0 8px;font:700 15px var(--display);color:var(--teal)}
+.titem{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;padding:9px 12px;border-radius:12px;background:var(--bg2);margin-bottom:6px}
+.titem label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);white-space:nowrap;cursor:pointer}
+.titem.rev b{opacity:.6}.titem .x{all:unset;cursor:pointer;color:var(--muted);padding:0 4px}.titem .x:hover{color:var(--coral)}
+.addrow{display:flex;gap:8px;margin-top:10px}.addrow input{flex:1}
+.pday{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}.pday:last-child{border:0}.pday .d{font-family:var(--mono);font-size:13px;color:var(--teal)}.pday.today .d{color:var(--gold);font-weight:700}
+.ymap{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.ymap .y{padding:14px;border-radius:16px;background:var(--bg2);border:1px solid var(--line)}.ymap .y b{font:800 26px/1 var(--mono)}.ymap .y.cur{border-color:var(--teal);box-shadow:0 0 22px -10px var(--teal)}
+.dsum{display:flex;gap:22px;flex-wrap:wrap;margin:14px 0 6px}.dsum div{display:grid}.dsum b{font:800 24px/1.1 var(--mono)}.dsum small{color:var(--muted)}
+.icsBox p{margin:6px 0}.icsBox ul{margin:6px 0;padding-inline-start:18px;color:var(--muted);font-size:14px}
+@media(max-width:700px){.planTop{grid-template-columns:1fr 1fr}.planTop .card:last-child{grid-column:1/-1}.ymap{grid-template-columns:1fr 1fr}.titem{grid-template-columns:auto auto 1fr;row-gap:6px}.titem b{grid-column:1/-1}.titem .x{justify-self:end}.pday{grid-template-columns:84px 1fr}}
 /* static cover: content shows instantly, only background motion stays */
 #cover .emblem .ring,#cover .emblem .ring2,#cover .emblem .scale,#cover .emblem .beam,#cover .emblem .panL,#cover .emblem .panR,#cover .corner,#cover .kicker,#cover h1.title span,#cover h1.title.shine span,#cover .sub,#cover .rule i,#cover .rule b,#cover .quote,#cover .src,#cover .date,#cover .study,#cover .skip{animation:none!important}
 #cover .emblem .ring,#cover .emblem .ring2{stroke-dashoffset:0}#cover .emblem .scale{opacity:1}
@@ -497,6 +519,7 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
       <a href="#schedule">מערכת שעות</a>
       <a href="#courses">קורסים</a>
       <a href="#exams">בחינות</a>
+      <a href="#plan">תוכנית למידה</a>
       <a href="#tasks">מטלות והגשות</a>
 
       <a href="#goals">יעדים ומסלול</a>
@@ -542,6 +565,7 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
       </div>
     </div>
 
+    <div class="card c12"><h3>דדליינים והתראות</h3><div class="list" id="deadlines"></div></div>
     <div class="card c12"><h3>נקודות זכות לפי קורס</h3><div class="chartbox" style="height:340px"><canvas id="chCredits"></canvas></div></div>
     <div class="card c12"><h3>נקודות זכות, מועדי בחינה ומטלות לפי קורס</h3><div class="tbl"><table><thead><tr><th>קורס</th><th>סמסטר</th><th>נק״ז</th><th>הבחינה הבאה</th><th>מועדי בחינה</th><th>מטלות פתוחות</th><th>ציון</th></tr></thead><tbody id="credRows"></tbody></table></div></div>
 
@@ -583,12 +607,19 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
 
 <!-- EXAMS -->
 <section class="view" id="v-exams">
-  <div class="vhead"><h2>בחינות</h2><button class="btn" data-add="exam" type="button">+ בחינה</button>
-    <p>הבחינות מחולקות לפי מועד א׳, ב׳ ו־ג׳, עם תאריך, שעה, מיקום וספירה לאחור.</p></div>
+  <div class="vhead"><h2>בחינות</h2><button class="btn ghost" data-ics type="button">ייצוא ליומן בטלפון</button><button class="btn" data-add="exam" type="button">+ בחינה</button>
+    <p>הבחינות מחולקות לפי מועד א׳, ב׳ ו־ג׳. כשעוברים בחינה באחד המועדים, שאר המועדים של אותו קורס מסומנים כלא רלוונטיים. אפשר להוסיף לכל בחינה תאריך אחרון לרישום ולערעור.</p></div>
   <div class="card tbl exGrp" id="exGA"><h3 class="exH"><span class="exBadge">מועד א׳</span><small id="exNA"></small></h3><table><thead><tr><th style="width:70px">בוצע</th><th>קורס</th><th>תאריך ושעה</th><th>מיקום</th><th style="width:110px">ציון</th><th></th></tr></thead><tbody class="examRows" id="exRA"></tbody></table></div>
   <div class="card tbl exGrp" id="exGB"><h3 class="exH"><span class="exBadge">מועד ב׳</span><small id="exNB"></small></h3><table><thead><tr><th style="width:70px">בוצע</th><th>קורס</th><th>תאריך ושעה</th><th>מיקום</th><th style="width:110px">ציון</th><th></th></tr></thead><tbody class="examRows" id="exRB"></tbody></table></div>
   <div class="card tbl exGrp" id="exGC"><h3 class="exH"><span class="exBadge">מועד ג׳</span><small id="exNC"></small></h3><table><thead><tr><th style="width:70px">בוצע</th><th>קורס</th><th>תאריך ושעה</th><th>מיקום</th><th style="width:110px">ציון</th><th></th></tr></thead><tbody class="examRows" id="exRC"></tbody></table></div>
   <div class="card tbl exGrp" id="exGM"><h3 class="exH"><span class="exBadge">מועד מיוחד</span><small id="exNM"></small></h3><table><thead><tr><th style="width:70px">בוצע</th><th>קורס</th><th>תאריך ושעה</th><th>מיקום</th><th style="width:110px">ציון</th><th></th></tr></thead><tbody class="examRows" id="exRM"></tbody></table></div>
+</section>
+
+<!-- PLAN -->
+<section class="view" id="v-plan">
+  <div class="vhead"><h2>תוכנית למידה</h2><p>נושאי הסילבוס של כל קורס, עם סימון "למדתי" ו"חזרתי", ותוכנית חזרה שמתחלקת לבד על הימים שנשארו עד הבחינה.</p></div>
+  <div class="filters" id="planCourses"></div>
+  <div id="planBody"></div>
 </section>
 
 <!-- TASKS -->
@@ -620,14 +651,17 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
 <!-- GOALS -->
 <section class="view" id="v-goals">
   <div class="vhead"><h2>יעדים ומסלול לעתיד</h2><button class="btn" data-add="goal" type="button">+ יעד</button><p>יעדים לסמסטר, לשנה, לתואר ולקריירה, ושלבי הדרך לרישיון עריכת דין.</p></div>
+  <div class="card" style="margin-bottom:16px"><h3>מפת התואר</h3><div class="dsum" id="degSum"></div><div class="ymap" id="degYears"></div>
+    <h3 style="margin-top:18px">דרישות התואר</h3><p class="src" style="margin-top:0">רשימה לעריכה. הדרישות המחייבות מופיעות בתקנון התואר באונו.</p><div class="list" id="degReq"></div>
+    <div class="addrow"><input id="degNew" placeholder="דרישה חדשה, למשל: קורס בחירה בדיני תאגידים"><button class="btn sm" id="degAdd" type="button">הוספה</button></div></div>
   <div class="card"><h3>המסלול</h3><div class="stage" id="stages"></div></div>
   <div class="grid" id="goalCols"></div>
 </section>
 
 <!-- CASES -->
 <section class="view" id="v-cases">
-  <div class="vhead"><h2>פסיקה לפי הסילבוס</h2><button class="btn" data-add="case" type="button">+ פסק דין</button><p>כל פסקי הדין שמופיעים בסילבוסים שלך בידיעון, מסודרים לפי קורס ונושא. סמני ✓ על מה שקראת.</p></div>
-  <div class="card" style="margin-bottom:14px"><div class="caseTop"><div class="filters" id="caseCourses"></div><input type="search" id="caseSearch" placeholder="חיפוש לפי שם, מספר תיק או נושא"></div><div class="caseProg" id="caseProg"></div></div>
+  <div class="vhead"><h2>פסיקה לפי הסילבוס</h2><button class="btn" data-add="case" type="button">+ פסק דין</button><p>כל פסקי הדין שמופיעים בסילבוסים שלך בידיעון, מסודרים לפי קורס ונושא. סמני ✓ על מה שקראת, ★ על מה שחשוב לבחינה, ולחצי על פסק דין כדי לכתוב את ההלכה במשפט אחד.</p></div>
+  <div class="card" style="margin-bottom:14px"><div class="caseTop"><div class="filters" id="caseCourses"></div><button type="button" class="btn ghost sm" id="caseImp">★ חשוב לבחינה</button><input type="search" id="caseSearch" placeholder="חיפוש לפי שם, מספר תיק, נושא או הלכה"></div><div class="caseProg" id="caseProg"></div></div>
   <div id="caseList"></div>
 </section>
 
@@ -649,8 +683,13 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
         <label class="f">שנה<select id="pYear"><option>א׳</option><option>ב׳</option><option>ג׳</option><option>ד׳</option><option>התמחות</option></select></label>
         <label class="f">נק״ז נדרשות לתואר<input id="pTotal" type="number" min="0"></label>
         <label class="f">ממוצע יעד<input id="pTarget" type="number" min="0" max="100"></label>
+        <label class="f">ציון עובר בבחינה<input id="pPass" type="number" min="0" max="100"></label>
         <div class="full frow"><button class="btn" type="submit">שמירה</button></div>
       </form></div>
+    <div class="card c12 icsBox"><h3>ייצוא ליומן של הטלפון</h3>
+      <p>היומן לא יכול לשלוח התראות בעצמו. במקום זה הוא מייצא קובץ ליומן של הטלפון (גוגל או אייפון), עם תזכורות מוגדרות מראש: שבוע, יום ושעתיים לפני בחינה, יומיים ויום לפני דדליין, ויום לפני הגשת מטלה.</p>
+      <div class="frow"><label class="f" style="flex-direction:row;align-items:center;gap:8px"><input type="checkbox" id="icsLessons" checked style="width:auto"> לכלול את כל השיעורים של הסמסטר</label><button class="btn" data-ics type="button">ייצוא ליומן</button></div>
+      <ul><li><b>אייפון:</b> פותחים את היומן בספארי (לא באפליקציה שעל מסך הבית), לוחצים "ייצוא ליומן" ואז "הוספת הכול".</li><li><b>אנדרואיד:</b> הקובץ יורד לטלפון. פותחים אותו מההורדות ובוחרים "יומן Google". אם זה לא עובד, נכנסים במחשב ל־calendar.google.com, הגדרות, "ייבוא וייצוא", ומעלים את הקובץ.</li><li>אחרי שינויים גדולים כדאי לייצא שוב. כדי לא ליצור כפילויות, מוחקים קודם את האירועים הישנים או מייבאים ליומן נפרד.</li></ul></div>
     <div class="card c6"><h3>גיבוי ושחזור</h3>
       <p class="src" id="syncNote" style="margin-top:0"></p>
       <div class="frow"><button class="btn" id="copyBtn" type="button">העתקת גיבוי</button><button class="btn ghost" id="restoreBtn" type="button">שחזור מהטקסט</button><button class="btn danger" id="resetBtn" type="button">איפוס היומן</button></div>
@@ -686,15 +725,21 @@ const ONO={"profile":{"targetCredits":140,"avgGoal":90},"courses":[{"id":"ono-c-
 const SYL=[["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","ע\"א 3833/93","לוין נ' לוין"],["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","ע\"א 8566/06","אמריקר שירותי ניהול וייעוץ"],["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","ע\"א 4106/11","ד\"ר יצחק רויזמן נ' הפקולטה לרפואה, אוניברסיטת תל אביב"],["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","ע\"א 9612/11","פרופ' שטרית נ' דבוש"],["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","ע\"א 5258/98","פלונית נ' פלוני"],["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","ע\"א 6490/97","אלחג' נ' אבו עקל"],["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","דנ\"א 2401/95","נחמני נ' נחמני"],["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","","Edwards v Skyways Ltd"],["1116","כריתת חוזה › כשרות משפטית","ע\"א 2409/10","מגורי נ' מלאכי"],["1116","כריתת חוזה › כשרות משפטית","ת\"א 715417/07","פלאפון תקשורת בע\"מ נ' מלאך"],["1116","כריתת חוזה › כשרות משפטית","בע\"מ 946/08","פלוני נ' פלונית"],["1116","כריתת חוזה › כשרות משפטית","ת\"ק 51496-04-21","גל נ' רייזר קלאב בן שמן בע\"מ ואח'"],["1116","כריתת חוזה › טענת 'לא נעשה דבר'","ע\"א 8163/05","הדר חברה לביטוח בע\"מ נ' פלונית"],["1116","כריתת חוזה › טענת 'לא נעשה דבר'","ע\"א 1333/14","סעדה גואנה מיטרי נ' עלס דוברונסקי"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 1932/90","פרץ בוני הנגב – אחים פרץ בע\"מ נ' בוחבוט"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 3601/96","בראשי נ' עזבון המנוח זלמן בראשי ז\"ל"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 158/77","רבינאי נ' חברת מן שקד בע\"מ בפירוק"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","רע\"א 3160/08","אליהו מזר נ' גאון חברה לבנין והשקעות בע\"מ"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 7193/08","מנחם עדני נ' מרדכי דוד"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 10489/09","א.נץ ניהול ואחזקות בע\"מ ואח' נ' הרי אלוף ואח'"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 692/86","בוטקובסקי נ' גת"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 649/73","קפולסקי נ' גני גולן בע\"מ"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 3380/97","תמגר, חברה לבניה ופיתוח בע\"מ נ' גושן"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 6235/15","חלאק נ' כריים"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 4933/17","גרין נ' פרידמן"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 8872/18","וייס נ' בן מנחם"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 1456/22","איברהים עג'מי נ' וואחת אל סאלם נווה שלום (ועד מקומי נווה שלום)"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 1463/22","הפטריארכיה היוונית אורתודוכסית של ירושלים נ' הימנותא בע\"מ"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 838/75","ספקטור נ' צרפתי"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 829/80","שיכון עובדים בע\"מ נ' זפניק"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 4850/96","קל בנין בע\"מ נ' ע.ר.מ. רעננה לבניה והשכרה בע\"מ"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 6370/00","קל בנין בע\"מ נ' ע.ר.מ. רעננה לבניה והשכרה בע\"מ"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 8144/00","עלריג נכסים"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 434/07","פרינץ נ' אמירים מושב עובדים של צמחונים וטבעונים להתיישבות חקלאית שיתופית בע\"מ"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ד\"נ 7/81","פנידר, חברה להשקעות פתוח ובנין בע\"מ נ' קסטרו"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 800/75","קוט נ' ארגון הדיירים במרכז המסחרי, רמת-יוסף, בת-ים, אגודה עותמנית"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 2720/08","ז'אן נ' ליבמן"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 8143/14","חלפון נ' בנק דיסקונט למשכנתאות בע\"מ"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 7021/14","אמיר ילינק נ' יוסף אורנשטיין"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 2642/19","מועצה מקומית הר-אדר נ' מרכז קניות דוד ויהונתן"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","בע\"מ 5827/19","פלוני נ' פלונית"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 2733/19","אורן אלימלך נ' רשות מקרקעי ישראל"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 2274/21","נטע מור נ' אלעד ישראל מגורים בע\"מ"],["1116","כריתת חוזה › צורת החוזה","ע\"א 726/71","גרוסמן את ק.ב.ק. שותפות רשומה נ' מנהלי עזבון המנוח יהושע בידרמן"],["1116","כריתת חוזה › צורת החוזה","ע\"א 235/75","קאדרי נ' מנזר האחיות צ'רלס הקדוש"],["1116","כריתת חוזה › צורת החוזה","ע\"א 252/78","ברון נ' מנדיס טורס בע\"מ"],["1116","כריתת חוזה › צורת החוזה","ע\"א 579/83","זוננשטיין נ' גבסו"],["1116","כריתת חוזה › צורת החוזה","ע\"א 986/93","קלמר נ' גיא"],["1116","כריתת חוזה › צורת החוזה","ע\"א 2143/00","לוין נ' שולר"],["1116","כריתת חוזה › צורת החוזה","ע\"א 7119/08","עזרי חיימי נ' שמיר"],["1116","כריתת חוזה › צורת החוזה","ע\"א 8234/09","שם טוב נ' פרץ"],["1116","כריתת חוזה › צורת החוזה","בע\"מ 1270/23","פלונית נ' פלוני"],["1116","כריתת חוזה › צורת החוזה","דנ\"א 25914-08-25","הימנותא בע\"מ נ' הפטריארכיה היוונית אורתודוכסית של ירושלים"],["1116","כריתת חוזה › הצעה וקיבול","ע\"א 7824/95","תשובה נ' בר נתן"],["1116","כריתת חוזה › הצעה וקיבול","ע\"א 6295/16","איברהים קוזלי נ' מדינת ישראל"],["1116","כריתת חוזה › הצעה וקיבול","","Carlill v Carbolic Smoke Ball Company"],["1116","כריתת חוזה › זיכרון דברים","ע\"א 5332/03","רמות ארזים, חברה לבניין והשקעות בע\"מ נ' שירן"],["1116","כריתת חוזה › זיכרון דברים","ע\"א 8320/09","אלחדד נ' שמיר"],["1116","כריתת חוזה › מכרזים פרטיים","ד\"נ 22/82","בית יולס בע\"מ נ' רביב משה ושות' בע\"מ"],["1116","כריתת חוזה › מכרזים פרטיים","ע\"א 10859/07","חברה קדישא גחש\"א שעל יד הרבנות הראשית והמועצה הדתית תל-אביב-יפו והמחוז (ע\"ר) נ' לוי"],["1116","כריתת חוזה › מכרזים פרטיים","ע\"א 8265/15","בתי זיקוק לנפט בע\"מ נ' קבוצת אקוסנס (מזרח תיכון) בע\"מ"],["1116","כריתת חוזה › מכרזים פרטיים","ע\"א 4832/23","אל מול הים בע\"מ נ' עיריית בת ים"],["1116","כריתת חוזה › בין דיני חוזים לעשיית עושר","ע\"א 6164/22","SMITHS DETECTION INC נ' ווטאירפול הנדסה בע\"מ"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 8972/00","שלזינגר נ' הפניקס חברה לביטוח בע\"מ"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 5054/11","ספיר וברקת נדל\"ן (הולילנד) בע\"מ נ' עו\"ד יעקב אמסטר ואח'"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 472/86","עזר נ' עזריהו"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","דנ\"א 3047/01","איליה נ' קינסטלינגר"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 2469/06","סויסה נ' חברת זאגא בגוש 5027 חלק 1 בע\"מ"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 7730/09","כהן נ' מבני גזית"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 338/85","שפיגלמן נ' צ'פניק"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","","Raffles v Wichelhaus"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 7920/13","כרמל נ' טלמון"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","רע\"א 3264/21","כהן נ' אלקטרה בנייה בע\"מ"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 3865/19","משה אליאסיאן נ' מאיר שבו"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 5858/19","פסגות קופות גמל ופנסיה בע\"מ נ' חיים אופיר"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 403/80","סאסי נ' קיקאון"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 5493/95","דיור לעולה (עא\"ק) בע\"מ נ' קרן"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 700/83","כהן נ' י. הרשקוביץ, חברה לבנין בע\"מ"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 8/88","שאול רחמים בע\"מ נ' אקספומדיה בע\"מ"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 1569/93","מאיה נ' פנפורד (ישראל) בע\"מ"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 6234/00","ש.א.פ. בע\"מ נ' בנק לאומי לישראל בע\"מ"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 4839/92","גנז נ' כץ"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 2041/05","מחקשווילי נ' מיכקשווילי"],["1116","פגמים בכריתת חוזה › כפיה; עושק","רע\"א 7539/98","לוטם רהיטים בע\"מ נ' בנק דיסקונט לישראל בע\"מ"],["1116","פגמים בכריתת חוזה › כפיה; עושק","רע\"א 617/08","מלון עדן נהריה בע\"מ נ' קסל"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 784/81","שפיר נ' אפל"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 1912/93","שחם נ' מנס"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 731/17","מראות ישראל בע\"מ נ' עיריית ירושלים"],["1116","פגמים בכריתת חוזה › ביטול והשבה","ע\"א 5393/03","פרג' נ' מיטל"],["1116","פגמים בכריתת חוזה › חוזה למראית עין","ע\"א 4305/10","אילן נ' לוי"],["1116","פגמים בכריתת חוזה › חוזה למראית עין","רע\"א 1400/15","שלמה אילוז נ' י. מ. אמסלם בע\"מ"],["1116","פגמים בכריתת חוזה › חוזה למראית עין","ע\"א 5892/06","דואק נ' המועצה המקומית גדרה"],["1116","פגמים בכריתת חוזה › חוזה למראית עין","ע\"א 424/89","פרקש נ' שיכון ופתוח לישראל בע\"מ"],["1116","תוכן החוזה › תום לב בביצוע החוזה","רע\"א 1233/91","ג'רבי נ' בן דוד"],["1116","תוכן החוזה › תום לב בביצוע החוזה","בג\"ץ 59/80","שירותי תחבורה ציבוריים באר-שבע בע\"מ נ' בית הדין הארצי לעבודה בירושלים"],["1116","תוכן החוזה › תום לב בביצוע החוזה","ע\"א 391/80","לסרסון נ' שכון עובדים בע\"מ"],["1116","תוכן החוזה › תום לב בביצוע החוזה","ע\"א 3912/90","EXIMIN S.A תאגיד בלגי נ' טקסטיל והנעלה איטל סטייל פראררי בע\"מ"],["1116","תוכן החוזה › תום לב בביצוע החוזה","ע\"א 467/04","יתח נ' מפעל הפיס"],["1116","תוכן החוזה › תום לב בביצוע החוזה","ע\"א 8068/11","עיני נ' שיפריס"],["1116","תוכן החוזה › תום לב בביצוע החוזה","ע\"א 8422/17","מדינת ישראל – משרד התחבורה נ' המועצה הלאומית למניעת תאונות דרכים"],["1116","תוכן החוזה › תום לב בביצוע החוזה","ע\"א 8336/17","מיכאל ראובן נ' סופר-דוש בע\"מ"],["1116","תוכן החוזה › תום לב בביצוע החוזה","בע\"מ 57929-12-24","פלונית נ' פלוני"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 450/82","מדינת ישראל נ' חירם לנדאו עבודות עפר כבישים ופתוח בע\"מ"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 5795/90","ד\"ר אנדור סקלי נ' דורען בע\"מ"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 4628/93","מדינת ישראל נ' אפרופים שיכון ויזום"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","דנ\"א 2045/05","ארגון מגדלי ירקות – אגודה חקלאית שיתופית בע\"מ נ' מדינת ישראל"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","רע\"א 3961/10","המוסד לביטוח לאומי נ' סהר חברה לתביעות בע\"מ"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 3894/11","דלק – חברת הדלק הישראלית בע\"מ נ' ניר בן שלום"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 453/11","מ.ש. מוצרי אלומיניום בע\"מ נ' אריה חברה לביטוח"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 8763/15","יואל זיו נ' גספא הנדסה בע\"מ"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 7649/18","ביבי כבישים עפר ופיתוח בע\"מ נ' רכבת ישראל בע\"מ"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","רע\"א 8160/20","Google LLC נ' דורון אשל"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 4690/20","אריה פיסחוב נ' גיל ישראלי"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","עע\"מ 1122/22","מדינת ישראל – רשות מקרקעי ישראל נ' סאב ניהול יזמות והשקעות בע\"מ"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 3999/22","ברק ברנשטיין השקעות בע\"מ נ' מקס איט פיננסים בע\"מ"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 839/21","חיה הקר נ' חברת קלמטיס אוברסיז בע\"מ"],["1116","תוכן החוזה › חופש החוזים כזכות יסוד ומגבלותיו","ע\"א 294/91","חברת קדישא גחש\"א \"קהילת ירושלים\" נ' קסטנבאום"],["1116","תוכן החוזה › חופש החוזים כזכות יסוד ומגבלותיו","ע\"א 6601/96","AES System Inc נ' סער"],["1116","תוכן החוזה › חופש החוזים כזכות יסוד ומגבלותיו","דנג\"ץ 4191/97","רקנט נ' בית הדין הארצי לעבודה"],["1116","תוכן החוזה › חוזה פסול","ע\"א 461/62","צים חברת השיט הישראלית בע\"מ נ' מזיאר"],["1116","תוכן החוזה › חוזה פסול","ע\"א 285/73","לגיל טרמפולין וציוד ספורט ישראל בע\"מ נ' נחמיאס"],["1116","תוכן החוזה › חוזה פסול","ע\"א 6705/04","בית הרכב בע\"מ נ' עיריית ירושלים"],["1116","תוכן החוזה › חוזה פסול","ע\"א 6667/10","גלית הלוי בר טנדלר נ' קוזניצקי"],["1116","תוכן החוזה › חוזה פסול","ע\"א 3388/12","נהרות משלחות רפטינג בע\"מ נ' עזבון המנוח שלמה חרובי ז\"ל"],["1116","תוכן החוזה › חוזה פסול","ע\"א 3613/13","חילו נ' בדארנה"],["1116","תוכן החוזה › חוזה פסול","ע\"א 8661/12","מ. מזוז"],["1116","תוכן החוזה › חוזה פסול","ע\"א 8222/19","פרץ חנניה נ' קווליטי קרדיט פאנד"],["1116","תוכן החוזה › חוזה פסול","ע\"א 4183/20","דינה יציב ו-99 אח' נ' הועדה המקומית לתכנון ובניה \"גני תקוה\""],["1116","תוכן החוזה › חוזה פסול","ע\"א 1770/21","חצרוני נ' Facebook"],["1116","תוכן החוזה › חוזה פסול","","Patel v Mirza"],["1116","תוכן החוזה › חוזים אחידים","רע\"א 1185/97","יורשי ומנהלי עיזבון המנוחה מילגרום הינדה ז\"ל נ' מרכז משען"],["1116","תוכן החוזה › חוזים אחידים","רע\"א 5860/16","Facebook Inc נ' אוהד בן חמו"],["1116","תוכן החוזה › חוזים אחידים","רע\"א 1901/20","טרוים מילר בע\"מ נ' Facebook Ireland Limited"],["1116","תוכן החוזה › תנאי מתלה ותנאי מפסיק","ע\"א 1156/10","אפרת האס נ' חברת הבונים בקרית משה בע\"מ"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","ע\"א 8389/17","דניאל אלכס א.ש. אחזקות בע\"מ נ' לקסל אסטבלישמנט"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","ע\"א 1546/16","עפו סעיד ביסאן נ' מדינת ישראל – רשות הפיתוח וקק\"ל"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","ע\"א 253/83","חושי נ' הטכניון"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","ע\"א 149/74","פריגן נ' גורדון"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","ע\"א 5027/90","מילשטיין נ' אקוה"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","ע\"א 5757/97","אליהו, חברה לביטוח בע\"מ נ' חמאדה"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","רע\"א 6493/21","שמואל לגזיאל נ' אר אס דיזיין בע\"מ"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","רע\"א 4933/22","שלמה ביטון נ' בונייך בנייה פתוח והשקעות בע\"מ"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","ע\"א 8316/21","אדלטק החזקות"],["1116","תרופות בשל הפרת חוזה › בין מצג להתחייבות","ע\"א 6271/95","אדוניה אשר נ' פרוייקט גן העיר"],["1116","תרופות בשל הפרת חוזה › בין מצג להתחייבות","ע\"א 5888/08","אלרומלי נ' החברה הכלכלית לפיתוח"],["1116","תרופות בשל הפרת חוזה › בין מצג להתחייבות","ע\"א 3666/90","עירית נתניה נ' מלון צוקים בע\"מ"],["1116","תרופות בשל הפרת חוזה › בין מצג להתחייבות","ד\"נ 20/82","אדרס חמרי בנין בע\"מ נ' הרלו את ג'ונס ג.מ.ב.ה."],["1116","תרופות בשל הפרת חוזה › בין מצג להתחייבות","ע\"א 1846/92","לוי נ' מבט בניה בע\"מ"],["1116","תרופות בשל הפרת חוזה › בין מצג להתחייבות","ע\"א 8850/10","שיר משכנות ותיקים בע\"מ נ' הליגה למניעת מחלות ריאה תל אביב"],["1116","תרופות בשל הפרת חוזה › התנאה על תרופות","ע\"א 2454/98","לינדאור נ' רינגל"],["1116","תרופות בשל הפרת חוזה › התנאה על תרופות","ע\"א 156/82","ליפקין נ' דור הזהב בע\"מ"],["1116","תרופות בשל הפרת חוזה › אכיפה","ד\"נ 21/80","ורטהיימר נ' הררי"],["1116","תרופות בשל הפרת חוזה › אכיפה","ע\"א 580/10","ניר שיתופי – אגודה ארצית שיתופית להתיישבות עובדים נ' עיריית הוד השרון"],["1116","תרופות בשל הפרת חוזה › אכיפה","ע\"א 846/75","עוניסון – חברה לבנין בע\"מ נ' דויטש"],["1116","תרופות בשל הפרת חוזה › אכיפה","ע\"א 2686/99","אייזמן נ' קדמת עדן בע\"מ"],["1116","תרופות בשל הפרת חוזה › אכיפה","ע\"א 108/84","סתם נ' אברהם מרקוביץ' – חברה לבנין ולהשקעות בע\"מ"],["1116","תרופות בשל הפרת חוזה › אכיפה","בג\"ץ 1719/11","ניסן פונדקי נ' בית הדין האזורי לעבודה בתל אביב"],["1116","תרופות בשל הפרת חוזה › אכיפה","ע\"א 5131/10","אזימוב נ' בנימיני"],["1116","תרופות בשל הפרת חוזה › אכיפה","בע\"מ 1533/13","פלוני נ' פלונית"],["1116","תרופות בשל הפרת חוזה › אכיפה","ע\"א 7259/15","רפאל לביא נ' אורקי בניה שירותים והשקעות בע\"מ"],["1116","תרופות בשל הפרת חוזה › ביטול חוזה והשבה","ד\"נ 44/75","ביטון נ' פרץ"],["1116","תרופות בשל הפרת חוזה › ביטול חוזה והשבה","ע\"א 3940/94","שמואל רונן חברה לבנין ופיתוח בע\"מ נ' ס.ע.ל.ר חברה לבנין בע\"מ"],["1116","תרופות בשל הפרת חוזה › ביטול חוזה והשבה","ע\"א 158/80","שלום נ' מוטה"],["1116","תרופות בשל הפרת חוזה › ביטול חוזה והשבה","רע\"א 7956/99","שיכון ופיתוח לישראל בע\"מ נ' עיריית מעלה אדומים"],["1116","תרופות בשל הפרת חוזה › ביטול חוזה והשבה","ע\"א 3694/99","ארדמן נ' חברת פרוייקט אורנים בע\"מ"],["1116","תרופות בשל הפרת חוזה › ביטול חוזה והשבה","ע\"א 6275/23","ג'ייקובס נ' עמר"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 355/80","נתן אניסימוב בע\"מ נ' מלון טירת בת שבע בע\"מ"],["1116","תרופות בשל הפרת חוזה › פיצויים","רע\"א 2371/01","אינשטיין נ' אוסי תכנון והקמת מבנים ופיתוח בע\"מ"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 3437/93","אגד אגודה שיתופית לתחבורה בישראל בע\"מ נ' אדלר"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 4162/02","רנדור בע\"מ נ' דרור מהנדסים"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 8556/96","לוביאניקר נ' משרד האוצר"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 2161/11","דרור נ' פרץ"],["1116","תרופות בשל הפרת חוזה › פיצויים","רע\"א 1584/13","אלגריסי גרופ בע\"מ נ' קפוא זן תעשיות מזון בע\"מ"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 2080/09","אחים שרבט חברה לבנין בע\"מ נ' מדינת ישראל – משרד הבינוי והשיכון"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 7731/11","צוריאל אגודה שיתופית להתיישבות חקלאית בע\"מ נ' אביטן"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 517/12","בן דוד אוחיון נ' גולדפינגר"],["1116","תרופות בשל הפרת חוזה › פיצויים","ת\"א 367/98","היימן ש.י.י. חברה להשקעות ופיתוח בע\"מ נ' דלק חברת הדלק הישראלית בע\"מ"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 1229/97","איי.אמ.איי – שיווק והשקעות בינלאומיים בע\"מ נ' ע.ר.מ. רעננה לבנייה והשכרה בע\"מ"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 11173/02","אלוניאל בע\"מ נ' זאב בר בניין ופיתוח"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 345/89","דברת נ' נהול והשקעות בע\"מ"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 4630/04","קניונים נכסים ובנין בע\"מ נ' בני יעקב נדל\"ן בע\"מ"],["1116","תרופות בשל הפרת חוזה › פיצויים","רע\"א 10239/07","טלכור ספקי כח בע\"מ נ' אמיתי תק-על"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 8506/13","זאבי תקשורת אחזקות בע\"מ נ' בנק הפועלים ואח'"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 4232/13","אנגלו סכסון סוכנות לנכסים בע\"מ נ' אלי בלום"],["1116","תרופות בשל הפרת חוזה › פיצויים","רע\"א 3501/21","נצר נ' קונפינו"],["1116","תרופות בשל הפרת חוזה › פיצויים","","Hadley v Baxendale"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 1094/23","הרמן קופר נ' רשות מקרקעי ישראל"],["1116","תרופות בשל הפרת חוזה › התעשרות מהפרת חוזה","ע\"א 588/87","כהן נ' שמש"],["1116","תרופות בשל הפרת חוזה › התעשרות מהפרת חוזה","ע\"א 8728/07","אגריפרם אינטרנשיונל בע\"מ נ' שמואל מאירסון"],["1116","תרופות בשל הפרת חוזה › התעשרות מהפרת חוזה","","Attorney General v Blake"],["1116","תרופות בשל הפרת חוזה › הפרה צפויה","ע\"א 195/85","בנק איגוד לישראל בע\"מ נ' סוראקי"],["1116","תרופות בשל הפרת חוזה › הפרה צפויה","ע\"א 874/13","שד-של בילדינג אנד אינבסטמנט בע\"מ נ' מירון ואח'"],["1116","תרופות בשל הפרת חוזה › דחיית קיום","ע\"א 7938/08, ע\"א 283/09","מונסנגו נ' מכביאן"],["1116","תרופות בשל הפרת חוזה › דחיית קיום","ע\"א 765/82","משה אלתר נ' יחזקאל אלעני"],["1116","תרופות בשל הפרת חוזה › דחיית קיום","ע\"א 1632/98","ארבוס נ' רובינשטיין"],["1116","תרופות בשל הפרת חוזה › דחיית קיום","ע\"א 2568/98","פטר נ' חממי"],["1116","תרופות בשל הפרת חוזה › דחיית קיום","ע\"א 3967/21","פרץ נ' שלום"],["1116","תרופות בשל הפרת חוזה › סיכול","ע\"א 715/78","כץ נ' ניצחוני מזרחי בע\"מ"],["1116","תרופות בשל הפרת חוזה › סיכול","ע\"א 6328/97","רגב נ' משרד הבטחון"],["1116","תרופות בשל הפרת חוזה › סיכול","ע\"א 5628/99","מרקין נ' שרה משה"],["1116","תרופות בשל הפרת חוזה › סיכול","ת\"א 46210-07-18","מירב רחל נ' כונס נכסים רשמי תל אביב"],["1116","תרופות בשל הפרת חוזה › סיכול","ע\"א 3234/14","אם דבליו היי טק פרוג'קטס ישראל בע\"מ נ' י.ל גג הנגב בע\"מ"],["1136","רשימת הפסיקה בסילבוס","ע\"פ 213/56","היועץ המשפטי לממשלה נ' אלכסנדרוביץ"],["1136","רשימת הפסיקה בסילבוס","ע\"פ 196/64","היועץ המשפטי לממשלה נ' בש"],["1136","רשימת הפסיקה בסילבוס","ע\"פ 64/77","ברנבלט נ' היועץ המשפטי לממשלה"],["1136","רשימת הפסיקה בסילבוס","ע\"פ 787/79","מזרחי נ' מדינת ישראל"],["1136","רשימת הפסיקה בסילבוס","ע\"א 546/78","בנק קופת עם נ' הנדלס"],["1136","רשימת הפסיקה בסילבוס","ד\"נ 13/80","הנדלס נ' בנק קופת עם"],["1136","רשימת הפסיקה בסילבוס","ד\"נ 40/80","קניג נ' כהן"],["1136","רשימת הפסיקה בסילבוס","רע\"א 8548/96","פדידה נ' סהר"],["1136","רשימת הפסיקה בסילבוס","ת\"פ (מקומיים י-ם) 4726/07","מדינת ישראל נ' טרמינל טווינטי וואן בע\"מ"],["8445","רשימת חומרי הקריאה › פסיקה","ע\"פ 281/69","בר שלום נ' מדינת ישראל"],["8445","רשימת חומרי הקריאה › פסיקה","ע\"פ 194/75","קינזי נ' מדינת ישראל"],["8445","רשימת חומרי הקריאה › פסיקה","בג\"ץ 11339/05","מדינת ישראל נ' בית המשפט המחוזי באר שבע"],["8445","רשימת חומרי הקריאה › פסיקה","רע\"א 4984/17","חיים נ' נציגות הבית המשותף סוקולוב 48 קרית אתא"],["8445","רשימת חומרי הקריאה › פסיקה","בש\"פ 977/19","מדינת ישראל נ' אבו כף"],["8445","רשימת חומרי הקריאה › פסיקה","רע\"פ 10141/09","בן חיים נ' מדינת ישראל"],["8445","רשימת חומרי הקריאה › פסיקה","ת\"א (שלום ת\"א) 35096-07-18","רוסו נ' שגב אקספרס"],["8445","רשימת חומרי הקריאה › פסיקה","ת\"א (שלום ת\"א) 2320-04-19","שמחי נ' אגד תעבורה"],["8445","רשימת חומרי הקריאה › פסיקה","דב\"ע (ארצי) מח/2-3","אורי גנני נ' \"אמירים\" – מושב עובדים של צמחונים וטבעונים להתיישבות חקלאית שיתופית בע\"מ"]];
 const EXAMPLE_CASES=ONO.cases.map(c=>c[0]);
 function sylCases(){const n={};return SYL.map(([code,topic,cite,name])=>{n[code]=(n[code]||0)+1;return {id:"syl-"+code+"-"+n[code],name,num:cite,area:topic,summary:"",courseId:"ono-c-"+code,syl:true,read:false}})}
+const DEG_REQ=["אנגלית: פטור או השלמת רמות","סמינריון ראשון","סמינריון שני","קליניקה או סדנה מעשית","השלמת קורסי בחירה","מחויבות קהילתית או פטור","הכנה להתמחות: קורות חיים וראיונות"];
+function sylTopics(code){const seen=new Set(),out=[];if(code!=="1116")return out;SYL.forEach(a=>{if(a[0]===code&&!seen.has(a[1])){seen.add(a[1]);out.push({id:"t-"+code+"-"+out.length,t:a[1],learned:false,reviewed:false})}});return out}
+function addV7(o){o.profile=o.profile||{};if(o.profile.passGrade==null||o.profile.passGrade==="")o.profile.passGrade=60;
+  (o.courses||[]).forEach(c=>{if(!c.year)c.year="א׳";if(c.absences==null)c.absences=0;if(c.maxAbs==null)c.maxAbs=Array.isArray(c.meets)&&c.meets.length?Math.floor(c.meets.length*0.2):"";if(!Array.isArray(c.topics))c.topics=sylTopics(c.code||"")});
+  if(!Array.isArray(o.degreeReq))o.degreeReq=DEG_REQ.map((t,i)=>({id:"dr"+i,t,done:false}));
+  (o.cases||[]).forEach(c=>{if(c.halacha==null)c.halacha="";if(c.important==null)c.important=false});return o}
 function addContracts(o){o.exams=o.exams||[];if(!o.exams.some(e=>e.id==="ono-x-1116-a"))o.exams.push({id:"ono-x-1116-a",courseId:"ono-c-1116",moed:"א׳",date:"",time:"",place:"מרכז בחינות ממוחשב · תאריך אישי, יש לבצע רישום דרך מרכז הבחינות",ready:0,grade:"",personal:true});return o}
 function mergeSylCases(old){const prev={};(old||[]).forEach(c=>{if(c.syl)prev[c.id]=c});const fresh=sylCases().map(c=>{const q=prev[c.id];if(q){c.read=!!q.read;c.summary=q.summary||""}return c});const mine=(old||[]).filter(c=>!c.syl&&!EXAMPLE_CASES.includes(c.name));return fresh.concat(mine)}
-function starter(){return addContracts(starter0())}
+function starter(){return addV7(addContracts(starter0()))}
 function starter0(){
   const toSlots=c=>c.sessions.map(x=>{const m=x.when.match(/יום (\S+) (\d\d:\d\d)–(\d\d:\d\d)/);return m?{day:String(HEB_D.indexOf(m[1])),start:m[2],end:m[3],kind:x.kind,room:x.place,who:x.who}:null}).filter(Boolean);
   const courses=ONO.courses.map((c,i)=>({id:c.id,code:c.code,name:c.name,type:c.type,sem:c.sem,credits:c.credits,lecturer:c.lecturer,grade:"",color:COLORS[i%COLORS.length],slots:toSlots(c),meets:c.meets,online:c.sessions.filter(x=>!/^יום/.test(x.when)).map(x=>x.when).join(", "),ono:true}));
   const byName=n=>(courses.find(c=>c.name===n)||{}).id||"";
   const ev=(title,start,end,kind,src)=>({id:uid(),title,start,end:end||"",kind,src});
-  return {v:6,syncedAt:"2026-11-19",
+  return {v:7,syncedAt:"2026-11-19",
     profile:{name:"יהל",inst:"הקריה האקדמית אונו",degree:"LL.B",year:"א׳",total:ONO.profile.targetCredits,target:ONO.profile.avgGoal,campus:"LLB ערב · קמפוס ירושלים החדש"},
     courses,
     exams:ONO.exams.map(e=>({id:e.id,courseId:byName(e.course),moed:e.moed,date:e.date,time:e.time,place:/^ono-x-2271/.test(e.id)?"בחינה מקוונת/כללי · מיקום טרם נקבע":"בחינה פרונטלית בקמפוס · חדר טרם נקבע",ready:0,grade:""})),
@@ -727,10 +772,11 @@ const DROP_COURSES=["ono-c-1275"];
 function dropCourses(o){const bad=new Set((o.courses||[]).filter(c=>DROP_COURSES.includes(c.id)||/מחוי?יבות קהילתית/.test(c.name||"")).map(c=>c.id));DROP_COURSES.forEach(x=>bad.add(x));
   o.courses=(o.courses||[]).filter(c=>!bad.has(c.id));["exams","tasks","cases","sessions"].forEach(k=>{if(Array.isArray(o[k]))o[k]=o[k].filter(x=>!bad.has(x.courseId))});return o}
 function migrate(o){
-  if(o&&o.v>=6)return o;
-  if(o&&o.v===5){addContracts(o);o.v=6;o.updated=Date.now();return o}
-  if(o&&o.v===4){dropCourses(o);addContracts(o);o.v=6;o.updated=Date.now();return o}
-  if(o&&o.v===3){o.cases=mergeSylCases(o.cases);o.casesSrc="syllabus-2026-11-19";dropCourses(o);addContracts(o);o.v=6;o.updated=Date.now();return o}
+  if(o&&o.v>=7)return o;
+  if(o&&o.v===6){addV7(o);o.v=7;o.updated=Date.now();return o}
+  if(o&&o.v===5){addContracts(o);addV7(o);o.v=7;o.updated=Date.now();return o}
+  if(o&&o.v===4){dropCourses(o);addContracts(o);addV7(o);o.v=7;o.updated=Date.now();return o}
+  if(o&&o.v===3){o.cases=mergeSylCases(o.cases);o.casesSrc="syllabus-2026-11-19";dropCourses(o);addContracts(o);addV7(o);o.v=7;o.updated=Date.now();return o}
   const n=starter();
   if(o){n.sessions=o.sessions||[];n.goals=o.goals||[];n.weeklyGoal=o.weeklyGoal||15;n.timer=o.timer||null;if(o.profile&&o.profile.name)n.profile.name=o.profile.name;
     if(o.v===2){
@@ -777,7 +823,7 @@ async function connect(){
     dbDoc=ref;
     if(snap.exists&&snap.data()&&snap.data().s){
       const raw=snap.data().s,remote=migrate(raw);
-      if(raw.v<6){S=remote;render();flush()}
+      if(raw.v<7){S=remote;render();flush()}
       else if(!S.updated||remote.updated>=S.updated||!localStorage.getItem(LS)){S=remote;render()}
       else flush();
     } else flush();
@@ -804,6 +850,13 @@ function countUp(el,to,dec){
 }
 function ring(el,pct,label){el.style.setProperty("--p",Math.max(0,Math.min(100,pct)));el.querySelector("span").textContent=label??Math.round(pct)+"%"}
 function courseGrade(c){if(c.grade!==""&&c.grade!=null&&!isNaN(parseFloat(c.grade)))return parseFloat(c.grade);const g=S.exams.filter(e=>e.courseId===c.id&&e.grade!==""&&e.grade!=null&&!isNaN(parseFloat(e.grade))).sort((a,b)=>(a.date||"").localeCompare(b.date||""));return g.length?parseFloat(g[g.length-1].grade):NaN}
+const passG=()=>{const v=parseFloat(S.profile.passGrade);return isNaN(v)?60:v};
+const gradeOk=e=>e.done&&e.grade!==""&&e.grade!=null&&!isNaN(parseFloat(e.grade))&&parseFloat(e.grade)>=passG();
+function passedExam(cid){return S.exams.find(e=>e.courseId===cid&&gradeOk(e))}
+function examSkip(e){return !e.done&&!!passedExam(e.courseId)}
+function deadlineItems(){const out=[];S.exams.forEach(e=>{if(examSkip(e))return;const n=cName(e.courseId)+" · מועד "+e.moed;
+  if(e.regDeadline&&!e.done)out.push({date:e.regDeadline,end:"",title:"רישום לבחינה · "+n,kind:"deadline",ref:["exam",e.id],color:"var(--gold)"});
+  if(e.appealDeadline&&e.done)out.push({date:e.appealDeadline,end:"",title:"ערעור על ציון · "+n,kind:"deadline",ref:["exam",e.id],color:"var(--gold)"})});return out}
 function weightedAvg(){let w=0,s=0;S.courses.forEach(c=>{const g=courseGrade(c),k=parseFloat(c.credits)||1;if(!isNaN(g)){s+=g*k;w+=k}});return w?s/w:null}
 function hoursSince(days){const d0=today();d0.setDate(d0.getDate()-days);return S.sessions.filter(x=>parse(x.date)>=d0).reduce((a,x)=>a+x.min,0)/60}
 function weekHours(){const d=today();d.setDate(d.getDate()-d.getDay());return S.sessions.filter(x=>parse(x.date)>=d).reduce((a,x)=>a+x.min,0)/60}
@@ -812,7 +865,8 @@ function css(v){return getComputedStyle(document.documentElement).getPropertyVal
 /* all dated items, for calendar & upcoming */
 function allItems(){
   const out=[];
-  S.exams.forEach(e=>out.push({date:e.date,end:"",title:cName(e.courseId)+" · מועד "+e.moed,kind:"exam",ref:["exam",e.id],color:"var(--coral)",done:!!e.done}));
+  S.exams.forEach(e=>{if(e.date&&!examSkip(e))out.push({date:e.date,end:"",title:cName(e.courseId)+" · מועד "+e.moed,kind:"exam",ref:["exam",e.id],color:"var(--coral)",done:!!e.done})});
+  deadlineItems().forEach(d=>out.push(d));
   S.tasks.forEach(t=>t.due&&out.push({date:t.due,end:"",title:t.title,kind:"task",done:t.done,ref:["task",t.id],color:"var(--gold)"}));
   S.events.forEach(e=>out.push({date:e.start,end:e.end,title:e.title,kind:e.kind,ref:["event",e.id],color:{academic:"var(--teal)",holiday:"var(--lime)",exam:"var(--coral)",personal:"var(--pink)"}[e.kind]||"var(--pink)"}));
   return out;
@@ -825,12 +879,12 @@ function render(){
   const p=S.profile;
   $("#brandName").textContent="היומן של "+(p.name||"שלי");
   $("#brandSub").innerHTML=[`${p.degree} · שנה ${p.year}`,p.inst,S.syncedAt?"עודכן מהידיעון "+fmt(S.syncedAt):""].filter(Boolean).map(x=>`<span>${esc(x)}</span>`).join("");
-  renderDash();renderCal();renderWeek();renderCourses();renderExams();renderTasks();renderStudy();renderGoals();renderCases();renderLinks();renderProfile();
+  renderDash();renderCal();renderWeek();renderCourses();renderExams();renderPlan();renderTasks();renderStudy();renderGoals();renderCases();renderLinks();renderProfile();
 }
 function renderDash(){
   const p=S.profile;
   const t0=iso(today());
-  const next=S.exams.filter(e=>!e.done&&e.date&&e.date>=t0).sort((a,b)=>(a.date+(a.time||"")).localeCompare(b.date+(b.time||"")))[0];
+  const next=S.exams.filter(e=>!e.done&&!examSkip(e)&&e.date&&e.date>=t0).sort((a,b)=>(a.date+(a.time||"")).localeCompare(b.date+(b.time||"")))[0];
   if(next){
     $("#heroTag").textContent="הבחינה הבאה · מועד "+next.moed;
     $("#heroTitle").textContent=cName(next.courseId);
@@ -869,14 +923,24 @@ function renderDash(){
   // upcoming
   const lim=new Date(today());lim.setDate(lim.getDate()+21);const lims=iso(lim);
   const up=allItems().filter(i=>!i.done&&((i.end||i.date)>=ds)&&i.date<=lims).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,9);
-  const KL={exam:"בחינה",task:"הגשה",academic:"אקדמי",holiday:"חג",personal:"אישי"};
+  const KL={exam:"בחינה",task:"הגשה",academic:"אקדמי",holiday:"חג",personal:"אישי",deadline:"דדליין"};
   $("#upcoming").innerHTML=up.length?up.map(i=>`<div class="item" data-open="${i.ref[0]}:${i.ref[1]}" style="cursor:pointer"><span class="dot" style="background:${i.color}"></span><div class="t"><b>${esc(i.title)}</b><small>${KL[i.kind]||""}</small></div>${whenChip(i.date<ds?ds:i.date)}</div>`).join(""):`<div class="empty"><b>שקט בשלושת השבועות הקרובים</b>הוסיפי מטלות ובחינות והן יופיעו כאן לפי סדר.</div>`;
   // rings
   ring($("#rTasks"),S.tasks.length?done/S.tasks.length*100:0);$("#rTasksN").textContent=done+" מתוך "+S.tasks.length;
   const fut=S.exams.filter(e=>!e.date||e.date>=ds);
 
 
+  renderDeadlines();
   drawCharts();renderCredRows();
+}
+function renderDeadlines(){
+  const ds=iso(today());const L=[];
+  deadlineItems().filter(d=>d.date>=ds).forEach(d=>L.push({sort:d.date,html:`<div class="item" data-open="${d.ref[0]}:${d.ref[1]}" style="cursor:pointer"><span class="dot" style="background:var(--gold)"></span><div class="t"><b>${esc(d.title)}</b><small>דדליין</small></div>${whenChip(d.date)}</div>`}));
+  S.exams.filter(e=>!e.done&&!e.date&&!examSkip(e)).forEach(e=>L.push({sort:"0",html:`<div class="item" data-open="exam:${e.id}" style="cursor:pointer"><span class="dot" style="background:var(--coral)"></span><div class="t"><b>לקבוע תאריך לבחינה · ${esc(cName(e.courseId))}</b><small>${esc(e.place||"אין עדיין תאריך לבחינה")}</small></div><span class="when soon">חסר תאריך</span></div>`}));
+  S.exams.filter(e=>!e.done&&!examSkip(e)&&e.date&&e.date>=ds&&!e.regDeadline&&/מרכז בחינות/.test(e.place||"")).forEach(e=>L.push({sort:e.date,html:`<div class="item" data-open="exam:${e.id}" style="cursor:pointer"><span class="dot" style="background:var(--gold)"></span><div class="t"><b>לבדוק מועד אחרון לרישום · ${esc(cName(e.courseId))}</b><small>בחינה במרכז הבחינות דורשת רישום מראש</small></div>${whenChip(e.date)}</div>`}));
+  S.courses.forEach(c=>{const m=parseFloat(c.maxAbs);if(isNaN(m)||!m)return;const a=+c.absences||0;if(a>=m-1)L.push({sort:"1",html:`<div class="item"><span class="dot" style="background:${a>=m?"var(--coral)":"var(--gold)"}"></span><div class="t"><b>נוכחות · ${esc(c.name)}</b><small>${a>=m?"הגעת למגבלת ההיעדרויות ("+a+" מתוך "+m+")":"נשארה לך היעדרות אחת לפני המגבלה ("+a+" מתוך "+m+")"}</small></div><span class="when ${a>=m?"past":"soon"}">${a}/${m}</span></div>`})});
+  L.sort((a,b)=>a.sort.localeCompare(b.sort));
+  $("#deadlines").innerHTML=L.length?L.map(x=>x.html).join(""):`<div class="empty"><b>אין דדליינים פתוחים</b>אפשר להוסיף לכל בחינה תאריך אחרון לרישום ולערעור, דרך "עריכה" בעמוד הבחינות.</div>`;
 }
 let heroTarget=null;
 function tickHero(){
@@ -907,12 +971,12 @@ function drawCharts(){
   mk("chCredits",{type:"bar",plugins:[valLbl],data:{labels:cc.map(c=>c.name.length>22?c.name.slice(0,21)+"…":c.name),datasets:[{data:cc.map(c=>+c.credits),backgroundColor:x=>grad(x,cc[x.dataIndex]),borderColor:cc.map(c=>SEMC[semOf(c)][0]),borderWidth:{right:0,left:3,top:0,bottom:0},borderSkipped:false,borderRadius:0,barPercentage:.72,categoryPercentage:.9}]},options:{...base,indexAxis:"y",layout:{padding:{right:24}},plugins:{legend:{display:true,position:"bottom",labels:{boxWidth:12,boxHeight:12,font:{size:11},generateLabels:()=>sems.map(k=>({text:"סמסטר "+k,fillStyle:SEMC[k][0],strokeStyle:SEMC[k][0],lineWidth:0,fontColor:fg}))},onClick:null},tooltip:{callbacks:{label:x=>x.raw+" נק״ז · סמסטר "+cc[x.dataIndex].sem}}},scales:{x:{beginAtZero:true,ticks:{precision:0,stepSize:1},grid:{color:grid},border:{display:false},title:{display:true,text:"נק״ז"}},y:{grid:{display:false},border:{color:grid},ticks:{font:{size:11},color:css("--fg")}}}}});
 }
 const MOEDS=["א׳","ב׳","ג׳","מיוחד"];
-function moedList(ex){const m=[...new Set(ex.map(e=>e.moed||"א׳"))].sort((a,b)=>MOEDS.indexOf(a)-MOEDS.indexOf(b));return m.length?m.join(" · "):"—"}
+function moedList(ex){const p=ex.find(gradeOk);if(p)return "✓ עברת במועד "+(p.moed||"א׳")+" ("+p.grade+")";const m=[...new Set(ex.map(e=>e.moed||"א׳"))].sort((a,b)=>MOEDS.indexOf(a)-MOEDS.indexOf(b));return m.length?m.join(" · "):"—"}
 function renderCredRows(){
   const ds=iso(today());const sems=["א׳","ב׳","קיץ","שנתי"];
   const rows=[...S.courses].sort((a,b)=>sems.indexOf(a.sem)-sems.indexOf(b.sem));
   let tot=0;
-  const h=rows.map(c=>{tot+=parseFloat(c.credits)||0;const ex=S.exams.filter(e=>e.courseId===c.id);const nx=ex.filter(e=>!e.done&&e.date>=ds).sort((a,b)=>a.date.localeCompare(b.date))[0];const open=S.tasks.filter(t=>t.courseId===c.id&&!t.done);
+  const h=rows.map(c=>{tot+=parseFloat(c.credits)||0;const ex=S.exams.filter(e=>e.courseId===c.id);const nx=ex.filter(e=>!e.done&&!examSkip(e)&&e.date&&e.date>=ds).sort((a,b)=>a.date.localeCompare(b.date))[0];const open=S.tasks.filter(t=>t.courseId===c.id&&!t.done);
     return `<tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${c.color};margin-inline-end:8px"></span><b>${esc(c.name)}</b></td><td>${c.sem==="שנתי"?"שנתי":esc(c.sem)}</td><td class="mono">${esc(c.credits)||"—"}</td><td>${nx?whenChip(nx.date)+" <small class='src'>מועד "+esc(nx.moed)+"</small>":"—"}</td><td class="mlist">${moedList(ex)}</td><td>${open.length?open.map(t=>`<div style="font-size:13px">• ${esc(t.title)}</div>`).join(""):"—"}</td><td class="mono">${isNaN(courseGrade(c))?"—":courseGrade(c)}</td></tr>`}).join("");
   $("#credRows").innerHTML=h+`<tr><td><b>סה״כ</b></td><td></td><td class="mono"><b>${tot}</b>${S.profile.total?" מתוך "+S.profile.total:""}</td><td colspan="4"></td></tr>`;
 }
@@ -973,6 +1037,9 @@ $("#semFilter").addEventListener("click",e=>{const b=e.target.closest("[data-sem
 
 /* courses */
 let cf="הכול";
+function attn(c){const m=parseFloat(c.maxAbs),a=+c.absences||0,has=!isNaN(m)&&m>0;const cls=has?(a>=m?"over":a>=m-1?"warn":""):"";
+  return `<div class="row attn-${cls?cls[0]:""}"><span>נוכחות</span><span class="attn ${cls}"><button type="button" class="ab" data-abs="${c.id}:-1" aria-label="הפחתת היעדרות">−</button><span class="n">${a}${has?"/"+m:""}</span><button type="button" class="ab" data-abs="${c.id}:1" aria-label="הוספת היעדרות">+</button></span></div>${has?`<div class="abar"><i style="width:${Math.min(100,a/m*100)}%"></i></div><small class="src">${a>=m?"הגעת למגבלת ההיעדרויות":a>=m-1?"נשארה היעדרות אחת לפני המגבלה":"היעדרויות מתוך "+m+" מותרות"}</small>`:'<small class="src">אפשר להגדיר מגבלת היעדרויות דרך "עריכה"</small>'}`}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-abs]");if(!b)return;const[cid,d]=b.dataset.abs.split(":");const c=course(cid);if(!c)return;c.absences=Math.max(0,(+c.absences||0)+(+d));save();renderCourses();renderDash();const m=parseFloat(c.maxAbs);if(+d>0&&!isNaN(m)&&m>0&&c.absences>=m-1)toast(c.absences>=m?"שימי לב: הגעת למגבלת ההיעדרויות ב"+c.name:"נשארה היעדרות אחת ב"+c.name)});
 function renderCourses(){
   const sems=["הכול","א׳","ב׳","שנתי","קיץ"];
   $("#courseFilter").innerHTML=sems.map(s=>`<button type="button" class="${cf===s?"on":""}" data-cf="${s}">${s==="הכול"?"הכול":s==="שנתי"?"שנתי":"סמסטר "+s}</button>`).join("");
@@ -989,22 +1056,104 @@ function renderCourses(){
     <div class="row"><span>מטלות פתוחות</span><b>${open}</b></div>
     <div class="row"><span>מועדי בחינה</span><b>${moedList(ex)}</b></div>
     <div class="row"><span>ציון</span><b>${esc(c.grade)||"—"}</b></div>
+    ${attn(c)}
+    ${c.topics&&c.topics.length?`<div class="row"><span>נושאי סילבוס</span><b>${c.topics.filter(t=>t.learned).length}/${c.topics.length} נלמדו</b></div>`:""}
     <div class="acts"><button type="button" data-addfor="slot:${c.id}">+ שיעור</button><button type="button" data-addfor="task:${c.id}">+ מטלה</button><button type="button" data-addfor="exam:${c.id}">+ בחינה</button><button type="button" data-open="course:${c.id}">עריכה</button></div></div>`}).join("")||'<div class="empty"><b>אין קורסים</b>הוסיפי את הקורס הראשון שלך.</div>';
 }
 $("#courseFilter").addEventListener("click",e=>{const b=e.target.closest("[data-cf]");if(b){cf=b.dataset.cf;renderCourses()}});
 
 /* exams */
 document.addEventListener("change",e=>{const c=e.target.closest("[data-exdone]");if(!c)return;const x=S.exams.find(k=>k.id===c.dataset.exdone);if(!x)return;x.done=c.checked;save();renderExams();renderDash();if(c.checked){confetti(c);toast("כל הכבוד! בחינה מאחורייך")}});
-document.addEventListener("change",e=>{const c=e.target.closest("[data-exgrade]");if(!c)return;const x=S.exams.find(k=>k.id===c.dataset.exgrade);if(!x)return;let v=c.value.trim();if(v!==""){v=Math.max(0,Math.min(100,Math.round(+v)));c.value=v}x.grade=v===""?"":String(v);if(v!==""&&!x.done){x.done=true}save();renderExams();renderDash();if(v!=="")toast("הציון נשמר")});
+document.addEventListener("change",e=>{const c=e.target.closest("[data-exgrade]");if(!c)return;const x=S.exams.find(k=>k.id===c.dataset.exgrade);if(!x)return;let v=c.value.trim();if(v!==""){v=Math.max(0,Math.min(100,Math.round(+v)));c.value=v}x.grade=v===""?"":String(v);if(v!==""&&!x.done){x.done=true}save();renderExams();renderDash();renderCourses();renderPlan();if(v!==""){if(v>=passG()&&S.exams.some(o=>o.courseId===x.courseId&&o.id!==x.id&&!o.done)){toast("עברת! שאר המועדים של הקורס סומנו כלא רלוונטיים");confetti(c)}else toast("הציון נשמר")}});
 function renderExams(){
   const ex=[...S.exams].sort((a,b)=>(a.date||"9").localeCompare(b.date||"9"));
-  const row=e=>`<tr class="${e.done?"exdone":""}"><td><input type="checkbox" class="caseChk" data-exdone="${e.id}"${e.done?" checked":""} aria-label="בוצע"></td><td><span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${cColor(e.courseId)};margin-inline-end:8px"></span><b>${esc(cName(e.courseId))}</b></td><td>${!e.date&&e.personal?'<span class="when soon">תאריך אישי · נקבע ברישום</span>':whenChip(e.date)} <span class="mono" style="font-size:12px">${esc(e.time)}</span></td><td>${esc(e.place)||"—"}</td><td><input type="number" min="0" max="100" step="1" inputmode="numeric" class="exGrade" data-exgrade="${e.id}" value="${esc(e.grade)}" placeholder="—" aria-label="ציון"></td><td><div class="acts"><button type="button" data-open="exam:${e.id}">עריכה</button></div></td></tr>`;
+  const dl=e=>{const a=[];if(e.regDeadline)a.push(`רישום עד <b>${fmt(e.regDeadline)}</b>`);if(e.appealDeadline)a.push(`ערעור עד <b>${fmt(e.appealDeadline)}</b>`);return a.length?`<span class="dl">${a.join(" · ")}</span>`:""};
+  const row=e=>{const sk=examSkip(e),p=sk?passedExam(e.courseId):null;return `<tr class="${e.done?"exdone":""}${sk?" exskip":""}"><td><input type="checkbox" class="caseChk" data-exdone="${e.id}"${e.done?" checked":""}${sk?" disabled":""} aria-label="בוצע"></td><td><span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${cColor(e.courseId)};margin-inline-end:8px"></span><b>${esc(cName(e.courseId))}</b></td><td>${sk?`<span class="when skip">לא רלוונטי · עברת במועד ${esc(p.moed)}</span>`:(!e.date&&e.personal?'<span class="when soon">תאריך אישי · נקבע ברישום</span>':whenChip(e.date))} <span class="mono" style="font-size:12px">${sk?"":esc(e.time)}</span>${sk?"":dl(e)}</td><td>${esc(e.place)||"—"}</td><td><input type="number" min="0" max="100" step="1" inputmode="numeric" class="exGrade" data-exgrade="${e.id}" value="${esc(e.grade)}" placeholder="—" aria-label="ציון"></td><td><div class="acts"><button type="button" data-open="exam:${e.id}">עריכה</button></div></td></tr>`};
   const G={A:"א׳",B:"ב׳",C:"ג׳",M:"מיוחד"};
   Object.entries(G).forEach(([k,m])=>{const L=ex.filter(e=>(e.moed||"א׳")===m);const card=$("#exG"+k);
     card.style.display=(L.length||k!=="M")?"":"none";
-    $("#exN"+k).textContent=L.length?`${L.length} בחינות${L.filter(e=>e.done).length?" · "+L.filter(e=>e.done).length+" בוצעו":""}`:"";
+    const nd=L.filter(e=>e.done).length,ns=L.filter(examSkip).length;$("#exN"+k).textContent=L.length?`${L.length} קורסים${nd?" · "+nd+" בוצעו":""}${ns?" · "+ns+" לא רלוונטיים":""}`:"";
     $("#exR"+k).innerHTML=L.length?L.map(row).join(""):`<tr><td colspan="6"><div class="empty" style="border:0"><b>אין בחינות במועד ${m}</b>${k==="C"?"מועד ג׳ מתפרסם בידיעון רק לחלק מהקורסים.":"אפשר להוסיף עם הכפתור למעלה."}</div></td></tr>`});
 }
+
+
+/* plan: syllabus topics & revision schedule */
+let planCourse=null;
+function nextExamOf(cid){const ds=iso(today());return S.exams.filter(e=>e.courseId===cid&&!e.done&&!examSkip(e)&&e.date&&e.date>=ds).sort((a,b)=>a.date.localeCompare(b.date))[0]}
+function renderPlan(){
+  const cs=S.courses.filter(c=>(c.topics&&c.topics.length)||S.exams.some(e=>e.courseId===c.id));
+  if(!cs.length){$("#planCourses").innerHTML="";$("#planBody").innerHTML='<div class="empty"><b>אין קורסים עם בחינות</b>הוסיפי קורס ובחינה כדי לבנות תוכנית למידה.</div>';return}
+  if(!planCourse||!cs.some(c=>c.id===planCourse)){const w=cs.find(c=>c.topics&&c.topics.length)||cs[0];planCourse=w.id}
+  $("#planCourses").innerHTML=cs.map(c=>{const t=c.topics||[];return `<button type="button" class="${planCourse===c.id?"on":""}" data-pcourse="${c.id}"><span class="dot" style="background:${c.color}"></span>${esc(c.name)}${t.length?` <span class="mono">${t.filter(x=>x.reviewed).length}/${t.length}</span>`:""}</button>`}).join("");
+  const c=course(planCourse),T=c.topics||[];const nx=nextExamOf(c.id),passed=passedExam(c.id);
+  const ln=T.filter(t=>t.learned).length,rv=T.filter(t=>t.reviewed).length;
+  const days=nx?dayDiff(nx.date):null;
+  let h=`<div class="planTop"><div class="card"><b class="big">${ln}/${T.length}</b><small class="src">נושאים שלמדתי</small><div class="bar" style="margin-top:8px"><i style="width:${T.length?ln/T.length*100:0}%"></i></div></div><div class="card"><b class="big">${rv}/${T.length}</b><small class="src">נושאים שחזרתי עליהם</small><div class="bar" style="margin-top:8px"><i style="width:${T.length?rv/T.length*100:0}%;background:linear-gradient(90deg,var(--cobalt),var(--pink))"></i></div></div><div class="card"><b class="big">${passed?"✓":days!=null?days:"—"}</b><small class="src">${passed?"עברת את הבחינה במועד "+esc(passed.moed):nx?"ימים עד הבחינה · מועד "+esc(nx.moed)+" · "+fmt(nx.date):"אין עדיין תאריך בחינה"}</small></div></div>`;
+  // revision plan
+  const left=T.filter(t=>!t.reviewed);
+  h+=`<div class="card" style="margin-bottom:14px"><h3>תוכנית חזרה</h3>`;
+  if(passed)h+=`<div class="src">עברת את הבחינה בקורס הזה, אין צורך בתוכנית חזרה.</div>`;
+  else if(!T.length)h+=`<div class="src">הוסיפי למטה את נושאי הקורס, והתוכנית תיבנה לבד.</div>`;
+  else if(!nx)h+=`<div class="src">כדי לבנות תוכנית חזרה צריך תאריך בחינה. ${S.exams.some(e=>e.courseId===c.id&&!e.date)?"לבחינה בקורס הזה עוד אין תאריך (למשל תאריך אישי במרכז הבחינות). אחרי הרישום, מכניסים את התאריך בעמוד הבחינות.":"מוסיפים אותו בעמוד הבחינות."}</div>`;
+  else if(!left.length)h+=`<div class="src">חזרת על כל הנושאים. כל הכבוד! ביומיים האחרונים כדאי לפתור מבחנים קודמים.</div>`;
+  else{
+    const avail=Math.max(1,days-1);// keep the last day for exam practice
+    const per=Math.ceil(left.length/avail);const slots=Math.min(avail,Math.ceil(left.length/per));const step=avail/slots;
+    h+=`<div class="src" style="margin-bottom:8px">נשארו ${left.length} נושאים לחזרה ו־${days} ימים. ${per>1?`זה ${per} נושאים`:"נושא אחד"} ${step>=1.5?"כל "+Math.round(step)+" ימים":"ביום"}, והיום האחרון נשאר לפתרון מבחנים.</div>`;
+    const t0=today();let k=0;
+    for(let i=0;i<slots&&k<left.length;i++){const d=new Date(t0);d.setDate(d.getDate()+Math.floor(i*step));const ds=iso(d);const items=left.slice(k,k+per);k+=per;
+      h+=`<div class="pday${i===0?" today":""}"><span class="d">${i===0?"היום":HEB_D[d.getDay()]+" "+fmt(ds)}</span><div>${items.map(t=>esc(t.t.split(" › ").pop())).join(" · ")}</div></div>`}
+    const ed=new Date(parse(nx.date));ed.setDate(ed.getDate()-1);
+    if(days>=2)h+=`<div class="pday"><span class="d">${HEB_D[ed.getDay()]} ${fmt(iso(ed))}</span><div>פתרון מבחן קודם בתנאי זמן אמת</div></div>`;
+  }
+  h+=`</div>`;
+  // topics list
+  h+=`<div class="card"><h3>נושאי הסילבוס · ${esc(c.name)}</h3>`;
+  if(c.code==="1116"&&T.length)h+=`<div class="src">הנושאים נלקחו מהסילבוס של הקורס בידיעון.</div>`;
+  const groups={};T.forEach(t=>{const g=t.t.includes(" › ")?t.t.split(" › ")[0]:"נושאים";(groups[g]=groups[g]||[]).push(t)});
+  h+=Object.entries(groups).map(([g,L])=>`<div class="tgrp"><h4>${esc(g)}</h4>${L.map(t=>`<div class="titem${t.reviewed?" rev":""}"><b>${esc(t.t.split(" › ").pop())}</b><label><input type="checkbox" data-tl="${t.id}" ${t.learned?"checked":""}> למדתי</label><label><input type="checkbox" data-tr="${t.id}" ${t.reviewed?"checked":""}> חזרתי</label><button type="button" class="x" data-tdel="${t.id}" aria-label="מחיקת נושא">×</button></div>`).join("")}</div>`).join("")||'<div class="src">אין עדיין נושאים לקורס הזה.</div>';
+  h+=`<div class="addrow"><input id="topicNew" placeholder="נושא חדש, למשל: הצעה וקיבול"><button class="btn sm" id="topicAdd" type="button">הוספה</button></div></div>`;
+  $("#planBody").innerHTML=h;
+}
+$("#planCourses").addEventListener("click",e=>{const b=e.target.closest("[data-pcourse]");if(b){planCourse=b.dataset.pcourse;renderPlan()}});
+$("#planBody").addEventListener("change",e=>{const l=e.target.closest("[data-tl],[data-tr]");if(!l)return;const c=course(planCourse);const id=l.dataset.tl||l.dataset.tr;const t=c.topics.find(x=>x.id===id);if(!t)return;
+  if(l.dataset.tl)t.learned=l.checked;else{t.reviewed=l.checked;if(l.checked)t.learned=true}save();renderPlan();renderCourses();if(l.checked)confetti(l)});
+$("#planBody").addEventListener("click",e=>{const d=e.target.closest("[data-tdel]");const c=course(planCourse);if(d){c.topics=c.topics.filter(x=>x.id!==d.dataset.tdel);save();renderPlan();renderCourses();return}
+  if(e.target.closest("#topicAdd")){const v=$("#topicNew").value.trim();if(!v)return;(c.topics=c.topics||[]).push({id:uid(),t:v,learned:false,reviewed:false});save();renderPlan();renderCourses();setTimeout(()=>{const i=$("#topicNew");i&&i.focus()},20)}});
+$("#planBody").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="topicNew"){e.preventDefault();$("#topicAdd").click()}});
+
+/* ics export */
+function icsText(withLessons){
+  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//yoman//law-planner//HE","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:יומן משפטים","X-WR-TIMEZONE:Asia/Jerusalem"];
+  const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+/,"");
+  const tx=v=>String(v||"").replace(/\\/g,"\\\\").replace(/;/g,"\;").replace(/,/g,"\\,").replace(/\n/g,"\\n");
+  const dt=(d,t)=>d.replace(/-/g,"")+(t?"T"+t.replace(":","")+"00":"");
+  const alarm=tr=>["BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:תזכורת","TRIGGER:"+tr,"END:VALARM"];
+  const ev=(uidv,sum,start,end,allDay,loc,desc,alarms)=>{L.push("BEGIN:VEVENT","UID:"+uidv+"@yoman","DTSTAMP:"+stamp);
+    if(allDay){L.push("DTSTART;VALUE=DATE:"+dt(start));const e=new Date(parse(start));e.setDate(e.getDate()+1);L.push("DTEND;VALUE=DATE:"+dt(iso(e)))}else L.push("DTSTART:"+start,"DTEND:"+end);
+    L.push("SUMMARY:"+tx(sum));if(loc)L.push("LOCATION:"+tx(loc));if(desc)L.push("DESCRIPTION:"+tx(desc));(alarms||[]).forEach(a=>L.push(...alarm(a)));L.push("END:VEVENT")};
+  const addH=(t,h)=>{const[a,b]=t.split(":").map(Number);const m=a*60+b+h*60;return pad(Math.floor(m/60)%24)+":"+pad(m%60)};
+  S.exams.forEach(e=>{if(!e.date||examSkip(e))return;const t=e.time||"09:00";ev("exam-"+e.id,"בחינה · "+cName(e.courseId)+" · מועד "+e.moed,dt(e.date,t),dt(e.date,addH(t,3)),false,e.place,"",["-P7D","-P1D","-PT2H"])});
+  deadlineItems().forEach((d,i)=>ev("dl-"+d.ref[1]+"-"+i,d.title,d.date,"",true,"","",["-P2D","-PT15H"]));
+  S.exams.filter(e=>!e.done&&!e.date&&!examSkip(e)).forEach(e=>{const d=today();d.setDate(d.getDate()+1);ev("reg-"+e.id,"לקבוע תאריך לבחינה · "+cName(e.courseId),iso(d),"",true,e.place,"",["-PT15H"])});
+  S.tasks.forEach(t=>{if(t.due&&!t.done)ev("task-"+t.id,"מטלה · "+t.title,t.due,"",true,"",t.notes,["-PT15H"])});
+  S.events.forEach(e=>{if(e.start&&e.kind!=="personal"){const end=e.end?new Date(parse(e.end)):null;L.push("BEGIN:VEVENT","UID:ev-"+e.id+"@yoman","DTSTAMP:"+stamp,"DTSTART;VALUE=DATE:"+dt(e.start));const x=end||new Date(parse(e.start));x.setDate(x.getDate()+1);L.push("DTEND;VALUE=DATE:"+dt(iso(x)),"SUMMARY:"+tx(e.title),"TRANSP:TRANSPARENT","END:VEVENT")}});
+  if(withLessons){S.courses.forEach(c=>{(c.meets||[]).forEach((m,i)=>{const r=String(m).match(/^(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)\s*(\S*)/);if(!r)return;const d="20"+r[1]+"-"+r[2]+"-"+r[3];if(d<iso(today()))return;
+    const kind=r[8]==="T"?"תרגיל":"הרצאה";const sl=(c.slots||[]).find(x=>x.kind===kind)||(c.slots||[])[0]||{};
+    ev("m-"+c.id+"-"+i,kind+" · "+c.name,dt(d,r[4]+":"+r[5]),dt(d,r[6]+":"+r[7]),false,sl.room||"",sl.who||"",["-PT30M"])})})}
+  L.push("END:VCALENDAR");
+  // fold lines to 73 bytes
+  const enc=new TextEncoder();
+  return L.map(line=>{let out="",cur="";for(const ch of line){if(enc.encode(cur+ch).length>73){out+=cur+"\r\n ";cur=ch}else cur+=ch}return out+cur}).join("\r\n")+"\r\n";
+}
+async function exportIcs(){
+  const box=$("#icsLessons");const txt=icsText(box?box.checked:true);
+  const file=new File([txt],"yoman-mishpatim.ics",{type:"text/calendar"});
+  try{if(matchMedia("(pointer:coarse)").matches&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"יומן משפטים"});return}}catch(e){if(e&&e.name==="AbortError")return}
+  const a=document.createElement("a");a.href=URL.createObjectURL(file);a.download="yoman-mishpatim.ics";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);
+  toast("הקובץ ירד. פותחים אותו כדי להוסיף ליומן");
+}
+document.addEventListener("click",e=>{if(e.target.closest("[data-ics]"))exportIcs()});
 
 /* tasks */
 let tf="פתוחות";
@@ -1048,7 +1197,24 @@ $("#weeklyGoal").onchange=e=>{S.weeklyGoal=+e.target.value||0;save();renderStudy
 document.addEventListener("click",e=>{const b=e.target.closest("[data-delsess]");if(b){S.sessions=S.sessions.filter(x=>x.id!==b.dataset.delsess);save();renderStudy();renderDash()}});
 
 /* goals */
+function renderDegree(){
+  const p=S.profile,tot=+p.total||0,YS=["א׳","ב׳","ג׳","ד׳"];
+  const planned=S.courses.reduce((a,c)=>a+(parseFloat(c.credits)||0),0);
+  const passedC=S.courses.filter(c=>{const g=courseGrade(c);return !isNaN(g)&&g>=passG()});
+  const earned=passedC.reduce((a,c)=>a+(parseFloat(c.credits)||0),0);
+  const avg=weightedAvg();
+  $("#degSum").innerHTML=`<div><b>${earned}</b><small>נק״ז שהושלמו${tot?" מתוך "+tot:""}</small></div><div><b>${planned}</b><small>נק״ז בתוכנית</small></div><div><b>${tot?Math.max(0,tot-planned):"—"}</b><small>נק״ז שעוד צריך לתכנן</small></div><div><b>${avg?avg.toFixed(1):"—"}</b><small>ממוצע מצטבר משוקלל</small></div>`;
+  $("#degYears").innerHTML=YS.map(y=>{const cs=S.courses.filter(c=>(c.year||"א׳")===y);const cr=cs.reduce((a,c)=>a+(parseFloat(c.credits)||0),0);const dn=cs.filter(c=>passedC.includes(c)).reduce((a,c)=>a+(parseFloat(c.credits)||0),0);
+    return `<div class="y${(p.year||"א׳")===y?" cur":""}"><small class="src">שנה ${y}</small><div><b>${cr}</b> <small class="src">נק״ז</small></div><div class="bar" style="margin:8px 0 6px"><i style="width:${cr?dn/cr*100:0}%"></i></div><small class="src">${cs.length?cs.length+" קורסים · "+dn+" נק״ז הושלמו":"עוד לא נוספו קורסים. בעריכת קורס בוחרים שנת לימוד."}</small></div>`}).join("");
+  const R=S.degreeReq||[];
+  $("#degReq").innerHTML=R.map(r=>`<div class="item${r.done?" done":""}"><input type="checkbox" class="chk" data-dreq="${r.id}" ${r.done?"checked":""} aria-label="הושלם"><div class="t"><b>${esc(r.t)}</b></div><button type="button" class="star" data-dreqdel="${r.id}" aria-label="מחיקה" title="מחיקה">×</button></div>`).join("")||'<div class="src">אין דרישות ברשימה</div>';
+}
+document.addEventListener("change",e=>{const c=e.target.closest("[data-dreq]");if(!c)return;const r=(S.degreeReq||[]).find(x=>x.id===c.dataset.dreq);if(!r)return;r.done=c.checked;save();renderDegree();if(c.checked)confetti(c)});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-dreqdel]");if(!b)return;S.degreeReq=(S.degreeReq||[]).filter(x=>x.id!==b.dataset.dreqdel);save();renderDegree()});
+$("#degAdd").onclick=()=>{const v=$("#degNew").value.trim();if(!v)return;(S.degreeReq=S.degreeReq||[]).push({id:uid(),t:v,done:false});$("#degNew").value="";save();renderDegree()};
+$("#degNew").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#degAdd").click()}});
 function renderGoals(){
+  renderDegree();
   $("#stages").innerHTML=PHASES.map(([ph,lab],k)=>{const it=S.road.filter(x=>x.phase===ph),dn=it.filter(x=>x.done).length;return `<div class="phase"><div class="phead"><b>${lab}</b><span class="mono">${dn}/${it.length}</span></div><div class="bar" style="margin:6px 0 10px"><i style="width:${it.length?dn/it.length*100:0}%;background:${PH_C[k]}"></i></div>${it.map(x=>`<label class="ritem${x.done?" done":""}"><input type="checkbox" class="chk" data-road="${x.id}" ${x.done?"checked":""}><span><b>${esc(x.t)}</b>${x.d?`<small>${esc(x.d)}</small>`:""}</span><button type="button" class="redit" data-open="stage:${x.id}" aria-label="עריכה">✎</button></label>`).join("")}</div>`}).join("")+`<div class="phase add"><button type="button" class="btn ghost sm" data-add="stage">+ שלב</button></div>`;
   const H=["סמסטר","שנה","תואר","קריירה"],HC=["var(--teal)","var(--gold)","var(--pink)","var(--cobalt)"];
   $("#goalCols").innerHTML=H.map((h,i)=>{const g=S.goals.filter(x=>x.horizon===h);return `<div class="card c3"><h3><span class="dot" style="width:10px;height:10px;border-radius:50%;background:${HC[i]};display:inline-block"></span>יעדי ${h}</h3><div class="list">${g.map(x=>`<div class="item${x.done?" done":""}"><input type="checkbox" class="chk" data-goal="${x.id}" ${x.done?"checked":""} aria-label="יעד הושג"><div class="t"><b>${esc(x.text)}</b></div><div class="acts"><button type="button" data-open="goal:${x.id}">עריכה</button></div></div>`).join("")||'<div class="src">אין יעדים עדיין</div>'}</div></div>`}).join("");
@@ -1057,7 +1223,7 @@ document.addEventListener("change",e=>{const c=e.target.closest("[data-road]");i
 document.addEventListener("change",e=>{const c=e.target.closest("[data-goal]");if(!c)return;const g=S.goals.find(x=>x.id===c.dataset.goal);g.done=c.checked;save();renderGoals();if(c.checked)confetti(c)});
 
 /* cases */
-let caseCourse="all",caseOpen={};
+let caseCourse="all",caseOpen={},caseImp=false;
 function renderCases(){
   const q=($("#caseSearch").value||"").trim();
   const ids=[...new Set(S.cases.map(c=>c.courseId||""))];
@@ -1068,16 +1234,19 @@ function renderCases(){
   const inC=S.cases.filter(c=>caseCourse==="all"||(c.courseId||"")===caseCourse);
   const rd=inC.filter(c=>c.read).length,pc=inC.length?Math.round(rd/inC.length*100):0;
   $("#caseProg").innerHTML=`<span>קראתי <b class="mono">${rd}</b> מתוך <b class="mono">${inC.length}</b></span><div class="bar"><i style="width:${pc}%"></i></div><span class="mono">${pc}%</span>`;
-  const L=inC.filter(c=>!q||[c.name,c.num,c.area,c.summary].join(" ").includes(q));
-  if(!L.length){$("#caseList").innerHTML=`<div class="empty"><b>${q?"לא נמצאו תוצאות":"המאגר ריק"}</b>${q?"נסי מילה אחרת.":"הוסיפי פסק דין מהשיעור."}</div>`;return}
+  const imp=inC.filter(c=>c.important).length;$("#caseImp").classList.toggle("on",caseImp);$("#caseImp").textContent="★ חשוב לבחינה"+(imp?" ("+imp+")":"");
+  const L=inC.filter(c=>(!caseImp||c.important)&&(!q||[c.name,c.num,c.area,c.summary,c.halacha].join(" ").includes(q)));
+  if(!L.length){$("#caseList").innerHTML=`<div class="empty"><b>${q||caseImp?"לא נמצאו תוצאות":"המאגר ריק"}</b>${caseImp&&!q?"עוד לא סימנת פסקי דין כחשובים. לוחצים על ★ ליד פסק הדין.":q?"נסי מילה אחרת.":"הוסיפי פסק דין מהשיעור."}</div>`;return}
   const groups=[];const gi={};
   L.forEach(c=>{const k=(c.courseId||"")+"§"+(c.area||"אחר");if(!(k in gi)){gi[k]=groups.length;groups.push({k,cid:c.courseId||"",area:c.area||"אחר",items:[]})}groups[gi[k]].items.push(c)});
   let lastC=null;
   $("#caseList").innerHTML=groups.map(g=>{const head=g.cid!==lastC&&caseCourse==="all"?`<h3 class="caseCourse"><span class="dot" style="background:${cColor(g.cid)}"></span>${esc(lab(g.cid))}</h3>`:"";lastC=g.cid;
-    const parts=g.area.split(" › ");const open=!!q||groups.length<=2||caseOpen[g.k]===true;const r=g.items.filter(c=>c.read).length;
-    return head+`<details class="card caseGrp"${open?" open":""} data-cgrp="${esc(g.k)}"><summary><span class="t">${parts.length>1?`<small>${esc(parts[0])}</small>`:""}<b>${esc(parts[parts.length-1])}</b></span><span class="chip mono">${r}/${g.items.length}</span></summary><div class="list">${g.items.map(c=>`<div class="item${c.read?" done":""}" style="align-items:flex-start"><input type="checkbox" class="caseChk" data-cread="${c.id}"${c.read?" checked":""} aria-label="קראתי"><div class="t" data-open="case:${c.id}" style="cursor:pointer"><b>${esc(c.name)}</b><small class="mono" dir="rtl">${esc(c.num)||"פסיקה זרה"}</small>${c.summary?`<div style="font-size:14px;margin-top:4px">${esc(c.summary)}</div>`:""}</div></div>`).join("")}</div></details>`}).join("");
+    const parts=g.area.split(" › ");const open=!!q||caseImp||groups.length<=2||caseOpen[g.k]===true;const r=g.items.filter(c=>c.read).length;
+    return head+`<details class="card caseGrp"${open?" open":""} data-cgrp="${esc(g.k)}"><summary><span class="t">${parts.length>1?`<small>${esc(parts[0])}</small>`:""}<b>${esc(parts[parts.length-1])}</b></span><span class="chip mono">${r}/${g.items.length}</span></summary><div class="list">${g.items.map(c=>`<div class="item${c.read?" done":""}" style="align-items:flex-start"><input type="checkbox" class="caseChk" data-cread="${c.id}"${c.read?" checked":""} aria-label="קראתי"><div class="t" data-open="case:${c.id}" style="cursor:pointer"><b>${esc(c.name)}</b><small class="mono" dir="rtl">${esc(c.num)||"פסיקה זרה"}</small>${c.halacha?`<div class="halacha">${esc(c.halacha)}</div>`:""}${c.summary?`<div style="font-size:13px;margin-top:4px;color:var(--muted)">${esc(c.summary)}</div>`:""}</div><button type="button" class="star${c.important?" on":""}" data-cstar="${c.id}" aria-label="חשוב לבחינה" title="חשוב לבחינה">${c.important?"★":"☆"}</button></div>`).join("")}</div></details>`}).join("");
 }
 $("#caseSearch").oninput=renderCases;
+$("#caseImp").onclick=()=>{caseImp=!caseImp;renderCases()};
+document.addEventListener("click",e=>{const b=e.target.closest("[data-cstar]");if(!b)return;e.stopPropagation();const x=S.cases.find(k=>k.id===b.dataset.cstar);if(!x)return;x.important=!x.important;save();renderCases();if(x.important)toast("סומן כחשוב לבחינה")});
 $("#caseCourses").addEventListener("click",e=>{const b=e.target.closest("[data-ccourse]");if(b){caseCourse=b.dataset.ccourse;renderCases()}});
 $("#caseList").addEventListener("toggle",e=>{const d=e.target.closest&&e.target.closest("[data-cgrp]");if(d&&!($("#caseSearch").value||"").trim())caseOpen[d.dataset.cgrp]=d.open},true);
 document.addEventListener("change",e=>{const c=e.target.closest("[data-cread]");if(!c)return;const x=S.cases.find(k=>k.id===c.dataset.cread);if(!x)return;x.read=c.checked;save();renderCases();if(c.checked)confetti(c)});
@@ -1089,8 +1258,8 @@ function renderLinks(){
 }
 
 /* profile & backup */
-function renderProfile(){const p=S.profile;$("#pName").value=p.name||"";$("#pInst").value=p.inst||"";$("#pDegree").value=p.degree||"LL.B";$("#pYear").value=p.year||"א׳";$("#pTotal").value=p.total||"";$("#pTarget").value=p.target||""}
-$("#profileForm").onsubmit=e=>{e.preventDefault();Object.assign(S.profile,{name:$("#pName").value.trim(),inst:$("#pInst").value.trim(),degree:$("#pDegree").value,year:$("#pYear").value,total:+$("#pTotal").value||"",target:+$("#pTarget").value||""});save();render();toast("הפרטים נשמרו")};
+function renderProfile(){const p=S.profile;$("#pName").value=p.name||"";$("#pInst").value=p.inst||"";$("#pDegree").value=p.degree||"LL.B";$("#pYear").value=p.year||"א׳";$("#pTotal").value=p.total||"";$("#pTarget").value=p.target||"";$("#pPass").value=p.passGrade??60}
+$("#profileForm").onsubmit=e=>{e.preventDefault();Object.assign(S.profile,{name:$("#pName").value.trim(),inst:$("#pInst").value.trim(),degree:$("#pDegree").value,year:$("#pYear").value,total:+$("#pTotal").value||"",target:+$("#pTarget").value||"",passGrade:$("#pPass").value===""?60:+$("#pPass").value});save();render();toast("הפרטים נשמרו")};
 $("#copyBtn").onclick=()=>{const txt=JSON.stringify(S);$("#backupText").value=txt;try{navigator.clipboard.writeText(txt).then(()=>toast("הגיבוי הועתק"),()=>{$("#backupText").select();toast("סמני והעתיקי את הטקסט")})}catch(e){$("#backupText").select();toast("סמני והעתיקי את הטקסט")}};
 $("#restoreBtn").onclick=()=>{try{const o=JSON.parse($("#backupText").value);if(!o||!o.courses)throw 0;S=migrate(Object.assign(starter(),o));save();render();toast("היומן שוחזר מהגיבוי")}catch(e){toast("הטקסט אינו גיבוי תקין של היומן")}};
 $("#resetBtn").onclick=()=>{$("#resetConfirm").hidden=false};
@@ -1102,12 +1271,12 @@ const PHASES=[["y1","שנה א׳"],["y2","שנה ב׳"],["y3","שנה ג׳"],["y
 const DAYS_OPT=HEB_D.slice(0,6).map((d,i)=>[String(i),d]);
 function courseOpts(){return [["","כללי"],...S.courses.map(c=>[c.id,c.name])]}
 const FORMS={
-  course:{title:"קורס",coll:"courses",fields:()=>[["name","שם הקורס","text",1],["type","סוג","select",0,["חובה","בחירה","מחויבות","פעילות","סמינריון","קליניקה","אנגלית","פרו־סמינריון"]],["sem","סמסטר","select",0,["א׳","ב׳","שנתי","קיץ"]],["credits","נקודות זכות","number"],["lecturer","מרצה","text"],["grade","ציון סופי","number"],["color","צבע","color"]]},
-  exam:{title:"בחינה",coll:"exams",fields:()=>[["courseId","קורס","select",1,courseOpts()],["moed","מועד","select",0,["א׳","ב׳","ג׳","מיוחד"]],["date","תאריך","date"],["time","שעה","time"],["place","מיקום / פורמט","text"],["grade","ציון","number"]]},
+  course:{title:"קורס",coll:"courses",fields:()=>[["name","שם הקורס","text",1],["type","סוג","select",0,["חובה","בחירה","מחויבות","פעילות","סמינריון","קליניקה","אנגלית","פרו־סמינריון"]],["sem","סמסטר","select",0,["א׳","ב׳","שנתי","קיץ"]],["credits","נקודות זכות","number"],["lecturer","מרצה","text"],["year","שנת לימוד","select",0,["א׳","ב׳","ג׳","ד׳"]],["grade","ציון סופי","number"],["absences","היעדרויות עד עכשיו","number"],["maxAbs","היעדרויות מותרות","number"],["color","צבע","color"]]},
+  exam:{title:"בחינה",coll:"exams",fields:()=>[["courseId","קורס","select",1,courseOpts()],["moed","מועד","select",0,["א׳","ב׳","ג׳","מיוחד"]],["date","תאריך","date"],["time","שעה","time"],["place","מיקום / פורמט","text"],["grade","ציון","number"],["regDeadline","תאריך אחרון לרישום","date"],["appealDeadline","תאריך אחרון לערעור","date"]]},
   task:{title:"מטלה",coll:"tasks",fields:()=>[["title","מה צריך לעשות","text",1],["courseId","קורס","select",0,courseOpts()],["kind","סוג","select",0,["רישום","קריאה","סיכום","תרגיל","עבודה להגשה","עבודה סמינריונית","הכנה לשיעור","אחר"]],["due","תאריך יעד","date"],["priority","עדיפות","select",0,["","גבוהה","בינונית","נמוכה"]],["notes","הערות","textarea"]]},
   event:{title:"אירוע",coll:"events",fields:()=>[["title","כותרת","text",1],["kind","סוג","select",0,[["personal","אישי"],["academic","אקדמי"],["holiday","חג / חופשה"],["exam","תקופת בחינות"]]],["start","מתאריך","date",1],["end","עד תאריך (לא חובה)","date"],["src","מקור / הערה","text"]]},
   goal:{title:"יעד",coll:"goals",fields:()=>[["text","היעד","text",1],["horizon","טווח","select",0,["סמסטר","שנה","תואר","קריירה"]]]},
-  case:{title:"פסק דין",coll:"cases",fields:()=>[["name","שם פסק הדין","text",1],["num","מספר תיק","text"],["area","נושא בסילבוס","text"],["courseId","קורס","select",0,courseOpts()],["summary","תקציר והלכה","textarea"]]},
+  case:{title:"פסק דין",coll:"cases",fields:()=>[["name","שם פסק הדין","text",1],["num","מספר תיק","text"],["area","נושא בסילבוס","text"],["courseId","קורס","select",0,courseOpts()],["halacha","ההלכה במשפט אחד","text"],["important","חשוב לבחינה","select",0,[["","לא"],["1","כן ★"]]],["summary","תקציר והערות","textarea"]]},
   slot:{title:"שיעור במערכת",fields:()=>[["courseId","קורס","select",1,S.courses.map(c=>[c.id,c.name])],["day","יום","select",0,DAYS_OPT],["kind","סוג","select",0,["הרצאה","תרגיל","תרגול","סדנה"]],["start","שעת התחלה","time",1],["end","שעת סיום","time",1],["who","מרצה / מתרגל","text"],["room","חדר / כיתה","text"]]},
   session:{title:"הוספת זמן לימוד",fields:()=>[["courseId","קורס","select",0,courseOpts()],["date","תאריך","date",1],["min","דקות","number",1]]},
   stage:{title:"שלב במסלול",fields:()=>[["phase","שלב","select",0,PHASES],["t","מה","text",1],["d","פירוט","textarea"]]}
@@ -1121,10 +1290,11 @@ function openForm(kind,id,preset){
   else if(kind==="stage"&&id)obj={...S.road.find(x=>x.id===id)};
   else if(id&&F.coll)obj={...S[F.coll].find(x=>x.id===id)};
   else{obj=Object.assign({},preset||{});if(kind==="session"&&!obj.date)obj.date=iso(today());if(kind==="exam"&&!obj.moed)obj.moed="א׳";if(kind==="course"&&!obj.color)obj.color=COLORS[S.courses.length%COLORS.length];if(kind==="slot"&&!obj.start){obj.start="10:00";obj.end="11:30";obj.day="0"}}
+  if(kind==="case")obj.important=obj.important?"1":"";
   cur={kind,id};
   $("#dlgTitle").textContent=(id?"עריכת ":"הוספת ")+F.title;
   $("#dlgFields").innerHTML=F.fields().map(([k,l,t,req,opts])=>{
-    const v=obj[k]??"";const full=(t==="textarea"||k==="title"||k==="name"||k==="text")?" full":"";
+    const v=obj[k]??"";const full=(t==="textarea"||k==="title"||k==="name"||k==="text"||k==="halacha")?" full":"";
     if(t==="select")return `<label class="f${full}">${l}<select id="f_${k}" ${req?"required":""}>${opts.map(o=>{const[val,lab]=Array.isArray(o)?o:[o,o||"—"];return `<option value="${esc(val)}" ${String(v)===String(val)?"selected":""}>${esc(lab)}</option>`}).join("")}</select></label>`;
     if(t==="textarea")return `<label class="f full">${l}<textarea id="f_${k}">${esc(v)}</textarea></label>`;
     return `<label class="f${full}">${l}<input id="f_${k}" type="${t}" value="${esc(v)}" ${req?"required":""} ${t==="number"?'step="any" min="0"':""}></label>`;
@@ -1146,6 +1316,8 @@ $("#dlgForm").onsubmit=e=>{
   else if(kind==="stage"){if(id){Object.assign(S.road.find(x=>x.id===id),o)}else S.road.push({id:uid(),phase:o.phase,t:o.t,d:o.d,done:false})}
   else{
     if(kind==="course")o.ono=false;
+    if(kind==="case")o.important=!!o.important;
+    if(kind==="course"&&!id){o.topics=[];o.absences=o.absences||0}
     if(id)Object.assign(S[F.coll].find(x=>x.id===id),o);
     else S[F.coll].push({id:uid(),done:false,slots:kind==="course"?[]:undefined,...o});
   }
@@ -1183,7 +1355,7 @@ document.documentElement.dataset.theme="dark";try{localStorage.removeItem(LS+"-t
 $("#themeBtn").remove();
 
 /* ---------- routing ---------- */
-const VIEWS=["dashboard","schedule","courses","exams","tasks","goals","cases","links","backup"];
+const VIEWS=["dashboard","schedule","courses","exams","plan","tasks","goals","cases","links","backup"];
 let fitT;function fitCharts(){Object.values(charts).forEach(c=>{try{const b=c.canvas.parentElement;if(!b||!b.clientWidth)return;c.resize(b.clientWidth,b.clientHeight)}catch(e){}})}
 if(window.ResizeObserver){const ro=new ResizeObserver(()=>{clearTimeout(fitT);fitT=setTimeout(fitCharts,60)});document.querySelectorAll(".chartbox").forEach(b=>ro.observe(b))}
 [300,1000,2500].forEach(t=>setTimeout(fitCharts,t));if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>setTimeout(fitCharts,50));
@@ -1208,6 +1380,7 @@ render();route();
     tasks:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>',
     goals:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
     cases:'<path d="M12 3v18M7 21h10M5 7h14M5 7l-3 6a3 3 0 006 0zM19 7l-3 6a3 3 0 006 0z"/>',
+    plan:'<path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/><path d="M8 2v4M16 2v4"/>',
     links:'<path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/>',
     backup:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.6 1.6 0 00-1.8-.3 1.6 1.6 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.6 1.6 0 00-1-1.5 1.6 1.6 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.6 1.6 0 00.3-1.8 1.6 1.6 0 00-1.5-1H3a2 2 0 110-4h.1a1.6 1.6 0 001.5-1 1.6 1.6 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.6 1.6 0 001.8.3H9a1.6 1.6 0 001-1.5V3a2 2 0 114 0v.1a1.6 1.6 0 001 1.5 1.6 1.6 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.6 1.6 0 00-.3 1.8V9a1.6 1.6 0 001.5 1H21a2 2 0 110 4h-.1a1.6 1.6 0 00-1.5 1z"/>',
     more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>'
