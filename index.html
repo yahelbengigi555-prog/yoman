@@ -1147,6 +1147,7 @@ function icsText(withLessons){
   return L.map(line=>{let out="",cur="";for(const ch of line){if(enc.encode(cur+ch).length>73){out+=cur+"\r\n ";cur=ch}else cur+=ch}return out+cur}).join("\r\n")+"\r\n";
 }
 async function exportIcs(){
+  if(window.claude&&window.claude.use){toast("הייצוא ליומן עובד באפליקציה. פותח אותה עכשיו…");setTimeout(()=>{try{window.open("https://yahelbengigi555-prog.github.io/yoman/#backup","_blank","noopener")}catch(e){}},900);return}
   const box=$("#icsLessons");const txt=icsText(box?box.checked:true);
   const file=new File([txt],"yoman-mishpatim.ics",{type:"text/calendar"});
   try{if(matchMedia("(pointer:coarse)").matches&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"יומן משפטים"});return}}catch(e){if(e&&e.name==="AbortError")return}
