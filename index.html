@@ -398,15 +398,15 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
 #cover .emblem .panR{animation:cvCounter2 3.2s 1.3s cubic-bezier(.3,0,.3,1) both}
 #cover .kicker{margin-top:24px;display:inline-flex;align-items:center;gap:8px;font:700 clamp(12px,1.4vw,14px)/1 var(--mono);letter-spacing:.32em;padding:8px 16px;border-radius:99px;color:var(--teal);background:color-mix(in srgb,var(--teal) 12%,transparent);border:1px solid color-mix(in srgb,var(--teal) 35%,transparent);animation:cvTrack 1.3s 1.6s cubic-bezier(.2,.7,.2,1) both}
 #cover .kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal);animation:blink 1.6s infinite}
-#cover h1.title{font-family:var(--display);font-weight:800;font-size:clamp(42px,8.4vw,104px);line-height:1.08;margin:20px 0 0;letter-spacing:-.5px}
-#cover h1.title span{display:inline-block;animation:cvRise 1.1s cubic-bezier(.2,.8,.2,1) both;background:linear-gradient(100deg,var(--fg) 0 30%,var(--teal) 42%,var(--pink) 50%,var(--cobalt) 58%,color-mix(in srgb,var(--teal) 60%,var(--fg)) 70% 100%);background-size:300% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 22px color-mix(in srgb,var(--teal) 25%,transparent))}
+#cover h1.title{filter:drop-shadow(0 0 22px color-mix(in srgb,var(--teal) 22%,transparent));font-family:var(--display);font-weight:800;font-size:clamp(42px,8.4vw,104px);line-height:1.08;margin:20px 0 0;letter-spacing:-.5px}
+#cover h1.title span{display:inline-block;animation:cvRise 1.1s cubic-bezier(.2,.8,.2,1) both;background:linear-gradient(100deg,var(--fg) 0 30%,var(--teal) 42%,var(--pink) 50%,var(--cobalt) 58%,color-mix(in srgb,var(--teal) 60%,var(--fg)) 70% 100%);background-size:300% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;will-change:transform,opacity}
 #cover h1.title.shine span{animation:cvShine 2s ease-in-out both}
 #cover .sub{margin-top:20px;font:500 clamp(15px,2vw,21px)/1.4 var(--body);color:var(--muted);animation:cvUp .9s 2.6s both}
 #cover .rule{display:flex;align-items:center;gap:14px;width:min(620px,80vw);margin:24px 0 22px}
 #cover .rule i{flex:1;height:2px;border-radius:2px;transform:scaleX(0);animation:cvLine 1s 2.9s cubic-bezier(.6,0,.2,1) forwards;transform-origin:0 50%;background:linear-gradient(90deg,transparent,var(--teal));box-shadow:0 0 10px var(--teal)}
 #cover .rule i:last-child{background:linear-gradient(270deg,transparent,var(--pink));box-shadow:0 0 10px var(--pink);transform-origin:100% 50%}
 #cover .rule b{width:12px;height:12px;border-radius:3px;background:linear-gradient(135deg,var(--teal),var(--pink));box-shadow:0 0 14px var(--pink);transform:rotate(45deg) scale(0);animation:cvDiamond .7s 2.8s cubic-bezier(.3,1.6,.5,1) forwards}
-#cover .quote{font-family:"Frank Ruhl Libre",var(--display);font-weight:700;font-size:clamp(22px,3.2vw,34px);line-height:1.5;color:var(--fg);text-shadow:0 0 24px color-mix(in srgb,var(--pink) 35%,transparent);clip-path:inset(0 0 0 100%);animation:cvInk 1.8s 3.3s cubic-bezier(.5,0,.2,1) forwards}
+#cover .quote{font-family:"Frank Ruhl Libre",var(--display);font-weight:700;font-size:clamp(22px,3.2vw,34px);line-height:1.5;color:var(--fg);clip-path:inset(0 0 0 100%);animation:cvInk 1.8s 3.3s cubic-bezier(.5,0,.2,1) forwards}
 #cover .src{margin-top:8px;font:500 13px/1 var(--mono);letter-spacing:.24em;color:var(--pink);animation:cvUp .8s 4.6s both}
 #cover .date{margin-top:24px;font:500 clamp(14px,1.7vw,17px)/1.4 var(--body);color:var(--muted);animation:cvUp .8s 4.9s both}
 #cover .study{margin-top:14px;display:flex;flex-wrap:wrap;justify-content:center;gap:10px;animation:cvUp .8s 5.2s both}
@@ -427,8 +427,8 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
 @keyframes cvSwing{0%{transform:rotate(-14deg)}25%{transform:rotate(9deg)}48%{transform:rotate(-5deg)}68%{transform:rotate(2.5deg)}85%{transform:rotate(-1deg)}100%{transform:rotate(0)}}
 @keyframes cvCounter{0%{transform:translateY(7px)}25%{transform:translateY(-4.5px)}48%{transform:translateY(2.5px)}68%{transform:translateY(-1.2px)}85%{transform:translateY(.5px)}100%{transform:none}}
 @keyframes cvCounter2{0%{transform:translateY(-7px)}25%{transform:translateY(4.5px)}48%{transform:translateY(-2.5px)}68%{transform:translateY(1.2px)}85%{transform:translateY(-.5px)}100%{transform:none}}
-@keyframes cvTrack{from{opacity:0;letter-spacing:.9em;filter:blur(4px)}to{opacity:1;letter-spacing:.32em;filter:none}}
-@keyframes cvRise{from{opacity:0;transform:translateY(40px) scale(.96);filter:blur(10px)}to{opacity:1;transform:none;filter:drop-shadow(0 0 22px color-mix(in srgb,var(--teal) 25%,transparent))}}
+@keyframes cvTrack{from{opacity:0;letter-spacing:.9em}to{opacity:1;letter-spacing:.32em}}
+@keyframes cvRise{from{opacity:0;transform:translateY(40px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes cvShine{from{background-position:100% 0}to{background-position:0 0}}
 @keyframes cvUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes cvLine{to{transform:scaleX(1)}}
@@ -1218,7 +1218,7 @@ render();route();
   const cv=$("#cover");if(!cv)return;
   const t=$("#cvTitle");const words=t.textContent.trim().split(" ");
   t.innerHTML=words.map((w,i)=>`<span style="animation-delay:${2+i*.28}s">${w}</span>`).join(" ");
-  const shineT=()=>setTimeout(()=>t.classList.add("shine"),reduced?0:3600);
+  const shineT=()=>setTimeout(()=>t.classList.add("shine"),reduced?0:4300);
   const now=new Date();
   const gem=n=>{const L=[[400,"ת"],[300,"ש"],[200,"ר"],[100,"ק"],[90,"צ"],[80,"פ"],[70,"ע"],[60,"ס"],[50,"נ"],[40,"מ"],[30,"ל"],[20,"כ"],[10,"י"],[9,"ט"],[8,"ח"],[7,"ז"],[6,"ו"],[5,"ה"],[4,"ד"],[3,"ג"],[2,"ב"],[1,"א"]];let r="";n%=1000;for(const[v,c]of L)while(n>=v){r+=c;n-=v}r=r.replace("יה","טו").replace("יו","טז");return r.length>1?r.slice(0,-1)+"״"+r.slice(-1):r+"׳"};
   let heb="";try{const pt=new Intl.DateTimeFormat("he-IL-u-ca-hebrew",{day:"numeric",month:"long",year:"numeric"}).formatToParts(now);const g=k=>(pt.find(x=>x.type===k)||{}).value||"";heb=`${gem(+g("day"))} ב${g("month").replace(/^ב/,"")} ${gem(+g("year"))}`}catch(e){}
