@@ -439,6 +439,11 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
 @keyframes cvSway{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
 @keyframes cvFloat{from{transform:translateY(0) rotate(0);opacity:0}10%{opacity:1}90%{opacity:1}to{transform:translateY(-110vh) rotate(25deg);opacity:0}}
 @media (max-width:600px){#cover .inner{padding:44px 8px}#cover .emblem{width:96px;height:96px}#cover .kicker{letter-spacing:.22em}#cover .skip{display:none}#cover .corner{display:none}#cover .frame{border-radius:22px}}
+/* static cover: content shows instantly, only background motion stays */
+#cover .emblem .ring,#cover .emblem .ring2,#cover .emblem .scale,#cover .emblem .beam,#cover .emblem .panL,#cover .emblem .panR,#cover .corner,#cover .kicker,#cover h1.title span,#cover h1.title.shine span,#cover .sub,#cover .rule i,#cover .rule b,#cover .quote,#cover .src,#cover .date,#cover .study,#cover .skip{animation:none!important}
+#cover .emblem .ring,#cover .emblem .ring2{stroke-dashoffset:0}#cover .emblem .scale{opacity:1}
+#cover .rule i{transform:scaleX(1)}#cover .rule b{transform:rotate(45deg) scale(1)}#cover .quote{clip-path:none}
+#cover .frame{animation:cvSpin 8s linear infinite!important}#cover .enter{animation:cvPulse 2.4s 1s infinite!important}
 @media (prefers-reduced-motion:reduce){#cover *,#cover *::before,#cover *::after{animation-duration:.01s!important;animation-delay:0s!important;animation-iteration-count:1!important}#cover .book{transition:none}#cover .dust{display:none}}
 </style>
 
