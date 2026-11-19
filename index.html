@@ -33,7 +33,7 @@
   --gold:#C97A00; --coral:#E0244B; --teal:#00897A; --cobalt:#2F5BEA; --lime:#4F8A00; --pink:#C2189B;
   --ok:#0F9D63; --warn:#C97A00; --bad:#E0244B; --solid:#FFFFFF; --glow:rgba(47,91,234,.18); --grid:rgba(47,91,234,.06); --shadow:0 10px 30px -16px rgba(40,20,120,.35); color-scheme:light}
 *{box-sizing:border-box}
-html,body{background:var(--bg);color:var(--fg)}
+html,body{color:var(--fg)}html{background:var(--bg)}body{margin:0;min-height:100vh;min-height:100dvh}
 body{font-family:var(--body);font-size:15px;line-height:1.55;direction:rtl;overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 .wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 60px}
@@ -56,7 +56,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .brand{display:flex;align-items:center;gap:10px;margin-inline-end:auto}
 .seal{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:conic-gradient(from 200deg,var(--gold),var(--coral),var(--pink),var(--cobalt),var(--teal),var(--gold));color:#100E24;font-family:var(--display);font-size:22px;box-shadow:0 0 24px -4px var(--coral)}
 .brand b{font-family:var(--display);font-size:20px;display:block;line-height:1.1}
-.brand small{color:var(--muted);font-size:12px}
+.brand small{color:var(--muted);font-size:12px}#brandSub span{unicode-bidi:isolate}#brandSub span+span::before{content:" · "}
 .sync{font-size:12px;padding:4px 10px;border-radius:99px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
 .sync.on{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 50%,transparent)}
 .iconbtn{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 10px;cursor:pointer}
@@ -217,7 +217,7 @@ canvas#confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 
 
 /* fintech glass layer */
-body{background:radial-gradient(1200px 600px at 85% -10%,color-mix(in srgb,var(--pink) 18%,transparent),transparent 60%),radial-gradient(900px 500px at 0% 100%,color-mix(in srgb,var(--teal) 14%,transparent),transparent 60%),linear-gradient(var(--grid) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/44px 44px,var(--bg);background-attachment:fixed}
+html{background:radial-gradient(1200px 600px at 85% -10%,color-mix(in srgb,var(--pink) 18%,transparent),transparent 60%),radial-gradient(900px 500px at 0% 100%,color-mix(in srgb,var(--teal) 14%,transparent),transparent 60%),linear-gradient(var(--grid) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/44px 44px,var(--bg);background-attachment:fixed}body{background:transparent}.aurora{display:none}
 h1,h2,h3{font-weight:800;letter-spacing:-.3px}
 .card,.course,.day,dialog,.links a{backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%)}
 .card,.course{box-shadow:inset 0 1px 0 rgba(255,255,255,.06),var(--shadow)}
@@ -299,6 +299,7 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
   .top>.wrap{height:100%;display:flex;flex-direction:column;padding:22px 16px!important;max-width:none}
   .topin{flex-direction:column;align-items:stretch;gap:12px;padding:0 0 18px;border-bottom:1px solid var(--line);margin-bottom:14px}
   .topin .brand{margin:0}
+  #brandSub span{display:block;line-height:1.5}#brandSub span+span::before{content:none}
   .topin .sync,.topin .iconbtn{order:3}
   .topin>.sync{align-self:flex-start}
   .topin{position:relative}.topin>.iconbtn{position:absolute;left:0;bottom:18px}
@@ -480,7 +481,7 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
 <header class="top">
   <div class="wrap" style="padding-block:0">
     <div class="topin">
-      <div class="brand"><div class="seal">§</div><div><b id="brandName">היומן של יהל</b><small id="brandSub">LL.B · שנה א׳ · הקריה האקדמית אונו · תשפ״ז</small></div></div>
+      <div class="brand"><div class="seal">§</div><div><b id="brandName">היומן של יהל</b><small id="brandSub"><span>LL.B · שנה א׳</span><span>הקריה האקדמית אונו</span></small></div></div>
       <span class="sync" id="sync">שמור בדפדפן</span>
       <button class="iconbtn" id="themeBtn" type="button" aria-label="החלפת מצב תאורה">◐</button>
     </div>
@@ -811,7 +812,7 @@ const charts={};
 function render(){
   const p=S.profile;
   $("#brandName").textContent="היומן של "+(p.name||"שלי");
-  $("#brandSub").textContent=`${p.degree} · שנה ${p.year} · ${p.inst}${S.syncedAt?" · עודכן מהידיעון "+fmt(S.syncedAt):""}`;
+  $("#brandSub").innerHTML=[`${p.degree} · שנה ${p.year}`,p.inst,S.syncedAt?"עודכן מהידיעון "+fmt(S.syncedAt):""].filter(Boolean).map(x=>`<span>${esc(x)}</span>`).join("");
   renderDash();renderCal();renderWeek();renderCourses();renderExams();renderTasks();renderStudy();renderGoals();renderCases();renderLinks();renderProfile();
 }
 function renderDash(){
@@ -1164,11 +1165,13 @@ $("#themeBtn").remove();
 
 /* ---------- routing ---------- */
 const VIEWS=["dashboard","schedule","courses","exams","tasks","goals","cases","links","backup"];
+function fitCharts(){Object.values(charts).forEach(c=>{try{c.resize()}catch(e){}})}
+let fitT;addEventListener("resize",()=>{clearTimeout(fitT);fitT=setTimeout(fitCharts,120)});addEventListener("pageshow",()=>setTimeout(fitCharts,50));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(fitCharts,50)});
 function route(){
   const h=(location.hash||"").slice(1),v=VIEWS.includes(h)?h:"dashboard";
   $$("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
   $$("#tabs a").forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+v));
-  if(v==="dashboard")renderDash();
+  if(v==="dashboard"){renderDash();requestAnimationFrame(()=>requestAnimationFrame(fitCharts))}
 }
 addEventListener("hashchange",route);
 
@@ -1246,7 +1249,7 @@ render();route();
   dust.innerHTML=Array.from({length:16},(_,i)=>`<i style="right:${(i*53+7)%94}%;width:${20+(i*7)%20}px;animation-duration:${15+(i*5)%12}s;animation-delay:${-((i*1.9)%15)}s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${IC[i%IC.length]}</svg></i>`).join("");
   document.documentElement.style.overflow="hidden";shineT();
   let closing=false;
-  function close(){if(closing||cv.classList.contains("gone"))return;closing=true;cv.classList.add("open");document.documentElement.style.overflow="";setTimeout(()=>{const hc=$("#heroCount");if(hc&&typeof tickHero==="function"){hc.dataset.d="";tickHero()}},reduced?0:700);setTimeout(()=>{cv.classList.add("gone");cv.classList.remove("open");closing=false},reduced?0:1400)}
+  function close(){if(closing||cv.classList.contains("gone"))return;closing=true;cv.classList.add("open");document.documentElement.style.overflow="";setTimeout(()=>{const hc=$("#heroCount");if(hc&&typeof tickHero==="function"){hc.dataset.d="";tickHero()}},reduced?0:700);setTimeout(()=>{cv.classList.add("gone");cv.classList.remove("open");closing=false;if(typeof fitCharts==="function")fitCharts()},reduced?0:1400)}
   function show(){fill();t.classList.remove("shine");cv.classList.remove("gone");document.documentElement.style.overflow="hidden";
     cv.querySelectorAll("*").forEach(el=>{el.style.animation="none"});void cv.offsetWidth;cv.querySelectorAll("*").forEach(el=>{el.style.animation=""});
     words.forEach((w,i)=>{const sp=t.children[i];if(sp)sp.style.animationDelay=(2+i*.28)+"s"});shineT();setTimeout(()=>{try{$("#cvEnter").focus({preventScroll:true})}catch(e){}},50)}
