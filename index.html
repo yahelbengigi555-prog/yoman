@@ -1,0 +1,1265 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="theme-color" content="#070C18">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="היומן שלי">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<style>html,body{background:#070C18}</style>
+<title>יומן משפטים שנה א׳</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Rubik:wght@600;700;800&family=Heebo:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<script src="chart.umd.js"></script>
+<style>
+/* Layout: a "court docket" — sticky top bar with case-file tabs, a bold hero strip (countdown to the next exam), then a grid of instrument cards. Dark-first. */
+:root{
+  --bg:#070C18; --bg2:rgba(120,150,255,.07); --card:rgba(16,25,48,.62); --solid:#0E172C; --line:rgba(130,165,255,.16); --fg:#EAF0FF; --muted:#8C99BC;
+  --gold:#FFC53D; --coral:#FF4D7E; --teal:#22E3C4; --cobalt:#5B8CFF; --lime:#7CFF6B; --pink:#B46CFF;
+  --ok:#2EE59D; --warn:#FFC53D; --bad:#FF4D7E; --glow:rgba(34,227,196,.35); --grid:rgba(120,150,255,.05);
+  --display:"Rubik","Heebo",Arial,sans-serif;
+  --body:"Heebo","Rubik","Segoe UI",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --shadow:0 10px 30px -12px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+:root[data-theme="light-disabled"]{
+  --bg:#F3F6FF; --bg2:#EAF0FF; --card:#FFFFFF; --line:#DAD3F7; --fg:#17133A; --muted:#5E5790;
+  --gold:#C97A00; --coral:#E0244B; --teal:#00897A; --cobalt:#2F5BEA; --lime:#4F8A00; --pink:#C2189B;
+  --ok:#0F9D63; --warn:#C97A00; --bad:#E0244B; --solid:#FFFFFF; --glow:rgba(47,91,234,.18); --grid:rgba(47,91,234,.06); --shadow:0 10px 30px -16px rgba(40,20,120,.35); color-scheme:light}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:15px;line-height:1.55;direction:rtl;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 60px}
+h1,h2,h3{font-family:var(--display);font-weight:400;text-wrap:balance;margin:0;letter-spacing:.2px}
+.mono,.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:8px}
+
+/* ambient blobs */
+.aurora{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.aurora i{position:absolute;width:46vmax;height:46vmax;border-radius:50%;filter:blur(80px);opacity:.28;animation:drift 26s ease-in-out infinite alternate}
+.aurora i:nth-child(1){background:var(--coral);top:-18vmax;right:-10vmax}
+.aurora i:nth-child(2){background:var(--cobalt);bottom:-22vmax;left:-12vmax;animation-delay:-8s}
+.aurora i:nth-child(3){background:var(--teal);top:30%;left:35%;width:30vmax;height:30vmax;opacity:.16;animation-delay:-14s}
+@keyframes drift{to{transform:translate(6vmax,4vmax) scale(1.12)}}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.topin{display:flex;align-items:center;gap:14px;padding-block:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;margin-inline-end:auto}
+.seal{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:conic-gradient(from 200deg,var(--gold),var(--coral),var(--pink),var(--cobalt),var(--teal),var(--gold));color:#100E24;font-family:var(--display);font-size:22px;box-shadow:0 0 24px -4px var(--coral)}
+.brand b{font-family:var(--display);font-size:20px;display:block;line-height:1.1}
+.brand small{color:var(--muted);font-size:12px}
+.sync{font-size:12px;padding:4px 10px;border-radius:99px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.sync.on{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 50%,transparent)}
+.iconbtn{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 10px;cursor:pointer}
+nav.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs a{flex:none;text-decoration:none;color:var(--muted);padding:7px 14px;border-radius:99px;border:1px solid transparent;font-weight:500;font-size:14px;transition:.2s}
+nav.tabs a:hover{color:var(--fg);border-color:var(--line)}
+nav.tabs a.on{color:#100E24;background:var(--gold);font-weight:700}
+
+section.view{display:none;padding-top:22px}
+section.view.on{display:block;animation:rise .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes rise{from{transform:translateY(10px);opacity:.4}to{transform:none;opacity:1}}
+
+.vhead{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.vhead h2{font-size:30px;margin-inline-end:auto}
+.vhead p{margin:0;color:var(--muted);width:100%}
+.btn{border:0;border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer;background:var(--gold);color:#100E24;transition:transform .15s,box-shadow .15s;white-space:nowrap}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px -8px var(--gold)}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.btn.ghost:hover{box-shadow:none;border-color:var(--muted)}
+.btn.danger{background:var(--coral);color:#fff}
+.btn.sm{padding:6px 11px;font-size:13px;border-radius:9px}
+
+/* hero */
+.hero{position:relative;border-radius:24px;padding:26px;overflow:hidden;background:linear-gradient(120deg,var(--coral),var(--pink) 45%,var(--cobalt));color:#fff;display:grid;grid-template-columns:1.4fr 1fr;gap:20px;box-shadow:var(--shadow)}
+.hero::after{content:"§";position:absolute;left:-10px;bottom:-90px;font-family:var(--display);font-size:300px;opacity:.12;line-height:1}
+.hero h1{font-size:clamp(26px,4vw,40px);line-height:1.15}
+.hero .sub{opacity:.9;margin-top:6px}
+.count{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.count div{background:rgba(16,14,36,.28);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:10px 14px;min-width:76px;text-align:center}
+.count b{display:block;font-family:var(--mono);font-size:30px;line-height:1}
+.count small{font-size:12px;opacity:.85}
+.hero .side{display:grid;gap:10px;align-content:start;position:relative;z-index:1}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;background:rgba(16,14,36,.3)}
+.today{background:rgba(16,14,36,.25);border-radius:14px;padding:12px 14px}
+.today h3{font-size:16px;margin-bottom:6px}
+.today ul{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:14px}
+
+/* grid + cards */
+.grid{display:grid;gap:16px;grid-template-columns:repeat(12,1fr);margin-top:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;min-width:0;box-shadow:var(--shadow);position:relative}
+.card h3{font-size:18px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card h3 .more{margin-inline-start:auto;font-family:var(--body);font-size:13px;color:var(--muted);text-decoration:none}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}
+.stat .big{font-family:var(--mono);font-size:40px;font-weight:600;line-height:1}
+.stat .lbl{color:var(--muted);font-size:13px;margin-top:6px}
+.stat .glow{position:absolute;inset:auto 18px 18px auto;width:54px;height:54px}
+.bar{height:8px;border-radius:9px;background:var(--bg2);overflow:hidden;margin-top:10px}
+.bar>i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--teal),var(--lime));width:0;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.ring{--p:0;--c:var(--teal);width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--bg2) 0);display:grid;place-items:center;transition:--p 1s}
+.ring::before{content:"";grid-area:1/1;width:92px;height:92px;border-radius:50%;background:var(--card)}
+.ring span{grid-area:1/1;font-family:var(--mono);font-size:24px;font-weight:600;position:relative}
+@property --p{syntax:"<number>";inherits:false;initial-value:0}
+.rings{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-around;text-align:center}
+.rings small{display:block;color:var(--muted);margin-top:6px;font-size:13px}
+
+/* lists */
+.list{display:grid;gap:8px}
+.item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:var(--bg2);border:1px solid transparent;transition:.2s;min-width:0}
+.item:hover{border-color:var(--line);transform:translateX(-3px)}
+.item .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.item .t{min-width:0;flex:1}
+.item .t b{display:block;font-weight:700;overflow-wrap:anywhere}
+.item .t small{color:var(--muted)}
+.when{font-family:var(--mono);font-size:12px;padding:3px 8px;border-radius:8px;background:var(--card);white-space:nowrap}
+.when.soon{background:var(--coral);color:#fff}
+.when.mid{background:var(--gold);color:#100E24}
+.when.past{opacity:.5}
+.chip{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.empty{padding:22px;border:2px dashed var(--line);border-radius:16px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--fg);font-family:var(--display);font-size:18px;font-weight:400;margin-bottom:4px}
+
+/* tables */
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:separate;border-spacing:0 6px;min-width:640px}
+th{font-size:12px;color:var(--muted);text-align:right;font-weight:500;padding:0 10px;letter-spacing:.4px}
+td{background:var(--bg2);padding:10px;vertical-align:middle}
+td:first-child{border-radius:0 12px 12px 0}td:last-child{border-radius:12px 0 0 12px}
+.acts{display:flex;gap:6px;justify-content:flex-end}
+.acts button{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px 9px;cursor:pointer;font-size:13px}
+.acts button:hover{border-color:var(--gold)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filters button{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:5px 12px;cursor:pointer;font-size:13px;color:var(--muted)}
+.filters button.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+
+/* courses cards */
+.courses{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.course{border-radius:18px;padding:16px;background:var(--card);border:1px solid var(--line);position:relative;overflow:hidden;box-shadow:var(--shadow);transition:transform .2s}
+.course:hover{transform:translateY(-4px) rotate(-.4deg)}
+.course::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:var(--cc)}
+.course h3{font-size:19px;margin:4px 0 6px}
+.course .meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.course .row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.course .row b{color:var(--fg);font-family:var(--mono)}
+.course .acts{margin-top:12px}
+
+/* task check */
+.chk{appearance:none;width:24px;height:24px;border-radius:8px;border:2px solid var(--muted);cursor:pointer;flex:none;display:grid;place-items:center;transition:.2s;background:transparent}
+.chk:checked{background:var(--ok);border-color:var(--ok)}
+.chk:checked::after{content:"✓";color:#100E24;font-weight:800;font-size:15px}
+.item.done b{text-decoration:line-through;opacity:.55}
+
+/* calendar */
+.calbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.calbar h3{font-size:24px;min-width:170px;text-align:center}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.cal .dn{font-size:12px;color:var(--muted);text-align:center;padding:4px}
+.day{min-height:96px;border-radius:12px;background:var(--card);border:1px solid var(--line);padding:6px;cursor:pointer;transition:.15s;display:flex;flex-direction:column;gap:3px;min-width:0}
+.day:hover{border-color:var(--gold)}
+.day.out{opacity:.35}
+.day.now{border:2px solid var(--gold);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 25%,transparent)}
+.day .d{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.ev{font-size:11px;font-weight:700;border-radius:6px;padding:1px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#100E24}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;font-size:13px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--c);margin-inline-end:6px}
+
+/* weekly schedule */
+.week{display:grid;grid-template-columns:56px repeat(6,minmax(110px,1fr));position:relative;min-width:760px}
+.week .h{font-size:13px;font-weight:700;text-align:center;padding:6px;color:var(--muted)}
+.week .hr{font-family:var(--mono);font-size:11px;color:var(--muted);height:44px;border-top:1px dashed var(--line);padding-top:2px}
+.week .col{position:relative;border-inline-start:1px dashed var(--line)}
+.week .col .ln{height:44px;border-top:1px dashed var(--line)}
+.slot{position:absolute;inset-inline:4px;border-radius:10px;padding:5px 7px;font-size:12px;color:#100E24;font-weight:700;overflow:hidden;cursor:pointer;box-shadow:0 6px 14px -8px rgba(0,0,0,.6)}
+.slot small{display:block;font-weight:500;opacity:.8}
+.col.today{background:color-mix(in srgb,var(--gold) 8%,transparent)}
+
+/* timer */
+.timer{display:grid;place-items:center;gap:14px;text-align:center;padding:10px}
+.clock{font-family:var(--mono);font-size:clamp(44px,9vw,76px);font-weight:600;letter-spacing:2px;background:linear-gradient(90deg,var(--teal),var(--lime),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.timer.run .clock{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{50%{filter:brightness(1.35)}}
+
+/* forms / modal */
+dialog{border:1px solid var(--line);border-radius:22px;background:var(--card);color:var(--fg);padding:0;width:min(560px,calc(100vw - 32px));box-shadow:0 30px 80px -20px rgba(0,0,0,.7)}
+dialog::backdrop{background:rgba(8,6,24,.65);backdrop-filter:blur(4px)}
+dialog form{padding:20px;display:grid;gap:12px}
+dialog h3{font-size:22px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fgrid .full{grid-column:1/-1}
+label.f{display:grid;gap:4px;font-size:13px;color:var(--muted);min-width:0}
+input,select,textarea{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%;min-width:0}
+textarea{min-height:90px;resize:vertical}
+input[type=range]{padding:0;accent-color:var(--teal)}
+.frow{display:flex;gap:8px;justify-content:flex-start;flex-wrap:wrap}
+.notice{font-size:13px;background:color-mix(in srgb,var(--gold) 14%,transparent);border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);border-radius:12px;padding:10px 12px}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(120px);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:12px;font-weight:700;transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:30}
+.toast.on{transform:translateX(-50%)}
+canvas#confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+.links{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.links a{display:block;text-decoration:none;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;transition:.2s}
+.links a:hover{border-color:var(--teal);transform:translateY(-3px)}
+.links a small{display:block;color:var(--muted);font-size:12px;direction:ltr;text-align:right}
+.stage{display:flex;gap:10px;flex-wrap:wrap}
+.stage button{border:2px solid var(--line);background:var(--card);border-radius:14px;padding:10px 14px;cursor:pointer;font-weight:700}
+.stage button.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--card))}
+.chartbox{position:relative;height:240px}
+.src{font-size:12px;color:var(--muted);margin-top:8px}
+
+
+/* fintech glass layer */
+body{background:radial-gradient(1200px 600px at 85% -10%,color-mix(in srgb,var(--pink) 18%,transparent),transparent 60%),radial-gradient(900px 500px at 0% 100%,color-mix(in srgb,var(--teal) 14%,transparent),transparent 60%),linear-gradient(var(--grid) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/44px 44px,var(--bg);background-attachment:fixed}
+h1,h2,h3{font-weight:800;letter-spacing:-.3px}
+.card,.course,.day,dialog,.links a{backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%)}
+.card,.course{box-shadow:inset 0 1px 0 rgba(255,255,255,.06),var(--shadow)}
+.card:hover{border-color:color-mix(in srgb,var(--teal) 45%,var(--line));box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 0 1px color-mix(in srgb,var(--teal) 20%,transparent),0 18px 50px -20px var(--glow)}
+.card{transition:border-color .3s,box-shadow .3s}
+.hero{background:linear-gradient(var(--solid),var(--solid)) padding-box,linear-gradient(120deg,var(--teal),var(--cobalt) 40%,var(--pink) 75%,var(--coral)) border-box;border:1.5px solid transparent;color:var(--fg);box-shadow:0 0 60px -18px var(--glow),var(--shadow)}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(600px 260px at 80% 0%,color-mix(in srgb,var(--pink) 30%,transparent),transparent 70%),radial-gradient(500px 240px at 10% 100%,color-mix(in srgb,var(--teal) 22%,transparent),transparent 70%);pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.hero::after{color:var(--teal);opacity:.07}
+.hero h1{background:linear-gradient(90deg,var(--fg),color-mix(in srgb,var(--teal) 70%,var(--fg)));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{color:var(--muted);opacity:1}
+.count div{background:var(--bg2);border:1px solid var(--line)}
+.count b{color:var(--teal);text-shadow:0 0 18px var(--glow)}
+.count .days{display:flex;align-items:baseline;gap:12px;padding:12px 22px;text-align:start}.count .days b{font-size:56px}.count .days small{font-size:16px;opacity:1;color:var(--fg)}
+.pill{background:color-mix(in srgb,var(--teal) 16%,transparent);color:var(--teal);border:1px solid color-mix(in srgb,var(--teal) 35%,transparent)}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.3}}
+.today{background:var(--bg2);border:1px solid var(--line)}
+.hero .btn.ghost{color:var(--fg)!important;border-color:var(--line)!important}
+.btn{background:linear-gradient(135deg,var(--teal),var(--cobalt));color:#061018}
+.btn:hover{box-shadow:0 8px 26px -6px var(--glow)}
+.btn.danger{background:linear-gradient(135deg,var(--coral),var(--pink));color:#fff}
+nav.tabs a.on{background:linear-gradient(135deg,var(--teal),var(--cobalt));color:#061018;box-shadow:0 0 22px -6px var(--glow)}
+.seal{color:#061018;box-shadow:0 0 26px -2px var(--glow)}
+.stat .big{background:linear-gradient(180deg,var(--fg),color-mix(in srgb,var(--fg) 55%,var(--teal)));-webkit-background-clip:text;background-clip:text;color:transparent}
+.ring::before{background:var(--solid)}
+.ring{box-shadow:0 0 30px -10px var(--c)}
+.ring span{color:var(--fg)}
+dialog{background:var(--solid)}
+.top{background:color-mix(in srgb,var(--bg) 70%,transparent)}
+.aurora i{opacity:.18}
+.when.soon{box-shadow:0 0 14px -2px var(--coral)}
+.item{background:var(--bg2)}
+.item:hover{border-color:color-mix(in srgb,var(--teal) 35%,var(--line))}
+td{background:var(--bg2)}
+.clock{text-shadow:none;filter:drop-shadow(0 0 18px var(--glow))}
+
+
+.stage{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.phase{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:12px;min-width:0}
+.phase.add{display:grid;place-items:center;border-style:dashed}
+.phead{display:flex;justify-content:space-between;align-items:center}
+.phead b{font-family:var(--display);font-size:16px}
+.ritem{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line);cursor:pointer}
+.ritem span{flex:1;min-width:0}
+.ritem b{display:block;font-size:14px}
+.ritem small{display:block;color:var(--muted);font-size:12px;line-height:1.4}
+.ritem.done b{text-decoration:line-through;opacity:.55}
+.stage .redit{background:none;border:0;color:var(--muted);cursor:pointer;padding:2px 4px;border-radius:6px;font-weight:400}
+.stage .redit:hover{color:var(--teal)}
+
+@media (max-width:960px){.c3{grid-column:span 6}.c4,.c5,.c7,.c8,.c6{grid-column:span 12}.hero{grid-template-columns:1fr}}
+@media (max-width:560px){.c3{grid-column:span 12}.fgrid{grid-template-columns:1fr}.day{min-height:64px}.ev{font-size:9px}.vhead h2{font-size:24px}.brand small{display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.caseTop{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.caseTop .filters{flex:1;min-width:0}.caseTop input{max-width:320px;flex:1 1 220px}
+#caseCourses button{white-space:nowrap}@media(max-width:700px){.caseTop{flex-direction:column;align-items:stretch}.caseTop input{max-width:none;flex:none}}
+#caseCourses button .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-inline-end:6px}
+.caseProg{display:flex;align-items:center;gap:12px;margin-top:12px;font-size:14px;color:var(--muted)}.caseProg .bar{flex:1;margin:0}.caseGrp .item.done b{text-decoration:none;opacity:.6}
+.caseCourse{display:flex;align-items:center;gap:8px;margin:22px 4px 10px;font-size:18px}.caseCourse .dot{width:12px;height:12px;border-radius:50%}
+.caseGrp{margin-bottom:10px;padding:0}.caseGrp summary{list-style:none;display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer}.caseGrp summary::-webkit-details-marker{display:none}
+.caseGrp summary .t{flex:1;min-width:0}.caseGrp summary small{display:block;color:var(--muted);font-size:12px}
+.caseGrp summary::after{content:"⌄";color:var(--muted);transition:.2s}.caseGrp[open] summary::after{transform:rotate(180deg)}
+.caseGrp .list{padding:0 12px 12px}.caseChk{margin-top:4px;width:18px;height:18px;accent-color:var(--teal);flex:none}
+.exGrade{width:84px;text-align:center;font-family:var(--mono);padding:6px 8px}
+#examRows tr.exdone td{opacity:.6}#examRows tr.exdone td:first-child,#examRows tr.exdone td:nth-child(6){opacity:1}
+
+.count .days b.bounce{display:inline-block;transform-origin:50% 100%;animation:dayIn .9s cubic-bezier(.3,1.6,.5,1) both}
+.count .days b.hop{animation:dayHop 1s ease-out 1 both}
+@keyframes dayIn{0%{transform:translateY(-40px) scale(.6);opacity:0}60%{transform:translateY(6px) scale(1.08,.92);opacity:1}100%{transform:none}}
+@keyframes dayHop{0%,100%{transform:none}15%{transform:scale(1.12,.86)}40%{transform:translateY(-22px) scale(.94,1.08)}62%{transform:scale(1.1,.9)}78%{transform:translateY(-6px)}90%{transform:none}}
+@media (prefers-reduced-motion:reduce){.count .days b.bounce,.count .days b.hop{animation:none}}
+
+/* ---------- responsive shells: desktop sidebar dashboard + phone app ---------- */
+nav.tabs a .ic{width:18px;height:18px;flex:none;display:inline-block;vertical-align:-4px;margin-inline-end:6px}
+nav.tabs a .ic svg{width:100%;height:100%;display:block}
+#bottomNav,#moreSheet,#weekAgenda{display:none}
+@media (min-width:1100px){
+  .top{position:fixed;top:0;right:0;bottom:0;width:256px;border-bottom:0;border-left:1px solid var(--line);background:color-mix(in srgb,var(--solid) 78%,transparent);overflow-y:auto}
+  .top>.wrap{height:100%;display:flex;flex-direction:column;padding:22px 16px!important;max-width:none}
+  .topin{flex-direction:column;align-items:stretch;gap:12px;padding:0 0 18px;border-bottom:1px solid var(--line);margin-bottom:14px}
+  .topin .brand{margin:0}
+  .topin .sync,.topin .iconbtn{order:3}
+  .topin>.sync{align-self:flex-start}
+  .topin{position:relative}.topin>.iconbtn{position:absolute;left:0;bottom:18px}
+  nav.tabs{flex-direction:column;gap:4px;overflow:visible;padding:0;flex:1}
+  nav.tabs a{display:flex;align-items:center;gap:4px;padding:11px 14px;border-radius:14px;font-size:15px;border:1px solid transparent}
+  nav.tabs a .ic{width:20px;height:20px;margin-inline-end:8px;opacity:.75}
+  nav.tabs a.on{color:var(--fg);background:linear-gradient(90deg,color-mix(in srgb,var(--teal) 6%,transparent),color-mix(in srgb,var(--teal) 20%,transparent));border-color:color-mix(in srgb,var(--teal) 40%,transparent);box-shadow:inset -3px 0 0 var(--teal),0 0 24px -10px var(--teal)}
+  nav.tabs a.on .ic{opacity:1;color:var(--teal);filter:drop-shadow(0 0 6px var(--teal))}
+  .sidefoot{margin-top:16px;font-size:12px;color:var(--muted);line-height:1.5}
+  main.wrap{margin-inline-start:256px;margin-inline-end:0;max-width:none;padding-inline:36px!important}
+  main.wrap>section.view{max-width:1360px;margin-inline:auto}
+  .grid{gap:18px}
+}
+@media (max-width:1099px){.sidefoot{display:none}}
+@media (max-width:700px){
+  .top{position:sticky}
+  .topin{padding-block:10px;flex-wrap:nowrap}
+  .brand b{font-size:17px}
+  .seal{width:34px;height:34px;font-size:18px;border-radius:10px}
+  .top .sync{display:none}
+  nav.tabs{display:none}
+  body{padding-bottom:calc(78px + env(safe-area-inset-bottom,0px))}
+  #bottomNav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:50;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));padding:6px;border-radius:22px;background:color-mix(in srgb,var(--solid) 86%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);box-shadow:0 14px 40px -12px rgba(0,0,0,.6),0 0 30px -14px var(--glow)}
+  #bottomNav a,#bottomNav button{all:unset;cursor:pointer;display:grid;justify-items:center;gap:3px;padding:7px 2px;border-radius:16px;color:var(--muted);font-size:11px;font-weight:600;text-align:center;-webkit-tap-highlight-color:transparent}
+  #bottomNav .ic{width:22px;height:22px}#bottomNav .ic svg{width:100%;height:100%;display:block}
+  #bottomNav .on{color:var(--fg);background:color-mix(in srgb,var(--teal) 16%,transparent)}
+  #bottomNav .on .ic{color:var(--teal);filter:drop-shadow(0 0 6px var(--teal))}
+  #moreSheet{position:fixed;inset:0;z-index:60;background:rgba(3,6,14,.55);backdrop-filter:blur(4px)}
+  #moreSheet.on{display:block}
+  #moreSheet .sheet{position:absolute;left:10px;right:10px;bottom:calc(86px + env(safe-area-inset-bottom,0px));padding:10px;border-radius:22px;background:var(--solid);border:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);gap:6px;animation:rise .25s ease}
+  #moreSheet a{display:grid;justify-items:center;gap:6px;padding:14px 4px;border-radius:16px;text-decoration:none;color:var(--fg);font-size:13px;font-weight:600;background:var(--bg2)}
+  #moreSheet a .ic{width:24px;height:24px;color:var(--teal)}#moreSheet a .ic svg{width:100%;height:100%;display:block}
+  #moreSheet a.on{outline:1px solid var(--teal)}
+  main.wrap{padding-inline:12px!important}
+  #weekCard{display:none}#weekAgenda{display:grid;gap:10px}
+  .agDay.today{border-color:color-mix(in srgb,var(--teal) 50%,transparent);box-shadow:0 0 30px -14px var(--teal)}
+  .tbl table{min-width:0!important}.tbl td{white-space:normal!important;overflow-wrap:anywhere}
+  #credRows tr{padding:10px 12px;gap:4px 10px}#credRows td{font-size:13px}
+  section.view{padding-top:14px}
+  .vhead h2{font-size:24px}
+  .hero{padding:18px;gap:14px;border-radius:20px}
+  .hero h1{font-size:26px}
+  .hero .count{margin-top:12px}
+  .count .days{width:100%;justify-content:center}
+  .count .days b{font-size:48px}
+  .c3{grid-column:span 6!important}
+  .stat .big{font-size:30px}
+  .grid{gap:10px}
+  .card{padding:14px;border-radius:18px}
+  .chartbox{height:300px!important}
+  /* tables become stacked cards */
+  .tbl table,.tbl tbody{display:block;width:100%}
+  .tbl thead{display:none}
+  .tbl tr{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;padding:12px;margin-bottom:8px;border-radius:14px;background:var(--bg2)}
+  .tbl td{display:block;padding:0!important;border:0!important;background:none!important;min-width:0}
+  .tbl td:first-child{grid-column:1/-1;font-size:15px}
+  .tbl td[data-l]:not(:first-child)::before{content:attr(data-l);display:block;font-size:11px;color:var(--muted);margin-bottom:2px}
+  .tbl td:empty{display:none}
+  #credRows tr{grid-template-columns:repeat(3,1fr)}
+  #credRows td:nth-child(4),#credRows td:nth-child(6){grid-column:1/-1}
+  #examRows tr{position:relative;grid-template-columns:1fr 1fr;gap:10px 12px}
+  #examRows td:first-child{position:absolute;left:12px;top:12px}
+  #examRows td:nth-child(2){grid-column:1/-1;padding-left:40px!important;order:1}
+  #examRows td:nth-child(4){grid-column:1/-1;order:2}
+  #examRows td:nth-child(5){grid-column:1/-1;order:3}
+  #examRows td:nth-child(3){order:4}#examRows td:nth-child(6){order:5}
+  #examRows td:nth-child(7){grid-column:1/-1;order:6}
+  #examRows td:nth-child(7) .acts{justify-content:flex-start}
+}
+/* ---------- opening cover ---------- */
+#cover{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px;background:var(--bg);color:var(--fg);perspective:1800px;overflow:hidden;cursor:pointer}
+#cover::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(circle at 50% 45%,#000 30%,transparent 80%);-webkit-mask-image:radial-gradient(circle at 50% 45%,#000 30%,transparent 80%)}
+#cover.gone{display:none}
+#cover .blobs{position:absolute;inset:0;pointer-events:none}
+#cover .blobs i{position:absolute;width:44vmax;height:44vmax;border-radius:50%;filter:blur(90px);opacity:.32;animation:drift 22s ease-in-out infinite alternate}
+#cover .blobs i:nth-child(1){background:var(--pink);top:-20vmax;right:-12vmax}
+#cover .blobs i:nth-child(2){background:var(--cobalt);bottom:-22vmax;left:-14vmax;animation-delay:-7s}
+#cover .blobs i:nth-child(3){background:var(--teal);top:35%;left:38%;width:26vmax;height:26vmax;opacity:.18;animation-delay:-12s}
+#cover .book{position:relative;width:min(1120px,100%);min-height:min(660px,calc(100dvh - 32px));display:grid;place-items:center;transform-origin:100% 50%;transition:transform 1.1s cubic-bezier(.7,0,.25,1),opacity 1.1s ease}
+#cover.open .book{transform:rotateY(-95deg) scale(.96);opacity:0}
+#cover.open{transition:opacity .9s .45s;opacity:0}
+#cover .frame{position:absolute;inset:0;border-radius:28px;border:1.5px solid transparent;background:linear-gradient(var(--solid),var(--solid)) padding-box,conic-gradient(from var(--cvA,0deg),var(--teal),var(--cobalt),var(--pink),var(--coral),var(--teal)) border-box;box-shadow:0 0 80px -20px var(--glow),0 0 140px -40px var(--pink),var(--shadow);animation:cvPop 1s cubic-bezier(.2,.8,.2,1) both,cvSpin 8s linear infinite;overflow:hidden}
+#cover .frame::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 300px at 80% 0%,color-mix(in srgb,var(--pink) 26%,transparent),transparent 70%),radial-gradient(600px 300px at 10% 100%,color-mix(in srgb,var(--teal) 20%,transparent),transparent 70%)}
+#cover .frame::after{content:"";position:absolute;left:-30px;bottom:-40px;width:320px;height:320px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322E3C4' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 4l6 6M11 7l6 6M12.5 5.5l-4 4M17.5 10.5l-4 4M10.5 11.5L3 19l2 2 7.5-7.5M2 23h10'/%3E%3C/svg%3E") center/contain no-repeat;opacity:.07;transform-origin:70% 30%;animation:cvGavel 5s 2s ease-in-out infinite}
+@keyframes cvGavel{0%,70%,100%{transform:rotate(0)}78%{transform:rotate(-14deg)}84%{transform:rotate(3deg)}90%{transform:rotate(0)}}
+@property --cvA{syntax:"<angle>";inherits:false;initial-value:0deg}
+#cover .corner{position:absolute;width:30px;height:30px;border:2px solid var(--teal);filter:drop-shadow(0 0 8px var(--teal));opacity:.9;animation:cvFade .8s 1s both}
+#cover .corner.a{top:22px;right:22px;border-left:0;border-bottom:0;border-top-right-radius:10px}#cover .corner.b{top:22px;left:22px;border-right:0;border-bottom:0;border-top-left-radius:10px;border-color:var(--pink);filter:drop-shadow(0 0 8px var(--pink))}
+#cover .corner.c{bottom:22px;right:22px;border-left:0;border-top:0;border-bottom-right-radius:10px;border-color:var(--pink);filter:drop-shadow(0 0 8px var(--pink))}#cover .corner.d{bottom:22px;left:22px;border-right:0;border-top:0;border-bottom-left-radius:10px}
+#cover .inner{position:relative;z-index:2;text-align:center;padding:56px 24px;display:grid;justify-items:center;max-width:100%}
+#cover .emblem{width:128px;height:128px;filter:drop-shadow(0 0 14px var(--glow)) drop-shadow(0 0 30px color-mix(in srgb,var(--pink) 40%,transparent))}
+#cover .emblem .ring{stroke-dasharray:360;stroke-dashoffset:360;animation:cvStroke 1.6s .4s cubic-bezier(.6,0,.2,1) forwards}
+#cover .emblem .ring2{stroke-dasharray:320;stroke-dashoffset:320;animation:cvStroke 1.6s .7s cubic-bezier(.6,0,.2,1) forwards}
+#cover .emblem .scale{opacity:0;animation:cvFade .6s 1.2s forwards}
+#cover .emblem .beam{transform-box:view-box;transform-origin:60px 46px;animation:cvSwing 3.2s 1.3s cubic-bezier(.3,0,.3,1) both}
+#cover .emblem .panL{animation:cvCounter 3.2s 1.3s cubic-bezier(.3,0,.3,1) both}
+#cover .emblem .panR{animation:cvCounter2 3.2s 1.3s cubic-bezier(.3,0,.3,1) both}
+#cover .kicker{margin-top:24px;display:inline-flex;align-items:center;gap:8px;font:700 clamp(12px,1.4vw,14px)/1 var(--mono);letter-spacing:.32em;padding:8px 16px;border-radius:99px;color:var(--teal);background:color-mix(in srgb,var(--teal) 12%,transparent);border:1px solid color-mix(in srgb,var(--teal) 35%,transparent);animation:cvTrack 1.3s 1.6s cubic-bezier(.2,.7,.2,1) both}
+#cover .kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal);animation:blink 1.6s infinite}
+#cover h1.title{font-family:var(--display);font-weight:800;font-size:clamp(42px,8.4vw,104px);line-height:1.08;margin:20px 0 0;letter-spacing:-.5px}
+#cover h1.title span{display:inline-block;animation:cvRise 1.1s cubic-bezier(.2,.8,.2,1) both;background:linear-gradient(100deg,var(--fg) 0 30%,var(--teal) 42%,var(--pink) 50%,var(--cobalt) 58%,color-mix(in srgb,var(--teal) 60%,var(--fg)) 70% 100%);background-size:300% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 22px color-mix(in srgb,var(--teal) 25%,transparent))}
+#cover h1.title.shine span{animation:cvShine 2s ease-in-out both}
+#cover .sub{margin-top:20px;font:500 clamp(15px,2vw,21px)/1.4 var(--body);color:var(--muted);animation:cvUp .9s 2.6s both}
+#cover .rule{display:flex;align-items:center;gap:14px;width:min(620px,80vw);margin:24px 0 22px}
+#cover .rule i{flex:1;height:2px;border-radius:2px;transform:scaleX(0);animation:cvLine 1s 2.9s cubic-bezier(.6,0,.2,1) forwards;transform-origin:0 50%;background:linear-gradient(90deg,transparent,var(--teal));box-shadow:0 0 10px var(--teal)}
+#cover .rule i:last-child{background:linear-gradient(270deg,transparent,var(--pink));box-shadow:0 0 10px var(--pink);transform-origin:100% 50%}
+#cover .rule b{width:12px;height:12px;border-radius:3px;background:linear-gradient(135deg,var(--teal),var(--pink));box-shadow:0 0 14px var(--pink);transform:rotate(45deg) scale(0);animation:cvDiamond .7s 2.8s cubic-bezier(.3,1.6,.5,1) forwards}
+#cover .quote{font-family:"Frank Ruhl Libre",var(--display);font-weight:700;font-size:clamp(22px,3.2vw,34px);line-height:1.5;color:var(--fg);text-shadow:0 0 24px color-mix(in srgb,var(--pink) 35%,transparent);clip-path:inset(0 0 0 100%);animation:cvInk 1.8s 3.3s cubic-bezier(.5,0,.2,1) forwards}
+#cover .src{margin-top:8px;font:500 13px/1 var(--mono);letter-spacing:.24em;color:var(--pink);animation:cvUp .8s 4.6s both}
+#cover .date{margin-top:24px;font:500 clamp(14px,1.7vw,17px)/1.4 var(--body);color:var(--muted);animation:cvUp .8s 4.9s both}
+#cover .study{margin-top:14px;display:flex;flex-wrap:wrap;justify-content:center;gap:10px;animation:cvUp .8s 5.2s both}
+#cover .study span{font:500 13px/1.25 var(--body);padding:9px 14px;border-radius:14px;color:var(--fg);background:var(--card);border:1px solid var(--line);backdrop-filter:blur(10px)}
+#cover .study b{color:var(--teal);font-family:var(--mono);text-shadow:0 0 12px var(--glow)}
+#cover .enter{margin-top:28px;font:800 16px/1 var(--display);letter-spacing:.06em;color:#071018;background:linear-gradient(135deg,var(--teal),var(--cobalt));border:0;padding:16px 34px;border-radius:14px;cursor:pointer;box-shadow:0 10px 30px -10px var(--teal);animation:cvUp .8s 5.5s both,cvPulse 2.4s 6.4s infinite}
+#cover .enter:focus-visible{outline:2px solid var(--teal);outline-offset:4px}
+#cover .skip{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:3;font:500 12px/1 var(--body);color:var(--muted);opacity:.7;animation:cvFade 1s 6s both;white-space:nowrap}
+#cover .dust{position:absolute;inset:0;z-index:1;pointer-events:none}
+#cover .dust i{position:absolute;bottom:-60px;display:block;aspect-ratio:1;animation:cvFloat linear infinite}#cover .dust svg{width:100%;height:100%;display:block;filter:drop-shadow(0 0 6px currentColor);animation:cvSway 4s ease-in-out infinite alternate}
+#cover .dust i:nth-child(3n){color:color-mix(in srgb,var(--teal) 40%,transparent);text-shadow:0 0 10px var(--teal)}
+#cover .dust i:nth-child(3n+1){color:color-mix(in srgb,var(--pink) 40%,transparent);text-shadow:0 0 10px var(--pink)}
+#cover .dust i:nth-child(3n+2){color:color-mix(in srgb,var(--cobalt) 40%,transparent);text-shadow:0 0 10px var(--cobalt)}
+@keyframes cvFade{from{opacity:0}to{opacity:1}}
+@keyframes cvPop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+@keyframes cvSpin{to{--cvA:360deg}}
+@keyframes cvStroke{to{stroke-dashoffset:0}}
+@keyframes cvSwing{0%{transform:rotate(-14deg)}25%{transform:rotate(9deg)}48%{transform:rotate(-5deg)}68%{transform:rotate(2.5deg)}85%{transform:rotate(-1deg)}100%{transform:rotate(0)}}
+@keyframes cvCounter{0%{transform:translateY(7px)}25%{transform:translateY(-4.5px)}48%{transform:translateY(2.5px)}68%{transform:translateY(-1.2px)}85%{transform:translateY(.5px)}100%{transform:none}}
+@keyframes cvCounter2{0%{transform:translateY(-7px)}25%{transform:translateY(4.5px)}48%{transform:translateY(-2.5px)}68%{transform:translateY(1.2px)}85%{transform:translateY(-.5px)}100%{transform:none}}
+@keyframes cvTrack{from{opacity:0;letter-spacing:.9em;filter:blur(4px)}to{opacity:1;letter-spacing:.32em;filter:none}}
+@keyframes cvRise{from{opacity:0;transform:translateY(40px) scale(.96);filter:blur(10px)}to{opacity:1;transform:none;filter:drop-shadow(0 0 22px color-mix(in srgb,var(--teal) 25%,transparent))}}
+@keyframes cvShine{from{background-position:100% 0}to{background-position:0 0}}
+@keyframes cvUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes cvLine{to{transform:scaleX(1)}}
+@keyframes cvDiamond{to{transform:rotate(45deg) scale(1)}}
+@keyframes cvInk{to{clip-path:inset(0 0 0 0)}}
+@keyframes cvPulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--teal) 55%,transparent)}70%{box-shadow:0 0 0 16px transparent}100%{box-shadow:0 0 0 0 transparent}}
+@keyframes cvSway{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
+@keyframes cvFloat{from{transform:translateY(0) rotate(0);opacity:0}10%{opacity:1}90%{opacity:1}to{transform:translateY(-110vh) rotate(25deg);opacity:0}}
+@media (max-width:600px){#cover .inner{padding:44px 8px}#cover .emblem{width:96px;height:96px}#cover .kicker{letter-spacing:.22em}#cover .skip{display:none}#cover .corner{display:none}#cover .frame{border-radius:22px}}
+@media (prefers-reduced-motion:reduce){#cover *,#cover *::before,#cover *::after{animation-duration:.01s!important;animation-delay:0s!important;animation-iteration-count:1!important}#cover .book{transition:none}#cover .dust{display:none}}
+</style>
+
+</head>
+<body>
+<div id="cover" role="dialog" aria-modal="true" aria-label="עמוד פתיחה">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="dust" aria-hidden="true"></div>
+  <div class="book">
+    <div class="frame"></div>
+    <span class="corner a"></span><span class="corner b"></span><span class="corner c"></span><span class="corner d"></span>
+    <div class="inner">
+      <svg class="emblem" viewBox="0 0 120 120" fill="none" stroke="url(#cvG)" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <defs><linearGradient id="cvG" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#22E3C4"/><stop offset=".5" stop-color="#5B8CFF"/><stop offset="1" stop-color="#B46CFF"/></linearGradient></defs>
+        <circle class="ring" cx="60" cy="60" r="56" stroke-width="2"/>
+        <circle class="ring2" cx="60" cy="60" r="49" stroke-width="1"/>
+        <g class="scale" stroke-width="2.4">
+          <path d="M60 24v58"/><path d="M55 30l5-7 5 7"/>
+          <path d="M46 84h28"/><path d="M50 88h20" stroke-width="1.6"/>
+          <g class="beam"><path d="M30 46h60"/><circle cx="60" cy="46" r="2.6" fill="#5B8CFF"/></g>
+          <g class="panL"><path d="M34 48l-9 17M34 48l9 17"/><path d="M23 65q11 9 22 0z" fill="#5B8CFF" fill-opacity=".18"/></g>
+          <g class="panR"><path d="M86 48l-9 17M86 48l9 17"/><path d="M75 65q11 9 22 0z" fill="#5B8CFF" fill-opacity=".18"/></g>
+        </g>
+      </svg>
+      <div class="kicker">LL.B · תיק לימודים</div>
+      <h1 class="title" id="cvTitle">יומן לימודי משפטים</h1>
+      <div class="sub" id="cvSub">הקריה האקדמית אונו · תואר ראשון במשפטים · שנה א׳</div>
+      <div class="rule" aria-hidden="true"><i></i><b></b><i></i></div>
+      <div class="quote">שָׁמֹעַ בֵּין אֲחֵיכֶם וּשְׁפַטְתֶּם צֶדֶק</div>
+      <div class="src">דברים א, טז</div>
+      <div class="date" id="cvDate"></div>
+      <button type="button" class="enter" id="cvEnter">פתיחת התיק</button>
+    </div>
+  </div>
+  <div class="skip">לחיצה בכל מקום או Enter לכניסה</div>
+</div>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<header class="top">
+  <div class="wrap" style="padding-block:0">
+    <div class="topin">
+      <div class="brand"><div class="seal">§</div><div><b id="brandName">היומן של יהל</b><small id="brandSub">LL.B · שנה א׳ · הקריה האקדמית אונו · תשפ״ז</small></div></div>
+      <span class="sync" id="sync">שמור בדפדפן</span>
+      <button class="iconbtn" id="themeBtn" type="button" aria-label="החלפת מצב תאורה">◐</button>
+    </div>
+    <nav class="tabs" id="tabs">
+      <a href="#dashboard">לוח בקרה</a>
+
+      <a href="#schedule">מערכת שעות</a>
+      <a href="#courses">קורסים</a>
+      <a href="#exams">בחינות</a>
+      <a href="#tasks">מטלות והגשות</a>
+
+      <a href="#goals">יעדים ומסלול</a>
+      <a href="#cases">פסיקה</a>
+      <a href="#links">קישורים</a>
+      <a href="#backup">הגדרות וגיבוי</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- DASHBOARD -->
+<section class="view" id="v-dashboard">
+  <div class="hero">
+    <div>
+      <span class="pill" id="heroTag">הבחינה הבאה</span>
+      <h1 id="heroTitle">אין עדיין בחינות ביומן</h1>
+      <div class="sub" id="heroSub">הוסיפי את לוח הבחינות מהידיעון והספירה לאחור תתחיל כאן.</div>
+      <div class="count" id="heroCount"></div>
+    </div>
+    <div class="side">
+      <div class="today"><h3 id="todayTitle">היום</h3><ul id="todayList"></ul></div>
+      <div class="frow"><button class="btn ghost sm" data-add="task" type="button">+ מטלה</button><button class="btn ghost sm" data-add="exam" type="button">+ בחינה</button><button class="btn ghost sm" data-add="event" type="button">+ אירוע</button></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card stat c3"><div class="big num" data-count="sOpen">0</div><div class="lbl">מטלות פתוחות</div><div class="bar"><i id="sOpenBar"></i></div></div>
+    <div class="card stat c3"><div class="big num" data-count="sWeek">0</div><div class="lbl">ימים עד סוף הסמסטר</div><div class="bar"><i id="sSemBar" style="background:linear-gradient(90deg,var(--cobalt),var(--pink))"></i></div></div>
+    <div class="card stat c3"><div class="big num" data-count="sCredits">0</div><div class="lbl" id="sCreditsLbl">נ״ז בשנה א׳</div><div class="bar"><i id="sCredBar" style="background:linear-gradient(90deg,var(--gold),var(--coral))"></i></div></div>
+    <div class="card stat c3"><div class="big num" data-count="sAvg">—</div><div class="lbl" id="sAvgLbl">ממוצע משוקלל</div><div class="bar"><i id="sAvgBar" style="background:linear-gradient(90deg,var(--pink),var(--gold))"></i></div></div>
+
+    <div class="card c7">
+      <h3>בקרוב · 21 הימים הקרובים</h3>
+      <div class="list" id="upcoming"></div>
+    </div>
+    <div class="card c5">
+      <h3>מדדי התקדמות</h3>
+      <div class="rings">
+        <div><div class="ring" id="rTasks" style="--c:var(--teal)"><span>0%</span></div><small>מטלות שהושלמו</small><small class="mono" id="rTasksN"></small></div>
+
+      </div>
+    </div>
+
+    <div class="card c12"><h3>נקודות זכות לפי קורס</h3><div class="chartbox" style="height:340px"><canvas id="chCredits"></canvas></div></div>
+    <div class="card c12"><h3>נקודות זכות, בחינות ומטלות לפי קורס</h3><div class="tbl"><table><thead><tr><th>קורס</th><th>סמסטר</th><th>נ״ז</th><th>הבחינה הבאה</th><th>בחינות</th><th>מטלות פתוחות</th><th>ציון</th></tr></thead><tbody id="credRows"></tbody></table></div></div>
+
+  </div>
+</section>
+
+<!-- CALENDAR -->
+<section class="view" id="v-calendar">
+  <div class="vhead"><h2>לוח שנה אקדמי</h2><button class="btn" data-add="event" type="button">+ אירוע</button>
+    <p>בחינות, הגשות, חגים וחופשות במקום אחד. לחיצה על יום מוסיפה אירוע בתאריך הזה.</p></div>
+  <div class="card">
+    <div class="calbar"><button class="btn ghost sm" id="calNext" type="button" aria-label="חודש הבא">→</button><h3 id="calTitle"></h3><button class="btn ghost sm" id="calPrev" type="button" aria-label="חודש קודם">←</button><button class="btn ghost sm" id="calToday" type="button">היום</button></div>
+    <div class="cal" id="cal"></div>
+    <div class="legend"><span style="--c:var(--coral)">בחינה</span><span style="--c:var(--gold)">הגשה</span><span style="--c:var(--teal)">אקדמי</span><span style="--c:var(--lime)">חג / חופשה</span><span style="--c:var(--pink)">אישי</span></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>אירועי לוח השנה</h3>
+    <div class="notice" style="margin-bottom:12px">תאריך פתיחת השנה (8.11.2026) נלקח מעמוד לוח הזמנים האקדמי של אונו, שם הוא מסומן כ״משוער״. תאריכי החגים חושבו לפי הלוח העברי. תאריכי סיום הסמסטרים ותקופות הבחינות הם הערכה בלבד. כדאי לעדכן אותם מקובץ לוח הזמנים של LL.B בידיעון.</div>
+    <div class="list" id="evList"></div>
+  </div>
+</section>
+
+<!-- SCHEDULE -->
+<section class="view" id="v-schedule">
+  <div class="vhead"><h2>מערכת שעות שבועית</h2><button class="btn" data-add="slot" type="button">+ שיעור</button>
+    <p>השיעורים של כל הקורסים לפי ימים ושעות. לחיצה על שיעור פותחת אותו לעריכה.</p></div>
+  <div class="filters" id="semFilter"></div>
+  <div class="card tbl" id="weekCard"><div class="week" id="week"></div></div>
+  <div id="weekAgenda"></div>
+</section>
+
+<!-- COURSES -->
+<section class="view" id="v-courses">
+  <div class="vhead"><h2>הקורסים שלי</h2><button class="btn" data-add="course" type="button">+ קורס</button>
+    <p id="coursesNote">הקורסים, נקודות הזכות, המרצים והציונים. ממוצע משוקלל מחושב אוטומטית מהציונים.</p></div>
+  <div class="filters" id="courseFilter"></div>
+  <div class="courses" id="courseGrid"></div>
+</section>
+
+<!-- EXAMS -->
+<section class="view" id="v-exams">
+  <div class="vhead"><h2>בחינות</h2><button class="btn" data-add="exam" type="button">+ בחינה</button>
+    <p>מועדי א׳, ב׳ ומיוחד מהידיעון, עם תאריך, שעה, מיקום וספירה לאחור.</p></div>
+  <div class="card tbl"><table><thead><tr><th style="width:70px">בוצע</th><th>קורס</th><th>מועד</th><th>תאריך ושעה</th><th>מיקום</th><th style="width:110px">ציון</th><th></th></tr></thead><tbody id="examRows"></tbody></table></div>
+</section>
+
+<!-- TASKS -->
+<section class="view" id="v-tasks">
+  <div class="vhead"><h2>מטלות והגשות</h2><button class="btn" data-add="task" type="button">+ מטלה</button>
+    <p>קריאה, סיכומים, תרגילים ועבודות. סימון ✓ מעביר את המטלה לבוצעו.</p></div>
+  <div class="filters" id="taskFilter"></div>
+  <div class="list" id="taskList"></div>
+</section>
+
+<!-- STUDY -->
+<section class="view" id="v-study">
+  <div class="vhead"><h2>שעון לימוד</h2><p>מפעילים את השעון כשמתחילים ללמוד, והזמן נרשם לקורס שנבחר.</p></div>
+  <div class="grid" style="margin-top:0">
+    <div class="card c6"><div class="timer" id="timerBox">
+      <label class="f" style="width:min(320px,100%)">קורס<select id="timerCourse"></select></label>
+      <div class="clock" id="clock">00:00:00</div>
+      <div class="frow" style="justify-content:center"><button class="btn" id="timerBtn" type="button">התחלה</button><button class="btn ghost" id="manualBtn" type="button">הוספה ידנית</button></div>
+    </div></div>
+    <div class="card c6">
+      <h3>השבוע</h3>
+      <div class="rings"><div><div class="ring" id="rWeek" style="--c:var(--lime)"><span>0</span></div><small>שעות השבוע</small></div>
+      <div style="display:grid;gap:8px;align-content:center;text-align:right"><label class="f">יעד שבועי (שעות)<input type="number" id="weeklyGoal" min="1" max="80"></label><div class="src" id="weekNote"></div></div></div>
+    </div>
+    <div class="card c12"><h3>יומן שעות</h3><div class="list" id="sessList"></div></div>
+  </div>
+</section>
+
+<!-- GOALS -->
+<section class="view" id="v-goals">
+  <div class="vhead"><h2>יעדים ומסלול לעתיד</h2><button class="btn" data-add="goal" type="button">+ יעד</button><p>יעדים לסמסטר, לשנה, לתואר ולקריירה, ושלבי הדרך לרישיון עריכת דין.</p></div>
+  <div class="card"><h3>המסלול</h3><div class="stage" id="stages"></div></div>
+  <div class="grid" id="goalCols"></div>
+</section>
+
+<!-- CASES -->
+<section class="view" id="v-cases">
+  <div class="vhead"><h2>פסיקה לפי הסילבוס</h2><button class="btn" data-add="case" type="button">+ פסק דין</button><p>כל פסקי הדין שמופיעים בסילבוסים שלך בידיעון, מסודרים לפי קורס ונושא. סמני ✓ על מה שקראת.</p></div>
+  <div class="card" style="margin-bottom:14px"><div class="caseTop"><div class="filters" id="caseCourses"></div><input type="search" id="caseSearch" placeholder="חיפוש לפי שם, מספר תיק או נושא"></div><div class="caseProg" id="caseProg"></div></div>
+  <div id="caseList"></div>
+</section>
+
+<!-- LINKS -->
+<section class="view" id="v-links">
+  <div class="vhead"><h2>קישורים שימושיים</h2></div>
+  <div class="links" id="linkGrid"></div>
+</section>
+
+<!-- BACKUP -->
+<section class="view" id="v-backup">
+  <div class="vhead"><h2>הגדרות וגיבוי</h2></div>
+  <div class="grid" style="margin-top:0">
+    <div class="card c6"><h3>פרטי סטודנטית</h3>
+      <form id="profileForm" class="fgrid">
+        <label class="f">שם<input id="pName"></label>
+        <label class="f">מוסד<input id="pInst"></label>
+        <label class="f">תואר<select id="pDegree"><option>LL.B</option><option>LL.B + BA</option><option>LL.M</option></select></label>
+        <label class="f">שנה<select id="pYear"><option>א׳</option><option>ב׳</option><option>ג׳</option><option>ד׳</option><option>התמחות</option></select></label>
+        <label class="f">נ״ז נדרשות לתואר<input id="pTotal" type="number" min="0"></label>
+        <label class="f">ממוצע יעד<input id="pTarget" type="number" min="0" max="100"></label>
+        <div class="full frow"><button class="btn" type="submit">שמירה</button></div>
+      </form></div>
+    <div class="card c6"><h3>גיבוי ושחזור</h3>
+      <p class="src" id="syncNote" style="margin-top:0"></p>
+      <div class="frow"><button class="btn" id="copyBtn" type="button">העתקת גיבוי</button><button class="btn ghost" id="restoreBtn" type="button">שחזור מהטקסט</button><button class="btn danger" id="resetBtn" type="button">איפוס היומן</button></div>
+      <textarea id="backupText" style="margin-top:10px" placeholder="כאן מופיע הגיבוי. להדבקת גיבוי קודם ולשחזור, הדביקי כאן ולחצי ״שחזור מהטקסט״."></textarea>
+      <div id="resetConfirm" hidden class="notice" style="margin-top:10px">האיפוס מוחק את כל הנתונים ביומן. <div class="frow" style="margin-top:8px"><button class="btn danger sm" id="resetYes" type="button">כן, למחוק הכול</button><button class="btn ghost sm" id="resetNo" type="button">ביטול</button></div></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<dialog id="dlg"><form id="dlgForm" method="dialog"><h3 id="dlgTitle"></h3><div class="fgrid" id="dlgFields"></div><div class="frow"><button class="btn" type="submit" id="dlgSave">שמירה</button><button class="btn ghost" type="button" id="dlgCancel">ביטול</button><button class="btn danger" type="button" id="dlgDel" hidden style="margin-inline-start:auto">מחיקה</button></div></form></dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parse=s=>{if(!s)return null;const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+const today=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
+const dayDiff=s=>Math.round((parse(s)-today())/864e5);
+const HEB_M=["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
+const HEB_D=["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"];
+const fmt=s=>{const d=parse(s);return d?d.getDate()+"."+(d.getMonth()+1)+"."+String(d.getFullYear()).slice(2):""};
+const COLORS=["#22E3C4","#5B8CFF","#B46CFF","#FF4D7E","#FFC53D","#7CFF6B","#FF8A3D","#5FD4FF","#E879F9","#3DDC84"];
+const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- default data ---------- */
+const ONO={"profile":{"targetCredits":140,"avgGoal":90},"courses":[{"id":"ono-c-1116","code":"1116","name":"דיני חוזים","sem":"א׳","type":"חובה","credits":6,"lecturer":"ד״ר אלעד פינקלשטיין","sessions":[{"kind":"הרצאה","who":"ד״ר אלעד פינקלשטיין","when":"יום שני 16:00–19:00","place":"ZOOM"},{"kind":"תרגיל","who":"עו״ד רועי כהן","when":"יום חמישי 16:00–17:30","place":"אולם 108, בניין ירושלים חדש"}],"meets":["26110916001900 L","26111216001730 T","26111616001900 L","26111916001730 T","26112316001900 L","26112616001730 T","26113016001900 L","26120316001730 T","26120716001900 L","26121016001730 T","26121416001900 L","26121716001730 T","26122116001900 L","26122416001730 T","26122816001900 L","26123116001730 T","27010416001900 L","27010716001730 T","27011116001900 L","27011416001730 T","27011816001900 L","27012116001730 T","27012516001900 L","27012816001730 T"]},{"id":"ono-c-1131","code":"1131","name":"משפט חוקתי","sem":"א׳","type":"חובה","credits":5,"lecturer":"ד״ר יעקב בן שמש","sessions":[{"kind":"הרצאה","who":"ד״ר יעקב בן שמש","when":"יום חמישי 17:45–20:15","place":"אולם 108, בניין ירושלים חדש"},{"kind":"תרגיל","who":"עו״ד ליאת מרקוביץ","when":"יום חמישי 20:30–22:00","place":"אולם 108, בניין ירושלים חדש"}],"meets":["26111217452015 L","26111220302200 T","26111917452015 L","26111920302200 T","26112617452015 L","26112620302200 T","26120317452015 L","26120320302200 T","26121017452015 L","26121020302200 T","26121717452015 L","26121720302200 T","26122417452015 L","26122420302200 T","26123117452015 L","26123120302200 T","27010717452015 L","27010720302200 T","27011417452015 L","27011420302200 T","27012117452015 L","27012120302200 T","27012817452015 L","27012820302200 T"]},{"id":"ono-c-1136","code":"1136","name":"מקורות המשפט","sem":"א׳","type":"חובה","credits":2,"lecturer":"ד״ר חנן מנדל","sessions":[{"kind":"הרצאה","who":"ד״ר חנן מנדל","when":"יום שני 20:45–22:00","place":"ZOOM"}],"meets":["26110920452200 L","26111620452200 L","26112320452200 L","26113020452200 L","26120720452200 L","26121420452200 L","26122120452200 L","26122820452200 L","27010420452200 L","27011120452200 L","27011820452200 L","27012520452200 L"]},{"id":"ono-c-8445","code":"8445","name":"הטקסט המשפטי: פיתוח כישורים משפטיים","sem":"א׳","type":"חובה","credits":2,"lecturer":"עו״ד אסף בן אסייג","sessions":[{"kind":"הרצאה","who":"עו״ד אסף בן אסייג","when":"יום שני 19:15–20:30","place":"ZOOM"}],"meets":["26110919152030 L","26111619152030 L","26112319152030 L","26113019152030 L","26120719152030 L","26121419152030 L","26122119152030 L","26122819152030 L","27010419152030 L","27011119152030 L","27011819152030 L","27012519152030 L"]},{"id":"ono-c-2271","code":"2271","name":"אנגלית: טרום בסיסי א/ב מקוון כולל תמך","sem":"א׳","type":"אנגלית","credits":"","lecturer":"גב׳ גאולה טברסקי","sessions":[{"kind":"קורס מקוון","who":"גב׳ גאולה טברסקי","when":"E-Learning, בקצב אישי","place":""}],"meets":[]},{"id":"ono-c-1121","code":"1121","name":"דיני עבודה","sem":"ב׳","type":"חובה","credits":3,"lecturer":"ד״ר אביעד מנשה","sessions":[{"kind":"הרצאה","who":"ד״ר אביעד מנשה","when":"יום שני 16:00–18:15","place":"ZOOM"}],"meets":["27030816001815 L","27031516001815 L","27032916001815 L","27040516001815 L","27041216001815 L","27050316001800 L","27051716001815 L","27052416001815 L","27053116001815 L","27060716001815 L","27061416001815 L"]},{"id":"ono-c-1122","code":"1122","name":"דיני עונשין","sem":"ב׳","type":"חובה","credits":6,"lecturer":"פרופ׳ גבריאל הלוי","sessions":[{"kind":"הרצאה","who":"פרופ׳ גבריאל הלוי","when":"יום חמישי 16:00–19:00","place":""},{"kind":"תרגיל","who":"עו״ד אריאל שניאור","when":"יום חמישי 20:45–22:00","place":""}],"meets":["27031116001900 L","27031120452200 T","27031816001900 L","27031820452200 T","27032516001900 L","27032520452200 T","27040116001900 L","27040120452200 T","27040816001900 L","27040820452200 T","27041516001900 L","27041520452200 T","27042916001900 L","27042920452200 T","27050616001900 L","27050620452200 T","27051316001900 L","27051320452200 T","27052016001900 L","27052020452200 T","27052716001900 L","27052720452200 T","27060316001900 L","27060320452200 T"]},{"id":"ono-c-1132","code":"1132","name":"משפט מנהלי","sem":"ב׳","type":"חובה","credits":5,"lecturer":"ד״ר אביעד בקשי","sessions":[{"kind":"הרצאה","who":"ד״ר אביעד בקשי","when":"יום שני 18:30–21:00","place":"ZOOM"},{"kind":"תרגיל","who":"עו״ד ליאת מרקוביץ","when":"יום חמישי 19:15–20:30","place":""}],"meets":["27030818302100 L","27031119152030 T","27031518302100 L","27031819152030 T","27032519152030 T","27032918302100 L","27040119152030 T","27040518302100 L","27040819152030 T","27041218302100 L","27041519152030 T","27042919152030 T","27050619152030 T","27051319152030 T","27051718302100 L","27052019152030 T","27052418302100 L","27052719152030 T","27053118302100 L","27060319152030 T","27060718302100 L","27061418302100 L"]},{"id":"ono-c-1164","code":"1164","name":"שימושי מחשב","sem":"ב׳","type":"חובה","credits":2,"lecturer":"ד״ר רחימי אילן דניאלס","sessions":[{"kind":"קורס מקוון","who":"ד״ר רחימי אילן דניאלס","when":"E-Learning, בקצב אישי","place":""}],"meets":[]},{"id":"ono-c-3046","code":"3046","name":"הכנה להתמחויות משפטים","sem":"ב׳","type":"פעילות","credits":"","lecturer":"מרכז קריירה","sessions":[],"meets":[]},{"id":"ono-c-1119","code":"1119","name":"דיני משפחה","sem":"קיץ","type":"חובה","credits":6,"lecturer":"פרופ׳ יצחק כהן","sessions":[{"kind":"הרצאה","who":"פרופ׳ יצחק כהן","when":"יום שני 16:00–19:00","place":""},{"kind":"תרגיל","who":"עו״ד ליאת מרקוביץ","when":"יום חמישי 19:00–20:30","place":""}],"meets":["27071916001900 L","27072219002030 T","27072616001900 L","27072919002030 T","27080216001900 L","27080519002030 T","27080916001900 L","27081616001900 L","27081919002030 T","27082316001900 L","27082619002030 T","27083016001900 L","27090219002030 T","27090616001900 L","27090919002030 T","27091316001900 L","27091619002030 T","27092016001900 L","27092319002030 T","27092716001900 L","27093019002030 T"]},{"id":"ono-c-2119","code":"2119","name":"משפט עברי","sem":"קיץ","type":"חובה","credits":2,"lecturer":"ד״ר יאיר אלדן","sessions":[{"kind":"הרצאה","who":"ד״ר יאיר אלדן","when":"יום שני 19:15–20:45","place":""}],"meets":["27071919152045 L","27072619152045 L","27080219152045 L","27080919152045 L","27081619152045 L","27082319152045 L","27083019152045 L","27090619152045 L","27091319152045 L","27092019152045 L","27092719152045 L"]},{"id":"ono-c-3047","code":"3047","name":"Lawyering: כלים ומיומנויות בעריכת דין א","sem":"קיץ","type":"חובה","credits":3,"lecturer":"עו״ד אריקה סולומון וסר","sessions":[{"kind":"הרצאה (מקוון)","who":"עו״ד אריקה סולומון וסר","when":"יום חמישי 16:15–18:45","place":""}],"meets":["27072216151845 L","27072916151845 L","27080516151845 L","27081916151845 L","27082616151845 L","27090216151845 L","27090916151845 L","27091616151845 L","27092316151845 L","27093016151845 L"]}],"exams":[{"id":"ono-x-2271-a","course":"אנגלית: טרום בסיסי א/ב מקוון כולל תמך","moed":"א׳","date":"2027-01-26","time":"16:30"},{"id":"ono-x-8445-a","course":"הטקסט המשפטי: פיתוח כישורים משפטיים","moed":"א׳","date":"2027-02-07","time":"16:30"},{"id":"ono-x-2271-b","course":"אנגלית: טרום בסיסי א/ב מקוון כולל תמך","moed":"ב׳","date":"2027-02-16","time":"16:30"},{"id":"ono-x-1136-a","course":"מקורות המשפט","moed":"א׳","date":"2027-02-24","time":"16:30"},{"id":"ono-x-1131-a","course":"משפט חוקתי","moed":"א׳","date":"2027-03-01","time":"16:30"},{"id":"ono-x-2271-c","course":"אנגלית: טרום בסיסי א/ב מקוון כולל תמך","moed":"ג׳","date":"2027-03-09","time":"16:30"},{"id":"ono-x-8445-b","course":"הטקסט המשפטי: פיתוח כישורים משפטיים","moed":"ב׳","date":"2027-03-17","time":"17:00"},{"id":"ono-x-1136-b","course":"מקורות המשפט","moed":"ב׳","date":"2027-03-30","time":"17:00"},{"id":"ono-x-1131-b","course":"משפט חוקתי","moed":"ב׳","date":"2027-04-14","time":"17:00"},{"id":"ono-x-8445-c","course":"הטקסט המשפטי: פיתוח כישורים משפטיים","moed":"ג׳","date":"2027-05-09","time":"16:30"},{"id":"ono-x-1131-c","course":"משפט חוקתי","moed":"ג׳","date":"2027-05-23","time":"16:30"},{"id":"ono-x-1136-c","course":"מקורות המשפט","moed":"ג׳","date":"2027-06-02","time":"16:30"}],"tasks":[{"id":"ono-t-1116","title":"להירשם לבחינה בדיני חוזים במרכז הבחינות הממוחשב","course":"דיני חוזים","kind":"רישום"}],"road":[["y1","להכיר את מערכת הלימודים","פורטל הסטודנטים, אתר הקורסים, הספרייה ומאגרי נבו ותקדין."],["y1","שיטת סיכום קבועה לכל קורס","סיכום שבועי קצר אחרי כל שיעור, לא רק לפני המבחן."],["y1","ללמוד לקרוא פסק דין","עובדות, שאלה משפטית, הלכה, נימוקים ודעת מיעוט."],["y1","לתרגל שאלות מקרה ממבחנים קודמים","כתיבת תשובה מסודרת: זיהוי סוגיה, דין, יישום, מסקנה."],["y1","לשלוט בחיפוש בנבו ובתקדין","חיפוש לפי מספר הליך, לפי סעיף חוק ולפי מילות מפתח."],["y1","להקים קבוצת לימוד קבועה","שניים או שלושה חברים, מפגש שבועי קבוע."],["y1","ממוצע גבוה כבר משנה א׳","ציוני שנה א׳ וב׳ הם הבסיס לראיונות ההתמחות."],["y1","להשלים את השנה בלי חובות פתוחים","כל המבחנים והעבודות סגורים עד הקיץ."],["y1","להתחיל פעילות מעבר ללימודים","התנדבות, אגודת הסטודנטים או סיוע משפטי לקהילה."],["y2","לשמור על הממוצע ולשפר אותו","זו השנה שהמשרדים ובתי המשפט יראו בגיליון הציונים."],["y2","קורות חיים משפטיים","עמוד אחד: השכלה, ממוצע, ניסיון, שפות ופעילות."],["y2","רשימת מקומות יעד להתמחות","משרדים פרטיים, בתי משפט, פרקליטות, מחלקות משפטיות וסיוע משפטי."],["y2","ירידי תעסוקה וימי קריירה","להכיר משרדים ולשאול עורכי דין על העבודה עצמה."],["y2","משפט מבוים או תחרות","ניסיון בכתיבת כתבי טענות והופעה בפני שופטים."],["y2","עבודה כסטודנט או עוזר מחקר","ניסיון מעשי במשרד או אצל מרצה."],["y2","הכנה לראיונות ההתמחות","ראיונות דמה, תשובות לשאלות נפוצות וקריאה על כל מקום."],["y2","ראיונות ההתמחות","בדרך כלל בשנה ב׳ או ג׳. את המועד של השנה בודקים מראש."],["y2","לבחור תחום עניין","כדי לכוון את קורסי הבחירה והסמינריונים."],["y3","סמינריון ראשון","בחירת נושא ומנחה, הצעת מחקר, כתיבה והגשה."],["y3","סמינריון שני","רצוי בתחום שמתאים להתמחות."],["y3","קליניקה משפטית","עבודה עם לקוחות אמיתיים בהנחיית עורכי דין."],["y3","קורסי בחירה בתחום שבחרת","פלילי, אזרחי, מסחרי או ציבורי."],["y3","לחתום על מקום התמחות","לוודא תאריך התחלה ושם המאמן."],["y3","כתב עת משפטי או מחקר","יתרון בקורות החיים ובכתיבה."],["y4","בדיקת זכאות לתואר","לעבור עם המזכירות על כל נקודות הזכות והחובות."],["y4","השלמת חובות אחרונים","עבודות, מבחנים וציונים שעוד חסרים."],["y4","אישור זכאות לתואר","המסמך שצריך לרישום להתמחות."],["intern","רישום כמתמחה בלשכת עורכי הדין","לפני תחילת ההתמחות, לפי ההנחיות באתר הלשכה."],["intern","ללמוד מהמאמן","כתבי טענות, דיונים, פגישות לקוח ומשא ומתן."],["intern","שגרת לימוד לבחינת ההסמכה","כמה שעות בשבוע לאורך כל ההתמחות."],["intern","קורס הכנה לבחינת ההסמכה","לבחור קורס ולהירשם מוקדם."],["bar","הרשמה לבחינה","המועד מתפרסם באתר הלשכה לפחות 90 יום מראש."],["bar","מבחנים לדוגמה בתנאי אמת","מבחנים מלאים עם שעון, כמו ביום הבחינה."],["bar","בחינת ההסמכה","נערכת לפחות פעמיים בשנה, בדרך כלל ביוני ובדצמבר."],["bar","רישיון וטקס השבעה","עורך דין."],["career","לבחור תחום מומחיות","ליטיגציה, מסחרי, נדל״ן, פלילי, ציבורי ועוד."],["career","תואר שני במשפטים","LL.M בארץ או בחו״ל, אם מתאים לתוכנית."],["career","רשת קשרים מקצועית","קולגות, מרצים, מאמנים ולקוחות."]],"cases":[["בנק המזרחי המאוחד נ׳ מגדל כפר שיתופי","ע״א 6821/93","משפט חוקתי","המהפכה החוקתית: לחוקי היסוד מעמד על-חוקי וביקורת שיפוטית על חקיקה."],["קול העם נ׳ שר הפנים","בג״ץ 73/53","משפט חוקתי","חופש הביטוי ומבחן הוודאות הקרובה."],["חברה קדישא גחש״א נ׳ קסטנבאום","ע״א 294/91","חוזים","תניה בחוזה אחיד הסותרת את תקנת הציבור וכבוד האדם."],["מדינת ישראל נ׳ אפרופים שיכון ויזום","ע״א 4628/93","חוזים","פרשנות חוזה לפי אומד דעת הצדדים, מתוך הלשון והנסיבות יחד."],["ועקנין נ׳ המועצה המקומית בית שמש","ע״א 145/80","נזיקין","מבנה עוולת הרשלנות: חובת זהירות מושגית וקונקרטית."]]};
+const SYL=[["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","ע\"א 3833/93","לוין נ' לוין"],["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","ע\"א 8566/06","אמריקר שירותי ניהול וייעוץ"],["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","ע\"א 4106/11","ד\"ר יצחק רויזמן נ' הפקולטה לרפואה, אוניברסיטת תל אביב"],["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","ע\"א 9612/11","פרופ' שטרית נ' דבוש"],["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","ע\"א 5258/98","פלונית נ' פלוני"],["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","ע\"א 6490/97","אלחג' נ' אבו עקל"],["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","דנ\"א 2401/95","נחמני נ' נחמני"],["1116","כריתת חוזה › כוונה ליצור יחסים משפטיים ושפיטות","","Edwards v Skyways Ltd"],["1116","כריתת חוזה › כשרות משפטית","ע\"א 2409/10","מגורי נ' מלאכי"],["1116","כריתת חוזה › כשרות משפטית","ת\"א 715417/07","פלאפון תקשורת בע\"מ נ' מלאך"],["1116","כריתת חוזה › כשרות משפטית","בע\"מ 946/08","פלוני נ' פלונית"],["1116","כריתת חוזה › כשרות משפטית","ת\"ק 51496-04-21","גל נ' רייזר קלאב בן שמן בע\"מ ואח'"],["1116","כריתת חוזה › טענת 'לא נעשה דבר'","ע\"א 8163/05","הדר חברה לביטוח בע\"מ נ' פלונית"],["1116","כריתת חוזה › טענת 'לא נעשה דבר'","ע\"א 1333/14","סעדה גואנה מיטרי נ' עלס דוברונסקי"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 1932/90","פרץ בוני הנגב – אחים פרץ בע\"מ נ' בוחבוט"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 3601/96","בראשי נ' עזבון המנוח זלמן בראשי ז\"ל"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 158/77","רבינאי נ' חברת מן שקד בע\"מ בפירוק"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","רע\"א 3160/08","אליהו מזר נ' גאון חברה לבנין והשקעות בע\"מ"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 7193/08","מנחם עדני נ' מרדכי דוד"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 10489/09","א.נץ ניהול ואחזקות בע\"מ ואח' נ' הרי אלוף ואח'"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 692/86","בוטקובסקי נ' גת"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 649/73","קפולסקי נ' גני גולן בע\"מ"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 3380/97","תמגר, חברה לבניה ופיתוח בע\"מ נ' גושן"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 6235/15","חלאק נ' כריים"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 4933/17","גרין נ' פרידמן"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 8872/18","וייס נ' בן מנחם"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 1456/22","איברהים עג'מי נ' וואחת אל סאלם נווה שלום (ועד מקומי נווה שלום)"],["1116","כריתת חוזה › העדה על גמירת דעת ומסוימות","ע\"א 1463/22","הפטריארכיה היוונית אורתודוכסית של ירושלים נ' הימנותא בע\"מ"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 838/75","ספקטור נ' צרפתי"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 829/80","שיכון עובדים בע\"מ נ' זפניק"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 4850/96","קל בנין בע\"מ נ' ע.ר.מ. רעננה לבניה והשכרה בע\"מ"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 6370/00","קל בנין בע\"מ נ' ע.ר.מ. רעננה לבניה והשכרה בע\"מ"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 8144/00","עלריג נכסים"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 434/07","פרינץ נ' אמירים מושב עובדים של צמחונים וטבעונים להתיישבות חקלאית שיתופית בע\"מ"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ד\"נ 7/81","פנידר, חברה להשקעות פתוח ובנין בע\"מ נ' קסטרו"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 800/75","קוט נ' ארגון הדיירים במרכז המסחרי, רמת-יוסף, בת-ים, אגודה עותמנית"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 2720/08","ז'אן נ' ליבמן"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 8143/14","חלפון נ' בנק דיסקונט למשכנתאות בע\"מ"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 7021/14","אמיר ילינק נ' יוסף אורנשטיין"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 2642/19","מועצה מקומית הר-אדר נ' מרכז קניות דוד ויהונתן"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","בע\"מ 5827/19","פלוני נ' פלונית"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 2733/19","אורן אלימלך נ' רשות מקרקעי ישראל"],["1116","כריתת חוזה › מו\"מ לקראת כריתתו של חוזה","ע\"א 2274/21","נטע מור נ' אלעד ישראל מגורים בע\"מ"],["1116","כריתת חוזה › צורת החוזה","ע\"א 726/71","גרוסמן את ק.ב.ק. שותפות רשומה נ' מנהלי עזבון המנוח יהושע בידרמן"],["1116","כריתת חוזה › צורת החוזה","ע\"א 235/75","קאדרי נ' מנזר האחיות צ'רלס הקדוש"],["1116","כריתת חוזה › צורת החוזה","ע\"א 252/78","ברון נ' מנדיס טורס בע\"מ"],["1116","כריתת חוזה › צורת החוזה","ע\"א 579/83","זוננשטיין נ' גבסו"],["1116","כריתת חוזה › צורת החוזה","ע\"א 986/93","קלמר נ' גיא"],["1116","כריתת חוזה › צורת החוזה","ע\"א 2143/00","לוין נ' שולר"],["1116","כריתת חוזה › צורת החוזה","ע\"א 7119/08","עזרי חיימי נ' שמיר"],["1116","כריתת חוזה › צורת החוזה","ע\"א 8234/09","שם טוב נ' פרץ"],["1116","כריתת חוזה › צורת החוזה","בע\"מ 1270/23","פלונית נ' פלוני"],["1116","כריתת חוזה › צורת החוזה","דנ\"א 25914-08-25","הימנותא בע\"מ נ' הפטריארכיה היוונית אורתודוכסית של ירושלים"],["1116","כריתת חוזה › הצעה וקיבול","ע\"א 7824/95","תשובה נ' בר נתן"],["1116","כריתת חוזה › הצעה וקיבול","ע\"א 6295/16","איברהים קוזלי נ' מדינת ישראל"],["1116","כריתת חוזה › הצעה וקיבול","","Carlill v Carbolic Smoke Ball Company"],["1116","כריתת חוזה › זיכרון דברים","ע\"א 5332/03","רמות ארזים, חברה לבניין והשקעות בע\"מ נ' שירן"],["1116","כריתת חוזה › זיכרון דברים","ע\"א 8320/09","אלחדד נ' שמיר"],["1116","כריתת חוזה › מכרזים פרטיים","ד\"נ 22/82","בית יולס בע\"מ נ' רביב משה ושות' בע\"מ"],["1116","כריתת חוזה › מכרזים פרטיים","ע\"א 10859/07","חברה קדישא גחש\"א שעל יד הרבנות הראשית והמועצה הדתית תל-אביב-יפו והמחוז (ע\"ר) נ' לוי"],["1116","כריתת חוזה › מכרזים פרטיים","ע\"א 8265/15","בתי זיקוק לנפט בע\"מ נ' קבוצת אקוסנס (מזרח תיכון) בע\"מ"],["1116","כריתת חוזה › מכרזים פרטיים","ע\"א 4832/23","אל מול הים בע\"מ נ' עיריית בת ים"],["1116","כריתת חוזה › בין דיני חוזים לעשיית עושר","ע\"א 6164/22","SMITHS DETECTION INC נ' ווטאירפול הנדסה בע\"מ"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 8972/00","שלזינגר נ' הפניקס חברה לביטוח בע\"מ"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 5054/11","ספיר וברקת נדל\"ן (הולילנד) בע\"מ נ' עו\"ד יעקב אמסטר ואח'"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 472/86","עזר נ' עזריהו"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","דנ\"א 3047/01","איליה נ' קינסטלינגר"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 2469/06","סויסה נ' חברת זאגא בגוש 5027 חלק 1 בע\"מ"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 7730/09","כהן נ' מבני גזית"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 338/85","שפיגלמן נ' צ'פניק"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","","Raffles v Wichelhaus"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 7920/13","כרמל נ' טלמון"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","רע\"א 3264/21","כהן נ' אלקטרה בנייה בע\"מ"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 3865/19","משה אליאסיאן נ' מאיר שבו"],["1116","פגמים בכריתת חוזה › טעות; הטעיה","ע\"א 5858/19","פסגות קופות גמל ופנסיה בע\"מ נ' חיים אופיר"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 403/80","סאסי נ' קיקאון"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 5493/95","דיור לעולה (עא\"ק) בע\"מ נ' קרן"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 700/83","כהן נ' י. הרשקוביץ, חברה לבנין בע\"מ"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 8/88","שאול רחמים בע\"מ נ' אקספומדיה בע\"מ"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 1569/93","מאיה נ' פנפורד (ישראל) בע\"מ"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 6234/00","ש.א.פ. בע\"מ נ' בנק לאומי לישראל בע\"מ"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 4839/92","גנז נ' כץ"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 2041/05","מחקשווילי נ' מיכקשווילי"],["1116","פגמים בכריתת חוזה › כפיה; עושק","רע\"א 7539/98","לוטם רהיטים בע\"מ נ' בנק דיסקונט לישראל בע\"מ"],["1116","פגמים בכריתת חוזה › כפיה; עושק","רע\"א 617/08","מלון עדן נהריה בע\"מ נ' קסל"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 784/81","שפיר נ' אפל"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 1912/93","שחם נ' מנס"],["1116","פגמים בכריתת חוזה › כפיה; עושק","ע\"א 731/17","מראות ישראל בע\"מ נ' עיריית ירושלים"],["1116","פגמים בכריתת חוזה › ביטול והשבה","ע\"א 5393/03","פרג' נ' מיטל"],["1116","פגמים בכריתת חוזה › חוזה למראית עין","ע\"א 4305/10","אילן נ' לוי"],["1116","פגמים בכריתת חוזה › חוזה למראית עין","רע\"א 1400/15","שלמה אילוז נ' י. מ. אמסלם בע\"מ"],["1116","פגמים בכריתת חוזה › חוזה למראית עין","ע\"א 5892/06","דואק נ' המועצה המקומית גדרה"],["1116","פגמים בכריתת חוזה › חוזה למראית עין","ע\"א 424/89","פרקש נ' שיכון ופתוח לישראל בע\"מ"],["1116","תוכן החוזה › תום לב בביצוע החוזה","רע\"א 1233/91","ג'רבי נ' בן דוד"],["1116","תוכן החוזה › תום לב בביצוע החוזה","בג\"ץ 59/80","שירותי תחבורה ציבוריים באר-שבע בע\"מ נ' בית הדין הארצי לעבודה בירושלים"],["1116","תוכן החוזה › תום לב בביצוע החוזה","ע\"א 391/80","לסרסון נ' שכון עובדים בע\"מ"],["1116","תוכן החוזה › תום לב בביצוע החוזה","ע\"א 3912/90","EXIMIN S.A תאגיד בלגי נ' טקסטיל והנעלה איטל סטייל פראררי בע\"מ"],["1116","תוכן החוזה › תום לב בביצוע החוזה","ע\"א 467/04","יתח נ' מפעל הפיס"],["1116","תוכן החוזה › תום לב בביצוע החוזה","ע\"א 8068/11","עיני נ' שיפריס"],["1116","תוכן החוזה › תום לב בביצוע החוזה","ע\"א 8422/17","מדינת ישראל – משרד התחבורה נ' המועצה הלאומית למניעת תאונות דרכים"],["1116","תוכן החוזה › תום לב בביצוע החוזה","ע\"א 8336/17","מיכאל ראובן נ' סופר-דוש בע\"מ"],["1116","תוכן החוזה › תום לב בביצוע החוזה","בע\"מ 57929-12-24","פלונית נ' פלוני"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 450/82","מדינת ישראל נ' חירם לנדאו עבודות עפר כבישים ופתוח בע\"מ"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 5795/90","ד\"ר אנדור סקלי נ' דורען בע\"מ"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 4628/93","מדינת ישראל נ' אפרופים שיכון ויזום"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","דנ\"א 2045/05","ארגון מגדלי ירקות – אגודה חקלאית שיתופית בע\"מ נ' מדינת ישראל"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","רע\"א 3961/10","המוסד לביטוח לאומי נ' סהר חברה לתביעות בע\"מ"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 3894/11","דלק – חברת הדלק הישראלית בע\"מ נ' ניר בן שלום"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 453/11","מ.ש. מוצרי אלומיניום בע\"מ נ' אריה חברה לביטוח"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 8763/15","יואל זיו נ' גספא הנדסה בע\"מ"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 7649/18","ביבי כבישים עפר ופיתוח בע\"מ נ' רכבת ישראל בע\"מ"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","רע\"א 8160/20","Google LLC נ' דורון אשל"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 4690/20","אריה פיסחוב נ' גיל ישראלי"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","עע\"מ 1122/22","מדינת ישראל – רשות מקרקעי ישראל נ' סאב ניהול יזמות והשקעות בע\"מ"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 3999/22","ברק ברנשטיין השקעות בע\"מ נ' מקס איט פיננסים בע\"מ"],["1116","תוכן החוזה › פרשנות והשלמה של חוזה","ע\"א 839/21","חיה הקר נ' חברת קלמטיס אוברסיז בע\"מ"],["1116","תוכן החוזה › חופש החוזים כזכות יסוד ומגבלותיו","ע\"א 294/91","חברת קדישא גחש\"א \"קהילת ירושלים\" נ' קסטנבאום"],["1116","תוכן החוזה › חופש החוזים כזכות יסוד ומגבלותיו","ע\"א 6601/96","AES System Inc נ' סער"],["1116","תוכן החוזה › חופש החוזים כזכות יסוד ומגבלותיו","דנג\"ץ 4191/97","רקנט נ' בית הדין הארצי לעבודה"],["1116","תוכן החוזה › חוזה פסול","ע\"א 461/62","צים חברת השיט הישראלית בע\"מ נ' מזיאר"],["1116","תוכן החוזה › חוזה פסול","ע\"א 285/73","לגיל טרמפולין וציוד ספורט ישראל בע\"מ נ' נחמיאס"],["1116","תוכן החוזה › חוזה פסול","ע\"א 6705/04","בית הרכב בע\"מ נ' עיריית ירושלים"],["1116","תוכן החוזה › חוזה פסול","ע\"א 6667/10","גלית הלוי בר טנדלר נ' קוזניצקי"],["1116","תוכן החוזה › חוזה פסול","ע\"א 3388/12","נהרות משלחות רפטינג בע\"מ נ' עזבון המנוח שלמה חרובי ז\"ל"],["1116","תוכן החוזה › חוזה פסול","ע\"א 3613/13","חילו נ' בדארנה"],["1116","תוכן החוזה › חוזה פסול","ע\"א 8661/12","מ. מזוז"],["1116","תוכן החוזה › חוזה פסול","ע\"א 8222/19","פרץ חנניה נ' קווליטי קרדיט פאנד"],["1116","תוכן החוזה › חוזה פסול","ע\"א 4183/20","דינה יציב ו-99 אח' נ' הועדה המקומית לתכנון ובניה \"גני תקוה\""],["1116","תוכן החוזה › חוזה פסול","ע\"א 1770/21","חצרוני נ' Facebook"],["1116","תוכן החוזה › חוזה פסול","","Patel v Mirza"],["1116","תוכן החוזה › חוזים אחידים","רע\"א 1185/97","יורשי ומנהלי עיזבון המנוחה מילגרום הינדה ז\"ל נ' מרכז משען"],["1116","תוכן החוזה › חוזים אחידים","רע\"א 5860/16","Facebook Inc נ' אוהד בן חמו"],["1116","תוכן החוזה › חוזים אחידים","רע\"א 1901/20","טרוים מילר בע\"מ נ' Facebook Ireland Limited"],["1116","תוכן החוזה › תנאי מתלה ותנאי מפסיק","ע\"א 1156/10","אפרת האס נ' חברת הבונים בקרית משה בע\"מ"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","ע\"א 8389/17","דניאל אלכס א.ש. אחזקות בע\"מ נ' לקסל אסטבלישמנט"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","ע\"א 1546/16","עפו סעיד ביסאן נ' מדינת ישראל – רשות הפיתוח וקק\"ל"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","ע\"א 253/83","חושי נ' הטכניון"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","ע\"א 149/74","פריגן נ' גורדון"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","ע\"א 5027/90","מילשטיין נ' אקוה"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","ע\"א 5757/97","אליהו, חברה לביטוח בע\"מ נ' חמאדה"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","רע\"א 6493/21","שמואל לגזיאל נ' אר אס דיזיין בע\"מ"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","רע\"א 4933/22","שלמה ביטון נ' בונייך בנייה פתוח והשקעות בע\"מ"],["1116","תוכן החוזה › חיוב השתדלות וחיוב תוצאה","ע\"א 8316/21","אדלטק החזקות"],["1116","תרופות בשל הפרת חוזה › בין מצג להתחייבות","ע\"א 6271/95","אדוניה אשר נ' פרוייקט גן העיר"],["1116","תרופות בשל הפרת חוזה › בין מצג להתחייבות","ע\"א 5888/08","אלרומלי נ' החברה הכלכלית לפיתוח"],["1116","תרופות בשל הפרת חוזה › בין מצג להתחייבות","ע\"א 3666/90","עירית נתניה נ' מלון צוקים בע\"מ"],["1116","תרופות בשל הפרת חוזה › בין מצג להתחייבות","ד\"נ 20/82","אדרס חמרי בנין בע\"מ נ' הרלו את ג'ונס ג.מ.ב.ה."],["1116","תרופות בשל הפרת חוזה › בין מצג להתחייבות","ע\"א 1846/92","לוי נ' מבט בניה בע\"מ"],["1116","תרופות בשל הפרת חוזה › בין מצג להתחייבות","ע\"א 8850/10","שיר משכנות ותיקים בע\"מ נ' הליגה למניעת מחלות ריאה תל אביב"],["1116","תרופות בשל הפרת חוזה › התנאה על תרופות","ע\"א 2454/98","לינדאור נ' רינגל"],["1116","תרופות בשל הפרת חוזה › התנאה על תרופות","ע\"א 156/82","ליפקין נ' דור הזהב בע\"מ"],["1116","תרופות בשל הפרת חוזה › אכיפה","ד\"נ 21/80","ורטהיימר נ' הררי"],["1116","תרופות בשל הפרת חוזה › אכיפה","ע\"א 580/10","ניר שיתופי – אגודה ארצית שיתופית להתיישבות עובדים נ' עיריית הוד השרון"],["1116","תרופות בשל הפרת חוזה › אכיפה","ע\"א 846/75","עוניסון – חברה לבנין בע\"מ נ' דויטש"],["1116","תרופות בשל הפרת חוזה › אכיפה","ע\"א 2686/99","אייזמן נ' קדמת עדן בע\"מ"],["1116","תרופות בשל הפרת חוזה › אכיפה","ע\"א 108/84","סתם נ' אברהם מרקוביץ' – חברה לבנין ולהשקעות בע\"מ"],["1116","תרופות בשל הפרת חוזה › אכיפה","בג\"ץ 1719/11","ניסן פונדקי נ' בית הדין האזורי לעבודה בתל אביב"],["1116","תרופות בשל הפרת חוזה › אכיפה","ע\"א 5131/10","אזימוב נ' בנימיני"],["1116","תרופות בשל הפרת חוזה › אכיפה","בע\"מ 1533/13","פלוני נ' פלונית"],["1116","תרופות בשל הפרת חוזה › אכיפה","ע\"א 7259/15","רפאל לביא נ' אורקי בניה שירותים והשקעות בע\"מ"],["1116","תרופות בשל הפרת חוזה › ביטול חוזה והשבה","ד\"נ 44/75","ביטון נ' פרץ"],["1116","תרופות בשל הפרת חוזה › ביטול חוזה והשבה","ע\"א 3940/94","שמואל רונן חברה לבנין ופיתוח בע\"מ נ' ס.ע.ל.ר חברה לבנין בע\"מ"],["1116","תרופות בשל הפרת חוזה › ביטול חוזה והשבה","ע\"א 158/80","שלום נ' מוטה"],["1116","תרופות בשל הפרת חוזה › ביטול חוזה והשבה","רע\"א 7956/99","שיכון ופיתוח לישראל בע\"מ נ' עיריית מעלה אדומים"],["1116","תרופות בשל הפרת חוזה › ביטול חוזה והשבה","ע\"א 3694/99","ארדמן נ' חברת פרוייקט אורנים בע\"מ"],["1116","תרופות בשל הפרת חוזה › ביטול חוזה והשבה","ע\"א 6275/23","ג'ייקובס נ' עמר"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 355/80","נתן אניסימוב בע\"מ נ' מלון טירת בת שבע בע\"מ"],["1116","תרופות בשל הפרת חוזה › פיצויים","רע\"א 2371/01","אינשטיין נ' אוסי תכנון והקמת מבנים ופיתוח בע\"מ"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 3437/93","אגד אגודה שיתופית לתחבורה בישראל בע\"מ נ' אדלר"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 4162/02","רנדור בע\"מ נ' דרור מהנדסים"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 8556/96","לוביאניקר נ' משרד האוצר"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 2161/11","דרור נ' פרץ"],["1116","תרופות בשל הפרת חוזה › פיצויים","רע\"א 1584/13","אלגריסי גרופ בע\"מ נ' קפוא זן תעשיות מזון בע\"מ"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 2080/09","אחים שרבט חברה לבנין בע\"מ נ' מדינת ישראל – משרד הבינוי והשיכון"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 7731/11","צוריאל אגודה שיתופית להתיישבות חקלאית בע\"מ נ' אביטן"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 517/12","בן דוד אוחיון נ' גולדפינגר"],["1116","תרופות בשל הפרת חוזה › פיצויים","ת\"א 367/98","היימן ש.י.י. חברה להשקעות ופיתוח בע\"מ נ' דלק חברת הדלק הישראלית בע\"מ"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 1229/97","איי.אמ.איי – שיווק והשקעות בינלאומיים בע\"מ נ' ע.ר.מ. רעננה לבנייה והשכרה בע\"מ"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 11173/02","אלוניאל בע\"מ נ' זאב בר בניין ופיתוח"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 345/89","דברת נ' נהול והשקעות בע\"מ"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 4630/04","קניונים נכסים ובנין בע\"מ נ' בני יעקב נדל\"ן בע\"מ"],["1116","תרופות בשל הפרת חוזה › פיצויים","רע\"א 10239/07","טלכור ספקי כח בע\"מ נ' אמיתי תק-על"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 8506/13","זאבי תקשורת אחזקות בע\"מ נ' בנק הפועלים ואח'"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 4232/13","אנגלו סכסון סוכנות לנכסים בע\"מ נ' אלי בלום"],["1116","תרופות בשל הפרת חוזה › פיצויים","רע\"א 3501/21","נצר נ' קונפינו"],["1116","תרופות בשל הפרת חוזה › פיצויים","","Hadley v Baxendale"],["1116","תרופות בשל הפרת חוזה › פיצויים","ע\"א 1094/23","הרמן קופר נ' רשות מקרקעי ישראל"],["1116","תרופות בשל הפרת חוזה › התעשרות מהפרת חוזה","ע\"א 588/87","כהן נ' שמש"],["1116","תרופות בשל הפרת חוזה › התעשרות מהפרת חוזה","ע\"א 8728/07","אגריפרם אינטרנשיונל בע\"מ נ' שמואל מאירסון"],["1116","תרופות בשל הפרת חוזה › התעשרות מהפרת חוזה","","Attorney General v Blake"],["1116","תרופות בשל הפרת חוזה › הפרה צפויה","ע\"א 195/85","בנק איגוד לישראל בע\"מ נ' סוראקי"],["1116","תרופות בשל הפרת חוזה › הפרה צפויה","ע\"א 874/13","שד-של בילדינג אנד אינבסטמנט בע\"מ נ' מירון ואח'"],["1116","תרופות בשל הפרת חוזה › דחיית קיום","ע\"א 7938/08, ע\"א 283/09","מונסנגו נ' מכביאן"],["1116","תרופות בשל הפרת חוזה › דחיית קיום","ע\"א 765/82","משה אלתר נ' יחזקאל אלעני"],["1116","תרופות בשל הפרת חוזה › דחיית קיום","ע\"א 1632/98","ארבוס נ' רובינשטיין"],["1116","תרופות בשל הפרת חוזה › דחיית קיום","ע\"א 2568/98","פטר נ' חממי"],["1116","תרופות בשל הפרת חוזה › דחיית קיום","ע\"א 3967/21","פרץ נ' שלום"],["1116","תרופות בשל הפרת חוזה › סיכול","ע\"א 715/78","כץ נ' ניצחוני מזרחי בע\"מ"],["1116","תרופות בשל הפרת חוזה › סיכול","ע\"א 6328/97","רגב נ' משרד הבטחון"],["1116","תרופות בשל הפרת חוזה › סיכול","ע\"א 5628/99","מרקין נ' שרה משה"],["1116","תרופות בשל הפרת חוזה › סיכול","ת\"א 46210-07-18","מירב רחל נ' כונס נכסים רשמי תל אביב"],["1116","תרופות בשל הפרת חוזה › סיכול","ע\"א 3234/14","אם דבליו היי טק פרוג'קטס ישראל בע\"מ נ' י.ל גג הנגב בע\"מ"],["1136","רשימת הפסיקה בסילבוס","ע\"פ 213/56","היועץ המשפטי לממשלה נ' אלכסנדרוביץ"],["1136","רשימת הפסיקה בסילבוס","ע\"פ 196/64","היועץ המשפטי לממשלה נ' בש"],["1136","רשימת הפסיקה בסילבוס","ע\"פ 64/77","ברנבלט נ' היועץ המשפטי לממשלה"],["1136","רשימת הפסיקה בסילבוס","ע\"פ 787/79","מזרחי נ' מדינת ישראל"],["1136","רשימת הפסיקה בסילבוס","ע\"א 546/78","בנק קופת עם נ' הנדלס"],["1136","רשימת הפסיקה בסילבוס","ד\"נ 13/80","הנדלס נ' בנק קופת עם"],["1136","רשימת הפסיקה בסילבוס","ד\"נ 40/80","קניג נ' כהן"],["1136","רשימת הפסיקה בסילבוס","רע\"א 8548/96","פדידה נ' סהר"],["1136","רשימת הפסיקה בסילבוס","ת\"פ (מקומיים י-ם) 4726/07","מדינת ישראל נ' טרמינל טווינטי וואן בע\"מ"],["8445","רשימת חומרי הקריאה › פסיקה","ע\"פ 281/69","בר שלום נ' מדינת ישראל"],["8445","רשימת חומרי הקריאה › פסיקה","ע\"פ 194/75","קינזי נ' מדינת ישראל"],["8445","רשימת חומרי הקריאה › פסיקה","בג\"ץ 11339/05","מדינת ישראל נ' בית המשפט המחוזי באר שבע"],["8445","רשימת חומרי הקריאה › פסיקה","רע\"א 4984/17","חיים נ' נציגות הבית המשותף סוקולוב 48 קרית אתא"],["8445","רשימת חומרי הקריאה › פסיקה","בש\"פ 977/19","מדינת ישראל נ' אבו כף"],["8445","רשימת חומרי הקריאה › פסיקה","רע\"פ 10141/09","בן חיים נ' מדינת ישראל"],["8445","רשימת חומרי הקריאה › פסיקה","ת\"א (שלום ת\"א) 35096-07-18","רוסו נ' שגב אקספרס"],["8445","רשימת חומרי הקריאה › פסיקה","ת\"א (שלום ת\"א) 2320-04-19","שמחי נ' אגד תעבורה"],["8445","רשימת חומרי הקריאה › פסיקה","דב\"ע (ארצי) מח/2-3","אורי גנני נ' \"אמירים\" – מושב עובדים של צמחונים וטבעונים להתיישבות חקלאית שיתופית בע\"מ"]];
+const EXAMPLE_CASES=ONO.cases.map(c=>c[0]);
+function sylCases(){const n={};return SYL.map(([code,topic,cite,name])=>{n[code]=(n[code]||0)+1;return {id:"syl-"+code+"-"+n[code],name,num:cite,area:topic,summary:"",courseId:"ono-c-"+code,syl:true,read:false}})}
+function mergeSylCases(old){const prev={};(old||[]).forEach(c=>{if(c.syl)prev[c.id]=c});const fresh=sylCases().map(c=>{const q=prev[c.id];if(q){c.read=!!q.read;c.summary=q.summary||""}return c});const mine=(old||[]).filter(c=>!c.syl&&!EXAMPLE_CASES.includes(c.name));return fresh.concat(mine)}
+function starter(){
+  const toSlots=c=>c.sessions.map(x=>{const m=x.when.match(/יום (\S+) (\d\d:\d\d)–(\d\d:\d\d)/);return m?{day:String(HEB_D.indexOf(m[1])),start:m[2],end:m[3],kind:x.kind,room:x.place,who:x.who}:null}).filter(Boolean);
+  const courses=ONO.courses.map((c,i)=>({id:c.id,code:c.code,name:c.name,type:c.type,sem:c.sem,credits:c.credits,lecturer:c.lecturer,grade:"",color:COLORS[i%COLORS.length],slots:toSlots(c),meets:c.meets,online:c.sessions.filter(x=>!/^יום/.test(x.when)).map(x=>x.when).join(", "),ono:true}));
+  const byName=n=>(courses.find(c=>c.name===n)||{}).id||"";
+  const ev=(title,start,end,kind,src)=>({id:uid(),title,start,end:end||"",kind,src});
+  return {v:5,syncedAt:"2026-11-19",
+    profile:{name:"יהל",inst:"הקריה האקדמית אונו",degree:"LL.B",year:"א׳",total:ONO.profile.targetCredits,target:ONO.profile.avgGoal,campus:"LLB ערב · קמפוס ירושלים החדש"},
+    courses,
+    exams:ONO.exams.map(e=>({id:e.id,courseId:byName(e.course),moed:e.moed,date:e.date,time:e.time,place:/^ono-x-2271/.test(e.id)?"בחינה מקוונת/כללי · מיקום טרם נקבע":"בחינה פרונטלית בקמפוס · חדר טרם נקבע",ready:0,grade:""})),
+    tasks:ONO.tasks.map(t=>({id:t.id,title:t.title,courseId:byName(t.course),kind:t.kind,due:"",done:false,priority:"גבוהה",notes:""})),
+    sessions:[],goals:[],
+    cases:sylCases(),casesSrc:"syllabus-2026-11-19",
+    road:ONO.road.map(r=>({id:uid(),phase:r[0],t:r[1],d:r[2],done:false})),
+    weeklyGoal:15,
+    events:[
+      ev("פתיחת שנת הלימודים תשפ״ז","2026-11-08","","academic","אונו"),
+      ev("תחילת השיעורים בסמסטר א׳","2026-11-09","","academic","לפי מערכת השעות"),
+      ev("אירועי פתיחת שנה בקמפוס","2026-11-11","2026-11-19","academic","אונו"),
+      ev("חנוכה","2026-12-05","2026-12-12","holiday","לוח עברי"),
+      ev("סיום סמסטר א׳ (שיעור אחרון)","2027-01-28","","academic","לפי מערכת השעות"),
+      ev("תקופת בחינות סמסטר א׳ (מועדי א׳)","2027-01-26","2027-03-01","exam","לוח הבחינות בידיעון"),
+      ev("תחילת סמסטר ב׳","2027-03-08","","academic","לפי מערכת השעות"),
+      ev("פורים","2027-03-23","","holiday","לוח עברי"),
+      ev("פסח · אין שיעורים","2027-04-18","2027-04-28","holiday","לוח עברי ומערכת השעות"),
+      ev("יום השואה","2027-05-04","","holiday","לוח עברי"),
+      ev("יום הזיכרון","2027-05-11","","holiday","לוח עברי"),
+      ev("יום העצמאות","2027-05-12","","holiday","לוח עברי"),
+      ev("שבועות","2027-06-11","","holiday","לוח עברי"),
+      ev("סיום סמסטר ב׳ (שיעור אחרון)","2027-06-14","","academic","לפי מערכת השעות"),
+      ev("סמסטר קיץ","2027-07-19","2027-09-30","academic","לפי מערכת השעות"),
+      ev("תשעה באב","2027-08-12","","holiday","לוח עברי")
+    ],
+    timer:null, updated:Date.now()};
+}
+const DROP_COURSES=["ono-c-1275"];
+function dropCourses(o){const bad=new Set((o.courses||[]).filter(c=>DROP_COURSES.includes(c.id)||/מחוי?יבות קהילתית/.test(c.name||"")).map(c=>c.id));DROP_COURSES.forEach(x=>bad.add(x));
+  o.courses=(o.courses||[]).filter(c=>!bad.has(c.id));["exams","tasks","cases","sessions"].forEach(k=>{if(Array.isArray(o[k]))o[k]=o[k].filter(x=>!bad.has(x.courseId))});return o}
+function migrate(o){
+  if(o&&o.v>=5)return o;
+  if(o&&o.v===4){dropCourses(o);o.v=5;o.updated=Date.now();return o}
+  if(o&&o.v===3){o.cases=mergeSylCases(o.cases);o.casesSrc="syllabus-2026-11-19";dropCourses(o);o.v=5;o.updated=Date.now();return o}
+  const n=starter();
+  if(o){n.sessions=o.sessions||[];n.goals=o.goals||[];n.weeklyGoal=o.weeklyGoal||15;n.timer=o.timer||null;if(o.profile&&o.profile.name)n.profile.name=o.profile.name;
+    if(o.v===2){
+      const rd={};(o.road||[]).forEach(r=>{if(r.done)rd[r.t]=1});n.road.forEach(r=>{if(rd[r.t])r.done=true});(o.road||[]).forEach(r=>{if(!n.road.some(x=>x.t===r.t))n.road.push(r)});
+      const ex={};(o.exams||[]).forEach(e=>ex[e.id]=e);n.exams.forEach(e=>{const q=ex[e.id];if(q){e.ready=q.ready||0;e.grade=q.grade||""}});
+      (o.exams||[]).forEach(e=>{if(!/^ono-/.test(e.id))n.exams.push(e)});
+      (o.tasks||[]).forEach(t=>{const m=n.tasks.find(x=>x.id===t.id);if(m)m.done=t.done;else n.tasks.push(t)});
+      (o.cases||[]).forEach(c=>{if(!c.syl&&!EXAMPLE_CASES.includes(c.name)&&!n.cases.some(x=>x.name===c.name))n.cases.push(c)});
+      (o.events||[]).forEach(e=>{if(e.kind==="personal")n.events.push(e)});
+      (o.courses||[]).forEach(c=>{const m=n.courses.find(x=>x.id===c.id);if(m){if(c.grade)m.grade=c.grade;m.color=c.color||m.color}else if(!/^ono-/.test(c.id))n.courses.push(c)});
+    }}
+  dropCourses(n);n.updated=Date.now();return n;
+}
+
+/* ---------- storage: account db (private per user) with browser fallback ---------- */
+const LS="yoman-law-v1";
+let S=null, dbDoc=null, saving=false, pendingSave=false, saveT=null;
+try{S=JSON.parse(localStorage.getItem(LS)||"null")}catch(e){}
+S=migrate(S&&S.v?S:null);
+function setSync(on,txt){const el=$("#sync");el.textContent=txt;el.classList.toggle("on",on);$("#syncNote").textContent=on?"היומן נשמר בחשבון Claude שלך ונגיש מכל מכשיר שבו את מחוברת. רק את רואה את הנתונים. מומלץ גם להעתיק גיבוי מדי פעם.":"היומן נשמר בדפדפן הזה בלבד. העתיקי גיבוי מדי פעם כדי לא לאבד נתונים."}
+function save(){
+  S.updated=Date.now();
+  try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}
+  if(!dbDoc)return;
+  clearTimeout(saveT);saveT=setTimeout(flush,700);
+}
+async function flush(){
+  if(saving){pendingSave=true;return}
+  saving=true;
+  try{await dbDoc.set({s:JSON.parse(JSON.stringify(S))});setSync(true,"מסונכרן לחשבון ✓")}
+  catch(e){setSync(false,"שמור בדפדפן בלבד")}
+  saving=false;
+  if(pendingSave){pendingSave=false;flush()}
+}
+async function connect(){
+  if(!window.claude||!window.claude.use)return;
+  try{
+    const [user,db]=await Promise.all([window.claude.use("user"),window.claude.use("db")]);
+    if(!user||!db)return;
+    const id=await user.id(); if(!id)return;
+    const ref=db.doc("data/users/"+id+"/planner");
+    setSync(false,"מתחבר…");
+    const snap=await Promise.race([ref.get(),new Promise((_,r)=>setTimeout(()=>r(new Error("timeout")),10000))]);
+    dbDoc=ref;
+    if(snap.exists&&snap.data()&&snap.data().s){
+      const raw=snap.data().s,remote=migrate(raw);
+      if(raw.v<5){S=remote;render();flush()}
+      else if(!S.updated||remote.updated>=S.updated||!localStorage.getItem(LS)){S=remote;render()}
+      else flush();
+    } else flush();
+    setSync(true,"מסונכרן לחשבון ✓");
+  }catch(e){setSync(false,"שמור בדפדפן בלבד")}
+}
+
+/* ---------- helpers ---------- */
+const course=id=>S.courses.find(c=>c.id===id);
+const cName=id=>(course(id)||{}).name||"כללי";
+const cColor=id=>(course(id)||{}).color||"#A7A1D6";
+function whenChip(date){
+  if(!date)return '<span class="when">ללא תאריך</span>';
+  const n=dayDiff(date);let cls=n<0?"past":n<=3?"soon":n<=10?"mid":"";
+  const t=n===0?"היום":n===1?"מחר":n<0?"עבר":"עוד "+n+" ימים";
+  return `<span class="when ${cls}">${fmt(date)} · ${t}</span>`;
+}
+function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("on"),2200)}
+function countUp(el,to,dec){
+  if(to===null||isNaN(to)){el.textContent="—";return}
+  if(reduced){el.textContent=dec?to.toFixed(dec):Math.round(to);return}
+  const from=0,t0=performance.now(),dur=900;
+  (function f(t){const p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3),v=from+(to-from)*e;el.textContent=dec?v.toFixed(dec):Math.round(v);if(p<1)requestAnimationFrame(f)})(t0);
+}
+function ring(el,pct,label){el.style.setProperty("--p",Math.max(0,Math.min(100,pct)));el.querySelector("span").textContent=label??Math.round(pct)+"%"}
+function courseGrade(c){if(c.grade!==""&&c.grade!=null&&!isNaN(parseFloat(c.grade)))return parseFloat(c.grade);const g=S.exams.filter(e=>e.courseId===c.id&&e.grade!==""&&e.grade!=null&&!isNaN(parseFloat(e.grade))).sort((a,b)=>(a.date||"").localeCompare(b.date||""));return g.length?parseFloat(g[g.length-1].grade):NaN}
+function weightedAvg(){let w=0,s=0;S.courses.forEach(c=>{const g=courseGrade(c),k=parseFloat(c.credits)||1;if(!isNaN(g)){s+=g*k;w+=k}});return w?s/w:null}
+function hoursSince(days){const d0=today();d0.setDate(d0.getDate()-days);return S.sessions.filter(x=>parse(x.date)>=d0).reduce((a,x)=>a+x.min,0)/60}
+function weekHours(){const d=today();d.setDate(d.getDate()-d.getDay());return S.sessions.filter(x=>parse(x.date)>=d).reduce((a,x)=>a+x.min,0)/60}
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+
+/* all dated items, for calendar & upcoming */
+function allItems(){
+  const out=[];
+  S.exams.forEach(e=>out.push({date:e.date,end:"",title:cName(e.courseId)+" · מועד "+e.moed,kind:"exam",ref:["exam",e.id],color:"var(--coral)",done:!!e.done}));
+  S.tasks.forEach(t=>t.due&&out.push({date:t.due,end:"",title:t.title,kind:"task",done:t.done,ref:["task",t.id],color:"var(--gold)"}));
+  S.events.forEach(e=>out.push({date:e.start,end:e.end,title:e.title,kind:e.kind,ref:["event",e.id],color:{academic:"var(--teal)",holiday:"var(--lime)",exam:"var(--coral)",personal:"var(--pink)"}[e.kind]||"var(--pink)"}));
+  return out;
+}
+function onDay(it,ds){return it.end?(it.date<=ds&&ds<=it.end):it.date===ds}
+
+/* ---------- render ---------- */
+const charts={};
+function render(){
+  const p=S.profile;
+  $("#brandName").textContent="היומן של "+(p.name||"שלי");
+  $("#brandSub").textContent=`${p.degree} · שנה ${p.year} · ${p.inst}${S.syncedAt?" · עודכן מהידיעון "+fmt(S.syncedAt):""}`;
+  renderDash();renderCal();renderWeek();renderCourses();renderExams();renderTasks();renderStudy();renderGoals();renderCases();renderLinks();renderProfile();
+}
+function renderDash(){
+  const p=S.profile;
+  const t0=iso(today());
+  const next=S.exams.filter(e=>!e.done&&e.date&&e.date>=t0).sort((a,b)=>(a.date+(a.time||"")).localeCompare(b.date+(b.time||"")))[0];
+  if(next){
+    $("#heroTag").textContent="הבחינה הבאה · מועד "+next.moed;
+    $("#heroTitle").textContent=cName(next.courseId);
+    $("#heroSub").textContent=`${HEB_D[parse(next.date).getDay()]}, ${fmt(next.date)}${next.time?" · "+next.time:""}${next.place?" · "+next.place:""}`;
+    heroTarget=new Date(next.date+"T"+(next.time||"09:00"));
+  } else {
+    $("#heroTag").textContent="הבחינה הבאה";$("#heroTitle").textContent="אין עדיין בחינות ביומן";
+    $("#heroSub").textContent="הוסיפי את לוח הבחינות מהידיעון והספירה לאחור תתחיל כאן.";heroTarget=null;
+  }
+  tickHero();
+  // today
+  const d=today(),ds=iso(d),dow=d.getDay();
+  $("#todayTitle").textContent="היום · יום "+HEB_D[dow]+" "+fmt(ds);
+  const lines=[];
+  lessonsOn(ds).forEach(l=>lines.push([l.start,`⁦${l.start}–${l.end}⁩ · ${l.c.name} · ${l.kind}${l.who?" · "+l.who:""}${l.room?" · "+l.room:""}`]));
+  allItems().filter(i=>onDay(i,ds)&&!i.done).forEach(i=>lines.push(["99",i.title]));
+  lines.sort((a,b)=>a[0].localeCompare(b[0]));
+  $("#todayList").innerHTML=lines.length?lines.map(l=>`<li>• ${esc(l[1])}</li>`).join(""):"<li>אין שיעורים או הגשות היום.</li>";
+  // stats
+  const open=S.tasks.filter(t=>!t.done).length, done=S.tasks.length-open;
+  countUp($('[data-count="sOpen"]'),open);
+  $("#sOpenBar").style.width=(S.tasks.length?done/S.tasks.length*100:0)+"%";
+  const semEnd=S.events.find(e=>/סיום סמסטר/.test(e.title)&&e.start>=ds);
+  const semStart=S.events.find(e=>/פתיחת שנת/.test(e.title));
+  const left=semEnd?dayDiff(semEnd.start):null;
+  countUp($('[data-count="sWeek"]'),left);
+  if(semEnd&&semStart){const tot=(parse(semEnd.start)-parse(semStart.start))/864e5;$("#sSemBar").style.width=Math.max(0,Math.min(100,(1-left/tot)*100))+"%"}
+  const cred=S.courses.reduce((a,c)=>a+(parseFloat(c.credits)||0),0);
+  countUp($('[data-count="sCredits"]'),cred,cred%1?1:0);
+  $("#sCreditsLbl").textContent=p.total?`נ״ז מתוך ${p.total} לתואר`:"נ״ז בקורסים שלי";
+  $("#sCredBar").style.width=(p.total?Math.min(100,cred/p.total*100):0)+"%";
+  const avg=weightedAvg();
+  countUp($('[data-count="sAvg"]'),avg,1);
+  $("#sAvgLbl").textContent="ממוצע משוקלל"+(p.target?" · יעד "+p.target:"");
+  $("#sAvgBar").style.width=(avg?avg:0)+"%";
+  // upcoming
+  const lim=new Date(today());lim.setDate(lim.getDate()+21);const lims=iso(lim);
+  const up=allItems().filter(i=>!i.done&&((i.end||i.date)>=ds)&&i.date<=lims).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,9);
+  const KL={exam:"בחינה",task:"הגשה",academic:"אקדמי",holiday:"חג",personal:"אישי"};
+  $("#upcoming").innerHTML=up.length?up.map(i=>`<div class="item" data-open="${i.ref[0]}:${i.ref[1]}" style="cursor:pointer"><span class="dot" style="background:${i.color}"></span><div class="t"><b>${esc(i.title)}</b><small>${KL[i.kind]||""}</small></div>${whenChip(i.date<ds?ds:i.date)}</div>`).join(""):`<div class="empty"><b>שקט בשלושת השבועות הקרובים</b>הוסיפי מטלות ובחינות והן יופיעו כאן לפי סדר.</div>`;
+  // rings
+  ring($("#rTasks"),S.tasks.length?done/S.tasks.length*100:0);$("#rTasksN").textContent=done+" מתוך "+S.tasks.length;
+  const fut=S.exams.filter(e=>!e.date||e.date>=ds);
+
+
+  drawCharts();renderCredRows();
+}
+let heroTarget=null;
+function tickHero(){
+  const box=$("#heroCount");
+  if(!heroTarget){box.innerHTML="";box.dataset.d="";return}
+  const t=new Date(heroTarget);t.setHours(0,0,0,0);const n=new Date();n.setHours(0,0,0,0);
+  const d=Math.max(0,Math.round((t-n)/864e5));
+  if(box.dataset.d===String(d)&&box.firstChild)return;box.dataset.d=d;
+  box.innerHTML=`<div class="days"><b class="bounce">${reduced?d:0}</b><small>${d===0?"הבחינה היום":d===1?"יום לבחינה":"ימים לבחינה"}</small></div>`;
+  if(!reduced){const b=box.querySelector("b"),t0=performance.now(),D=1100;const step=n=>{const k=Math.min(1,(n-t0)/D),e=1-Math.pow(1-k,3);b.textContent=Math.round(d*e);if(k<1)requestAnimationFrame(step);else{b.classList.add("hop")}};requestAnimationFrame(step)}
+}
+setInterval(()=>{if($("#v-dashboard").classList.contains("on"))tickHero()},60000);
+
+function drawCharts(){
+  if(!window.Chart)return;
+  const fg=css("--muted"),grid=css("--line");
+  Chart.defaults.font.family=getComputedStyle(document.body).fontFamily;
+  Chart.defaults.color=fg;
+  const base={responsive:true,maintainAspectRatio:false,animation:reduced?false:{duration:900,easing:"easeOutQuart"},plugins:{legend:{display:false}}};
+  const mk=(id,cfg)=>{if(charts[id])charts[id].destroy();charts[id]=new Chart(document.getElementById(id),cfg)};
+  // credits per course
+  const cc=S.courses.filter(c=>parseFloat(c.credits)>0);
+  const SEMC={"א׳":["#00F0FF","#0077FF"],"ב׳":["#FF3DF5","#7B2CFF"],"שנתי":["#FFE14D","#FF7A00"],"קיץ":["#7CFF6B","#00B894"]};
+  const semOf=c=>SEMC[c.sem]?c.sem:"א׳";
+  const grad=(ctx,c)=>{const a=ctx.chart.chartArea;if(!a)return SEMC[semOf(c)][0];const g=ctx.chart.ctx.createLinearGradient(a.right,0,a.left,0);g.addColorStop(0,SEMC[semOf(c)][1]);g.addColorStop(1,SEMC[semOf(c)][0]);return g};
+  const valLbl={id:"valLbl",afterDatasetsDraw(ch){const {ctx}=ch;ctx.save();ctx.font="700 12px "+getComputedStyle(document.body).fontFamily;ctx.fillStyle=css("--fg");ctx.textBaseline="middle";ctx.textAlign="left";ch.getDatasetMeta(0).data.forEach((b,i)=>ctx.fillText(String(cc[i].credits),b.x+6,b.y));ctx.restore()}};
+  const sems=[...new Set(cc.map(semOf))];
+  mk("chCredits",{type:"bar",plugins:[valLbl],data:{labels:cc.map(c=>c.name.length>22?c.name.slice(0,21)+"…":c.name),datasets:[{data:cc.map(c=>+c.credits),backgroundColor:x=>grad(x,cc[x.dataIndex]),borderColor:cc.map(c=>SEMC[semOf(c)][0]),borderWidth:{right:0,left:3,top:0,bottom:0},borderSkipped:false,borderRadius:0,barPercentage:.72,categoryPercentage:.9}]},options:{...base,indexAxis:"y",layout:{padding:{right:24}},plugins:{legend:{display:true,position:"bottom",labels:{boxWidth:12,boxHeight:12,font:{size:11},generateLabels:()=>sems.map(k=>({text:"סמסטר "+k,fillStyle:SEMC[k][0],strokeStyle:SEMC[k][0],lineWidth:0,fontColor:fg}))},onClick:null},tooltip:{callbacks:{label:x=>x.raw+" נ״ז · סמסטר "+cc[x.dataIndex].sem}}},scales:{x:{beginAtZero:true,ticks:{precision:0,stepSize:1},grid:{color:grid},border:{display:false},title:{display:true,text:"נ״ז"}},y:{grid:{display:false},border:{color:grid},ticks:{font:{size:11},color:css("--fg")}}}}});
+}
+function renderCredRows(){
+  const ds=iso(today());const sems=["א׳","ב׳","קיץ","שנתי"];
+  const rows=[...S.courses].sort((a,b)=>sems.indexOf(a.sem)-sems.indexOf(b.sem));
+  let tot=0;
+  const h=rows.map(c=>{tot+=parseFloat(c.credits)||0;const ex=S.exams.filter(e=>e.courseId===c.id);const nx=ex.filter(e=>!e.done&&e.date>=ds).sort((a,b)=>a.date.localeCompare(b.date))[0];const open=S.tasks.filter(t=>t.courseId===c.id&&!t.done);
+    return `<tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${c.color};margin-inline-end:8px"></span><b>${esc(c.name)}</b></td><td>${c.sem==="שנתי"?"שנתי":esc(c.sem)}</td><td class="mono">${esc(c.credits)||"—"}</td><td>${nx?whenChip(nx.date)+" <small class='src'>מועד "+esc(nx.moed)+"</small>":"—"}</td><td class="mono">${ex.length}</td><td>${open.length?open.map(t=>`<div style="font-size:13px">• ${esc(t.title)}</div>`).join(""):"—"}</td><td class="mono">${isNaN(courseGrade(c))?"—":courseGrade(c)}</td></tr>`}).join("");
+  $("#credRows").innerHTML=h+`<tr><td><b>סה״כ</b></td><td></td><td class="mono"><b>${tot}</b>${S.profile.total?" מתוך "+S.profile.total:""}</td><td colspan="4"></td></tr>`;
+}
+
+/* calendar */
+let calM=(()=>{const d=today();return new Date(d.getFullYear(),d.getMonth(),1)})();
+function renderCal(){
+  $("#calTitle").textContent=HEB_M[calM.getMonth()]+" "+calM.getFullYear();
+  const start=new Date(calM);start.setDate(1-start.getDay());
+  const items=allItems(),ds0=iso(today());
+  let h=HEB_D.map(d=>`<div class="dn">${d}</div>`).join("");
+  for(let i=0;i<42;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);const ds=iso(d);
+    const evs=items.filter(it=>onDay(it,ds));
+    h+=`<div class="day${d.getMonth()!==calM.getMonth()?" out":""}${ds===ds0?" now":""}" data-day="${ds}" tabindex="0"><span class="d">${d.getDate()}</span>${evs.slice(0,3).map(e=>`<span class="ev" style="background:${e.color}${e.done?";opacity:.45":""}" data-open="${e.ref[0]}:${e.ref[1]}" title="${esc(e.title)}">${esc(e.title)}</span>`).join("")}${evs.length>3?`<span class="d">+${evs.length-3}</span>`:""}</div>`;
+    if(i===34&&d>=new Date(calM.getFullYear(),calM.getMonth()+1,0))break;
+  }
+  $("#cal").innerHTML=h;
+  const KL={academic:"אקדמי",holiday:"חג / חופשה",exam:"בחינות",personal:"אישי"};
+  const ev=[...S.events].sort((a,b)=>a.start.localeCompare(b.start));
+  $("#evList").innerHTML=ev.map(e=>`<div class="item" data-open="event:${e.id}" style="cursor:pointer"><span class="dot" style="background:${{academic:"var(--teal)",holiday:"var(--lime)",exam:"var(--coral)"}[e.kind]||"var(--pink)"}"></span><div class="t"><b>${esc(e.title)}</b><small>${KL[e.kind]||""}${e.src?" · "+esc(e.src):""}</small></div><span class="when${e.start<ds0&&(!e.end||e.end<ds0)?" past":""}">${fmt(e.start)}${e.end?" – "+fmt(e.end):""}</span></div>`).join("")||'<div class="empty"><b>אין אירועים</b></div>';
+}
+$("#calPrev").onclick=()=>{calM.setMonth(calM.getMonth()-1);renderCal()};
+$("#calNext").onclick=()=>{calM.setMonth(calM.getMonth()+1);renderCal()};
+$("#calToday").onclick=()=>{const d=today();calM=new Date(d.getFullYear(),d.getMonth(),1);renderCal()};
+
+/* weekly schedule */
+let semSel=(()=>{const t=iso(today());return t<"2027-02-07"?"א׳":t<"2027-07-01"?"ב׳":"קיץ"})();
+function lessonsOn(ds){
+  const key=ds.slice(2).replace(/-/g,""),out=[];
+  S.courses.forEach(c=>{
+    if(c.meets&&c.meets.length){c.meets.forEach(m=>{if(m.slice(0,6)!==key)return;const st=m.slice(6,8)+":"+m.slice(8,10),en=m.slice(10,12)+":"+m.slice(12,14),k=m.slice(15)==="T"?"תרגיל":"הרצאה";const dw=parse(ds).getDay();const sl=c.slots.find(x=>+x.day===dw&&x.start===st)||c.slots.find(x=>+x.day===dw)||{};const sk=c.slots.find(x=>x.kind===k&&x.who);out.push({c,start:st,end:en,kind:k,room:sl.room||"",who:sl.who||(sk&&sk.who)||c.lecturer||""})})}
+    else if(semActive(c.sem)){const dw=parse(ds).getDay();c.slots.forEach(x=>{if(+x.day===dw)out.push({c,start:x.start,end:x.end,kind:x.kind||"שיעור",room:x.room||"",who:x.who||c.lecturer||""})})}
+  });
+  return out.sort((a,b)=>a.start.localeCompare(b.start));
+}
+function semActive(sem){return sem==="שנתי"||sem===semSel||!sem}
+function renderWeek(){
+  $("#semFilter").innerHTML=["א׳","ב׳","קיץ"].map(s=>`<button type="button" class="${semSel===s?"on":""}" data-sem="${s}">סמסטר ${s}</button>`).join("");
+  const H0=8,H1=22,PX=44,days=[0,1,2,3,4,5],dow=new Date().getDay();
+  let h='<div class="h"></div>'+days.map(d=>`<div class="h">${HEB_D[d]}</div>`).join("");
+  h+='<div>'+Array.from({length:H1-H0},(_,i)=>`<div class="hr">${pad(H0+i)}:00</div>`).join("")+'</div>';
+  let any=false;
+  days.forEach(d=>{
+    let slots="";
+    S.courses.filter(c=>semActive(c.sem)).forEach(c=>c.slots.forEach((s,si)=>{if(+s.day!==d)return;any=true;
+      const toM=t=>{const[a,b]=(t||"0:0").split(":").map(Number);return a*60+b};
+      const top=(toM(s.start)-H0*60)/60*PX,ht=Math.max(28,(toM(s.end)-toM(s.start))/60*PX-3);
+      slots+=`<div class="slot" style="top:${top}px;height:${ht}px;background:${c.color}" data-slot="${c.id}:${si}">${esc(c.name)}<small>⁦${s.start}–${s.end}⁩${s.room?" · "+esc(s.room):""}${s.kind?" · "+esc(s.kind):""}</small></div>`}));
+    h+=`<div class="col${d===dow?" today":""}">${Array.from({length:H1-H0},()=>'<div class="ln"></div>').join("")}${slots}</div>`;
+  });
+  $("#week").innerHTML=h;
+  $("#weekAgenda").innerHTML=days.map(d=>{const L=[];S.courses.filter(c=>semActive(c.sem)).forEach(c=>c.slots.forEach((s,si)=>{if(+s.day===d)L.push({c,s,si})}));if(!L.length)return"";L.sort((a,b)=>a.s.start.localeCompare(b.s.start));
+    return `<div class="card agDay${d===dow?" today":""}"><h3>יום ${HEB_D[d]}${d===dow?' <span class="chip">היום</span>':""}</h3><div class="list">${L.map(({c,s,si})=>`<div class="item" data-slot="${c.id}:${si}" style="cursor:pointer;align-items:flex-start"><span class="dot" style="background:${c.color};margin-top:7px"></span><div class="t"><b>${esc(c.name)}</b><small>${esc(s.kind||"שיעור")}${s.who?" · "+esc(s.who):""}${s.room?" · "+esc(s.room):""}</small></div><span class="when mono">⁦${s.start}–${s.end}⁩</span></div>`).join("")}</div></div>`}).join("")||'<div class="empty"><b>אין שיעורים בסמסטר הזה</b></div>';
+  if(!any)$("#week").insertAdjacentHTML("afterend","");
+}
+$("#semFilter").addEventListener("click",e=>{const b=e.target.closest("[data-sem]");if(b){semSel=b.dataset.sem;renderWeek()}});
+
+/* courses */
+let cf="הכול";
+function renderCourses(){
+  const sems=["הכול","א׳","ב׳","שנתי","קיץ"];
+  $("#courseFilter").innerHTML=sems.map(s=>`<button type="button" class="${cf===s?"on":""}" data-cf="${s}">${s==="הכול"?"הכול":s==="שנתי"?"שנתי":"סמסטר "+s}</button>`).join("");
+  const list=S.courses.filter(c=>cf==="הכול"||c.sem===cf);
+  const tpl=S.courses.some(c=>c.ono);
+  $("#coursesNote").innerHTML=tpl?'<span class="notice" style="display:block">הקורסים, מערכת השעות והבחינות נלקחו מהידיעון שלך באונו (LL.B ערב, קמפוס ירושלים) ב־'+fmt(S.syncedAt||"2026-11-19")+'. כדי לעדכן, התחברי לידיעון בכרום ובקשי ממני ״תעדכן״.</span>':"הקורסים, נקודות הזכות, המרצים והציונים. ממוצע משוקלל מחושב אוטומטית מהציונים.";
+  $("#courseGrid").innerHTML=list.map(c=>{
+    const ex=S.exams.filter(e=>e.courseId===c.id),tk=S.tasks.filter(t=>t.courseId===c.id),open=tk.filter(t=>!t.done).length;
+    return `<div class="course" style="--cc:${c.color}"><div class="meta"><span class="chip">${esc(c.type||"")}</span><span class="chip">${c.sem==="שנתי"?"שנתי":"סמסטר "+esc(c.sem)}</span>${c.code?`<span class="chip mono">${esc(c.code)}</span>`:""}${c.ono?'<span class="chip" style="color:var(--teal)">ידיעון</span>':""}</div>
+    <h3>${esc(c.name)}</h3>
+    <div class="row"><span>מרצה</span><b style="font-family:var(--body)">${esc(c.lecturer)||"—"}</b></div>
+    <div class="row"><span>נ״ז</span><b>${esc(c.credits)||"—"}</b></div>
+    <div style="display:grid;gap:4px;margin:4px 0 6px">${c.slots.map(x=>`<div class="row"><span>${esc(x.kind||"שיעור")} · ${HEB_D[+x.day]} ⁦${x.start}–${x.end}⁩</span><b style="font-family:var(--body);font-weight:500">${esc(x.room||"")}</b></div>`).join("")}${c.online?`<div class="row"><span>${esc(c.online)}</span></div>`:""}${!c.slots.length&&!c.online?'<div class="row"><span>אין שיעורים קבועים</span></div>':""}</div>
+    <div class="row"><span>מטלות פתוחות</span><b>${open}</b></div>
+    <div class="row"><span>בחינות</span><b>${ex.length}</b></div>
+    <div class="row"><span>ציון</span><b>${esc(c.grade)||"—"}</b></div>
+    <div class="acts"><button type="button" data-addfor="slot:${c.id}">+ שיעור</button><button type="button" data-addfor="task:${c.id}">+ מטלה</button><button type="button" data-addfor="exam:${c.id}">+ בחינה</button><button type="button" data-open="course:${c.id}">עריכה</button></div></div>`}).join("")||'<div class="empty"><b>אין קורסים</b>הוסיפי את הקורס הראשון שלך.</div>';
+}
+$("#courseFilter").addEventListener("click",e=>{const b=e.target.closest("[data-cf]");if(b){cf=b.dataset.cf;renderCourses()}});
+
+/* exams */
+document.addEventListener("change",e=>{const c=e.target.closest("[data-exdone]");if(!c)return;const x=S.exams.find(k=>k.id===c.dataset.exdone);if(!x)return;x.done=c.checked;save();renderExams();renderDash();if(c.checked){confetti(c);toast("כל הכבוד! בחינה מאחורייך")}});
+document.addEventListener("change",e=>{const c=e.target.closest("[data-exgrade]");if(!c)return;const x=S.exams.find(k=>k.id===c.dataset.exgrade);if(!x)return;let v=c.value.trim();if(v!==""){v=Math.max(0,Math.min(100,Math.round(+v)));c.value=v}x.grade=v===""?"":String(v);if(v!==""&&!x.done){x.done=true}save();renderExams();renderDash();if(v!=="")toast("הציון נשמר")});
+function renderExams(){
+  const ex=[...S.exams].sort((a,b)=>(a.date||"9").localeCompare(b.date||"9"));
+  $("#examRows").innerHTML=ex.length?ex.map(e=>`<tr class="${e.done?"exdone":""}"><td><input type="checkbox" class="caseChk" data-exdone="${e.id}"${e.done?" checked":""} aria-label="בוצע"></td><td><span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${cColor(e.courseId)};margin-inline-end:8px"></span><b>${esc(cName(e.courseId))}</b></td><td>מועד ${esc(e.moed)}</td><td>${whenChip(e.date)} <span class="mono" style="font-size:12px">${esc(e.time)}</span></td><td>${esc(e.place)||"—"}</td><td><input type="number" min="0" max="100" step="1" inputmode="numeric" class="exGrade" data-exgrade="${e.id}" value="${esc(e.grade)}" placeholder="—" aria-label="ציון"></td><td><div class="acts"><button type="button" data-open="exam:${e.id}">עריכה</button></div></td></tr>`).join(""):`<tr><td colspan="7"><div class="empty" style="border:0"><b>אין בחינות עדיין</b>הוסיפי את לוח הבחינות של סמסטר א׳ מהידיעון.</div></td></tr>`;
+}
+
+/* tasks */
+let tf="פתוחות";
+function renderTasks(){
+  $("#taskFilter").innerHTML=["פתוחות","השבוע","באיחור","בוצעו","הכול"].map(s=>`<button type="button" class="${tf===s?"on":""}" data-tf="${s}">${s}</button>`).join("");
+  const ds=iso(today()),w=new Date(today());w.setDate(w.getDate()+7);const ws=iso(w);
+  let L=S.tasks.filter(t=>tf==="הכול"||(tf==="פתוחות"&&!t.done)||(tf==="בוצעו"&&t.done)||(tf==="השבוע"&&!t.done&&t.due&&t.due<=ws&&t.due>=ds)||(tf==="באיחור"&&!t.done&&t.due&&t.due<ds));
+  L.sort((a,b)=>(a.done-b.done)||(a.due||"9").localeCompare(b.due||"9"));
+  const PR={גבוהה:"var(--coral)",בינונית:"var(--gold)",נמוכה:"var(--teal)"};
+  $("#taskList").innerHTML=L.length?L.map(t=>`<div class="item${t.done?" done":""}"><input type="checkbox" class="chk" data-done="${t.id}" ${t.done?"checked":""} aria-label="סימון כבוצע"><span class="dot" style="background:${cColor(t.courseId)}"></span><div class="t"><b>${esc(t.title)}</b><small>${esc(cName(t.courseId))} · ${esc(t.kind)}${t.priority?` · <span style="color:${PR[t.priority]}">עדיפות ${esc(t.priority)}</span>`:""}${t.notes?" · "+esc(t.notes):""}</small></div>${whenChip(t.due)}<div class="acts"><button type="button" data-open="task:${t.id}">עריכה</button></div></div>`).join(""):`<div class="empty"><b>${tf==="פתוחות"?"אין מטלות פתוחות":"אין מטלות כאן"}</b>מטלה חדשה: קריאה לשיעור, סיכום, תרגיל או עבודה להגשה.</div>`;
+}
+$("#taskFilter").addEventListener("click",e=>{const b=e.target.closest("[data-tf]");if(b){tf=b.dataset.tf;renderTasks()}});
+document.addEventListener("change",e=>{const c=e.target.closest("[data-done]");if(!c)return;const t=S.tasks.find(x=>x.id===c.dataset.done);t.done=c.checked;save();if(c.checked){confetti(c);toast("כל הכבוד! מטלה הושלמה")}setTimeout(()=>{renderTasks();renderDash();renderCal()},c.checked?450:0)});
+
+/* study timer */
+let tInt=null;
+function renderStudy(){
+  const sel=$("#timerCourse"),cur=sel.value||(S.timer&&S.timer.courseId)||"";
+  sel.innerHTML='<option value="">כללי</option>'+S.courses.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");sel.value=cur;
+  $("#weeklyGoal").value=S.weeklyGoal||"";
+  const wh=weekHours();ring($("#rWeek"),S.weeklyGoal?wh/S.weeklyGoal*100:0,wh.toFixed(1));
+  $("#weekNote").textContent=S.weeklyGoal?`${wh.toFixed(1)} מתוך ${S.weeklyGoal} שעות. ${wh>=S.weeklyGoal?"עמדת ביעד!":"נשארו "+(S.weeklyGoal-wh).toFixed(1)+" שעות."}`:"";
+  const ss=[...S.sessions].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,20);
+  $("#sessList").innerHTML=ss.length?ss.map(x=>`<div class="item"><span class="dot" style="background:${cColor(x.courseId)}"></span><div class="t"><b>${esc(cName(x.courseId))}</b><small>${HEB_D[parse(x.date).getDay()]}</small></div><span class="when">${fmt(x.date)} · ${Math.floor(x.min/60)}:${pad(x.min%60)} ש׳</span><div class="acts"><button type="button" data-delsess="${x.id}">מחיקה</button></div></div>`).join(""):'<div class="empty"><b>עוד לא נרשמו שעות</b>לחצי ״התחלה״ כשאת מתחילה ללמוד.</div>';
+  syncTimer();
+}
+function syncTimer(){
+  const run=!!S.timer;$("#timerBox").classList.toggle("run",run);$("#timerBtn").textContent=run?"עצירה ושמירה":"התחלה";
+  clearInterval(tInt);
+  const upd=()=>{const ms=run?Date.now()-S.timer.start:0;const s=Math.floor(ms/1000);$("#clock").textContent=pad(Math.floor(s/3600))+":"+pad(Math.floor(s/60)%60)+":"+pad(s%60)};
+  upd();if(run)tInt=setInterval(upd,1000);
+}
+$("#timerBtn").onclick=()=>{
+  if(S.timer){const min=Math.round((Date.now()-S.timer.start)/6e4);if(min>=1){S.sessions.push({id:uid(),date:iso(new Date(S.timer.start)),min,courseId:S.timer.courseId});toast(`נרשמו ${min} דקות לימוד`)}else toast("פחות מדקה, לא נרשם");S.timer=null}
+  else S.timer={start:Date.now(),courseId:$("#timerCourse").value};
+  save();renderStudy();renderDash();
+};
+$("#timerCourse").onchange=()=>{if(S.timer){S.timer.courseId=$("#timerCourse").value;save()}};
+$("#manualBtn").onclick=()=>openForm("session");
+$("#weeklyGoal").onchange=e=>{S.weeklyGoal=+e.target.value||0;save();renderStudy();renderDash()};
+document.addEventListener("click",e=>{const b=e.target.closest("[data-delsess]");if(b){S.sessions=S.sessions.filter(x=>x.id!==b.dataset.delsess);save();renderStudy();renderDash()}});
+
+/* goals */
+function renderGoals(){
+  $("#stages").innerHTML=PHASES.map(([ph,lab],k)=>{const it=S.road.filter(x=>x.phase===ph),dn=it.filter(x=>x.done).length;return `<div class="phase"><div class="phead"><b>${lab}</b><span class="mono">${dn}/${it.length}</span></div><div class="bar" style="margin:6px 0 10px"><i style="width:${it.length?dn/it.length*100:0}%;background:${PH_C[k]}"></i></div>${it.map(x=>`<label class="ritem${x.done?" done":""}"><input type="checkbox" class="chk" data-road="${x.id}" ${x.done?"checked":""}><span><b>${esc(x.t)}</b>${x.d?`<small>${esc(x.d)}</small>`:""}</span><button type="button" class="redit" data-open="stage:${x.id}" aria-label="עריכה">✎</button></label>`).join("")}</div>`}).join("")+`<div class="phase add"><button type="button" class="btn ghost sm" data-add="stage">+ שלב</button></div>`;
+  const H=["סמסטר","שנה","תואר","קריירה"],HC=["var(--teal)","var(--gold)","var(--pink)","var(--cobalt)"];
+  $("#goalCols").innerHTML=H.map((h,i)=>{const g=S.goals.filter(x=>x.horizon===h);return `<div class="card c3"><h3><span class="dot" style="width:10px;height:10px;border-radius:50%;background:${HC[i]};display:inline-block"></span>יעדי ${h}</h3><div class="list">${g.map(x=>`<div class="item${x.done?" done":""}"><input type="checkbox" class="chk" data-goal="${x.id}" ${x.done?"checked":""} aria-label="יעד הושג"><div class="t"><b>${esc(x.text)}</b></div><div class="acts"><button type="button" data-open="goal:${x.id}">עריכה</button></div></div>`).join("")||'<div class="src">אין יעדים עדיין</div>'}</div></div>`}).join("");
+}
+document.addEventListener("change",e=>{const c=e.target.closest("[data-road]");if(!c)return;const r=S.road.find(x=>x.id===c.dataset.road);r.done=c.checked;save();renderGoals();if(c.checked){confetti(c);toast("עוד צעד בדרך לרישיון!")}});
+document.addEventListener("change",e=>{const c=e.target.closest("[data-goal]");if(!c)return;const g=S.goals.find(x=>x.id===c.dataset.goal);g.done=c.checked;save();renderGoals();if(c.checked)confetti(c)});
+
+/* cases */
+let caseCourse="all",caseOpen={};
+function renderCases(){
+  const q=($("#caseSearch").value||"").trim();
+  const ids=[...new Set(S.cases.map(c=>c.courseId||""))];
+  const order=S.courses.map(c=>c.id);ids.sort((a,b)=>(order.indexOf(a)+1||99)-(order.indexOf(b)+1||99));
+  if(caseCourse!=="all"&&!ids.includes(caseCourse))caseCourse="all";
+  const lab=id=>id?cName(id):"ללא קורס";
+  $("#caseCourses").innerHTML=`<button type="button" class="${caseCourse==="all"?"on":""}" data-ccourse="all">הכול <span class="mono">${S.cases.length}</span></button>`+ids.map(id=>`<button type="button" class="${caseCourse===id?"on":""}" data-ccourse="${esc(id)}"><span class="dot" style="background:${cColor(id)}"></span>${esc(lab(id))} <span class="mono">${S.cases.filter(c=>(c.courseId||"")===id).length}</span></button>`).join("");
+  const inC=S.cases.filter(c=>caseCourse==="all"||(c.courseId||"")===caseCourse);
+  const rd=inC.filter(c=>c.read).length,pc=inC.length?Math.round(rd/inC.length*100):0;
+  $("#caseProg").innerHTML=`<span>קראתי <b class="mono">${rd}</b> מתוך <b class="mono">${inC.length}</b></span><div class="bar"><i style="width:${pc}%"></i></div><span class="mono">${pc}%</span>`;
+  const L=inC.filter(c=>!q||[c.name,c.num,c.area,c.summary].join(" ").includes(q));
+  if(!L.length){$("#caseList").innerHTML=`<div class="empty"><b>${q?"לא נמצאו תוצאות":"המאגר ריק"}</b>${q?"נסי מילה אחרת.":"הוסיפי פסק דין מהשיעור."}</div>`;return}
+  const groups=[];const gi={};
+  L.forEach(c=>{const k=(c.courseId||"")+"§"+(c.area||"אחר");if(!(k in gi)){gi[k]=groups.length;groups.push({k,cid:c.courseId||"",area:c.area||"אחר",items:[]})}groups[gi[k]].items.push(c)});
+  let lastC=null;
+  $("#caseList").innerHTML=groups.map(g=>{const head=g.cid!==lastC&&caseCourse==="all"?`<h3 class="caseCourse"><span class="dot" style="background:${cColor(g.cid)}"></span>${esc(lab(g.cid))}</h3>`:"";lastC=g.cid;
+    const parts=g.area.split(" › ");const open=!!q||groups.length<=2||caseOpen[g.k]===true;const r=g.items.filter(c=>c.read).length;
+    return head+`<details class="card caseGrp"${open?" open":""} data-cgrp="${esc(g.k)}"><summary><span class="t">${parts.length>1?`<small>${esc(parts[0])}</small>`:""}<b>${esc(parts[parts.length-1])}</b></span><span class="chip mono">${r}/${g.items.length}</span></summary><div class="list">${g.items.map(c=>`<div class="item${c.read?" done":""}" style="align-items:flex-start"><input type="checkbox" class="caseChk" data-cread="${c.id}"${c.read?" checked":""} aria-label="קראתי"><div class="t" data-open="case:${c.id}" style="cursor:pointer"><b>${esc(c.name)}</b><small class="mono" dir="rtl">${esc(c.num)||"פסיקה זרה"}</small>${c.summary?`<div style="font-size:14px;margin-top:4px">${esc(c.summary)}</div>`:""}</div></div>`).join("")}</div></details>`}).join("");
+}
+$("#caseSearch").oninput=renderCases;
+$("#caseCourses").addEventListener("click",e=>{const b=e.target.closest("[data-ccourse]");if(b){caseCourse=b.dataset.ccourse;renderCases()}});
+$("#caseList").addEventListener("toggle",e=>{const d=e.target.closest&&e.target.closest("[data-cgrp]");if(d&&!($("#caseSearch").value||"").trim())caseOpen[d.dataset.cgrp]=d.open},true);
+document.addEventListener("change",e=>{const c=e.target.closest("[data-cread]");if(!c)return;const x=S.cases.find(k=>k.id===c.dataset.cread);if(!x)return;x.read=c.checked;save();renderCases();if(c.checked)confetti(c)});
+
+/* links */
+function renderLinks(){
+  const L=[["ידיעון אונו","yedion.ono.ac.il","https://yedion.ono.ac.il"],["לוח זמנים אקדמי · אונו","web5.ono.ac.il","https://web5.ono.ac.il/en/academic-timetable/"],["הקריה האקדמית אונו","ono.ac.il","https://www.ono.ac.il"],["נבו","nevo.co.il","https://www.nevo.co.il"],["תקדין","takdin.co.il","https://www.takdin.co.il"],["בית המשפט העליון","supreme.court.gov.il","https://supreme.court.gov.il"],["הרשות השופטת","court.gov.il","https://www.court.gov.il"],["ספר החוקים הפתוח","he.wikisource.org","https://he.wikisource.org/wiki/ספר_החוקים_הפתוח"],["לשכת עורכי הדין","israelbar.org.il","https://www.israelbar.org.il"],["הכנסת","main.knesset.gov.il","https://main.knesset.gov.il"],["כל זכות","kolzchut.org.il","https://www.kolzchut.org.il"]];
+  $("#linkGrid").innerHTML=L.map(l=>`<a href="${l[2]}" target="_blank" rel="noopener"><b>${l[0]}</b><small>${l[1]}</small></a>`).join("");
+}
+
+/* profile & backup */
+function renderProfile(){const p=S.profile;$("#pName").value=p.name||"";$("#pInst").value=p.inst||"";$("#pDegree").value=p.degree||"LL.B";$("#pYear").value=p.year||"א׳";$("#pTotal").value=p.total||"";$("#pTarget").value=p.target||""}
+$("#profileForm").onsubmit=e=>{e.preventDefault();Object.assign(S.profile,{name:$("#pName").value.trim(),inst:$("#pInst").value.trim(),degree:$("#pDegree").value,year:$("#pYear").value,total:+$("#pTotal").value||"",target:+$("#pTarget").value||""});save();render();toast("הפרטים נשמרו")};
+$("#copyBtn").onclick=()=>{const txt=JSON.stringify(S);$("#backupText").value=txt;try{navigator.clipboard.writeText(txt).then(()=>toast("הגיבוי הועתק"),()=>{$("#backupText").select();toast("סמני והעתיקי את הטקסט")})}catch(e){$("#backupText").select();toast("סמני והעתיקי את הטקסט")}};
+$("#restoreBtn").onclick=()=>{try{const o=JSON.parse($("#backupText").value);if(!o||!o.courses)throw 0;S=Object.assign(starter(),o);save();render();toast("היומן שוחזר מהגיבוי")}catch(e){toast("הטקסט אינו גיבוי תקין של היומן")}};
+$("#resetBtn").onclick=()=>{$("#resetConfirm").hidden=false};
+$("#resetNo").onclick=()=>{$("#resetConfirm").hidden=true};
+$("#resetYes").onclick=()=>{S=starter();save();render();$("#resetConfirm").hidden=true;toast("היומן אופס")};
+
+/* ---------- generic form dialog ---------- */
+const PHASES=[["y1","שנה א׳"],["y2","שנה ב׳"],["y3","שנה ג׳"],["y4","סיום התואר"],["intern","התמחות"],["bar","בחינת הלשכה"],["career","קריירה"]],PH_C=["var(--teal)","var(--cobalt)","var(--pink)","var(--coral)","var(--gold)","var(--lime)","#5FD4FF"];
+const DAYS_OPT=HEB_D.slice(0,6).map((d,i)=>[String(i),d]);
+function courseOpts(){return [["","כללי"],...S.courses.map(c=>[c.id,c.name])]}
+const FORMS={
+  course:{title:"קורס",coll:"courses",fields:()=>[["name","שם הקורס","text",1],["type","סוג","select",0,["חובה","בחירה","מחויבות","פעילות","סמינריון","קליניקה","אנגלית","פרו־סמינריון"]],["sem","סמסטר","select",0,["א׳","ב׳","שנתי","קיץ"]],["credits","נקודות זכות","number"],["lecturer","מרצה","text"],["grade","ציון סופי","number"],["color","צבע","color"]]},
+  exam:{title:"בחינה",coll:"exams",fields:()=>[["courseId","קורס","select",1,courseOpts()],["moed","מועד","select",0,["א׳","ב׳","ג׳","מיוחד"]],["date","תאריך","date"],["time","שעה","time"],["place","מיקום / פורמט","text"],["grade","ציון","number"]]},
+  task:{title:"מטלה",coll:"tasks",fields:()=>[["title","מה צריך לעשות","text",1],["courseId","קורס","select",0,courseOpts()],["kind","סוג","select",0,["רישום","קריאה","סיכום","תרגיל","עבודה להגשה","עבודה סמינריונית","הכנה לשיעור","אחר"]],["due","תאריך יעד","date"],["priority","עדיפות","select",0,["","גבוהה","בינונית","נמוכה"]],["notes","הערות","textarea"]]},
+  event:{title:"אירוע",coll:"events",fields:()=>[["title","כותרת","text",1],["kind","סוג","select",0,[["personal","אישי"],["academic","אקדמי"],["holiday","חג / חופשה"],["exam","תקופת בחינות"]]],["start","מתאריך","date",1],["end","עד תאריך (לא חובה)","date"],["src","מקור / הערה","text"]]},
+  goal:{title:"יעד",coll:"goals",fields:()=>[["text","היעד","text",1],["horizon","טווח","select",0,["סמסטר","שנה","תואר","קריירה"]]]},
+  case:{title:"פסק דין",coll:"cases",fields:()=>[["name","שם פסק הדין","text",1],["num","מספר תיק","text"],["area","נושא בסילבוס","text"],["courseId","קורס","select",0,courseOpts()],["summary","תקציר והלכה","textarea"]]},
+  slot:{title:"שיעור במערכת",fields:()=>[["courseId","קורס","select",1,S.courses.map(c=>[c.id,c.name])],["day","יום","select",0,DAYS_OPT],["kind","סוג","select",0,["הרצאה","תרגיל","תרגול","סדנה"]],["start","שעת התחלה","time",1],["end","שעת סיום","time",1],["who","מרצה / מתרגל","text"],["room","חדר / כיתה","text"]]},
+  session:{title:"הוספת זמן לימוד",fields:()=>[["courseId","קורס","select",0,courseOpts()],["date","תאריך","date",1],["min","דקות","number",1]]},
+  stage:{title:"שלב במסלול",fields:()=>[["phase","שלב","select",0,PHASES],["t","מה","text",1],["d","פירוט","textarea"]]}
+};
+let cur=null;
+function openForm(kind,id,preset){
+  const F=FORMS[kind];if(!F)return;
+  if(kind==="slot"&&!S.courses.length){toast("הוסיפי קודם קורס");return}
+  let obj={};
+  if(kind==="slot"&&id){const[cid,si]=id.split(":");obj={...course(cid).slots[+si],courseId:cid}}
+  else if(kind==="stage"&&id)obj={...S.road.find(x=>x.id===id)};
+  else if(id&&F.coll)obj={...S[F.coll].find(x=>x.id===id)};
+  else{obj=Object.assign({},preset||{});if(kind==="session"&&!obj.date)obj.date=iso(today());if(kind==="exam"&&!obj.moed)obj.moed="א׳";if(kind==="course"&&!obj.color)obj.color=COLORS[S.courses.length%COLORS.length];if(kind==="slot"&&!obj.start){obj.start="10:00";obj.end="11:30";obj.day="0"}}
+  cur={kind,id};
+  $("#dlgTitle").textContent=(id?"עריכת ":"הוספת ")+F.title;
+  $("#dlgFields").innerHTML=F.fields().map(([k,l,t,req,opts])=>{
+    const v=obj[k]??"";const full=(t==="textarea"||k==="title"||k==="name"||k==="text")?" full":"";
+    if(t==="select")return `<label class="f${full}">${l}<select id="f_${k}" ${req?"required":""}>${opts.map(o=>{const[val,lab]=Array.isArray(o)?o:[o,o||"—"];return `<option value="${esc(val)}" ${String(v)===String(val)?"selected":""}>${esc(lab)}</option>`}).join("")}</select></label>`;
+    if(t==="textarea")return `<label class="f full">${l}<textarea id="f_${k}">${esc(v)}</textarea></label>`;
+    return `<label class="f${full}">${l}<input id="f_${k}" type="${t}" value="${esc(v)}" ${req?"required":""} ${t==="number"?'step="any" min="0"':""}></label>`;
+  }).join("");
+  $("#dlgDel").hidden=!id;
+  $("#dlg").showModal();
+  setTimeout(()=>{const f=$("#dlgFields input,#dlgFields select");f&&f.focus()},30);
+}
+$("#dlgCancel").onclick=()=>$("#dlg").close();
+$("#dlgForm").onsubmit=e=>{
+  e.preventDefault();
+  const {kind,id}=cur,F=FORMS[kind],o={};
+  F.fields().forEach(([k,,t])=>{let v=$("#f_"+k).value;if(t==="number"&&v!=="")v=+v;o[k]=v});
+  if(kind==="slot"){
+    const c=course(o.courseId);const slot={day:o.day,kind:o.kind,start:o.start,end:o.end,room:o.room,who:o.who};
+    if(id){const[cid,si]=id.split(":");course(cid).slots.splice(+si,1)}
+    c.slots.push(slot);
+  } else if(kind==="session"){S.sessions.push({id:uid(),date:o.date,min:+o.min||0,courseId:o.courseId})}
+  else if(kind==="stage"){if(id){Object.assign(S.road.find(x=>x.id===id),o)}else S.road.push({id:uid(),phase:o.phase,t:o.t,d:o.d,done:false})}
+  else{
+    if(kind==="course")o.ono=false;
+    if(id)Object.assign(S[F.coll].find(x=>x.id===id),o);
+    else S[F.coll].push({id:uid(),done:false,slots:kind==="course"?[]:undefined,...o});
+  }
+  save();$("#dlg").close();render();toast("נשמר");
+};
+$("#dlgDel").onclick=()=>{
+  const {kind,id}=cur,F=FORMS[kind];
+  if(kind==="slot"){const[cid,si]=id.split(":");course(cid).slots.splice(+si,1)}
+  else if(kind==="stage"){S.road=S.road.filter(x=>x.id!==id)}
+  else{S[F.coll]=S[F.coll].filter(x=>x.id!==id);if(kind==="course"){S.exams=S.exams.filter(x=>x.courseId!==id);S.tasks.forEach(t=>{if(t.courseId===id)t.courseId=""})}}
+  save();$("#dlg").close();render();toast("נמחק");
+};
+document.addEventListener("click",e=>{
+  const a=e.target.closest("[data-add]");if(a){openForm(a.dataset.add);return}
+  const af=e.target.closest("[data-addfor]");if(af){const[k,cid]=af.dataset.addfor.split(":");openForm(k,null,{courseId:cid});return}
+  const o=e.target.closest("[data-open]");if(o){e.stopPropagation();const[k,id]=o.dataset.open.split(":");openForm(k,id);return}
+  const sl=e.target.closest("[data-slot]");if(sl){openForm("slot",sl.dataset.slot);return}
+  const d=e.target.closest("[data-day]");if(d){openForm("event",null,{start:d.dataset.day,kind:"personal"})}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"){const d=e.target.closest&&e.target.closest("[data-day]");if(d)openForm("event",null,{start:d.dataset.day,kind:"personal"})}});
+
+/* ---------- confetti ---------- */
+const cv=$("#confetti"),cx=cv.getContext("2d");let parts=[],raf=null;
+function confetti(el){
+  if(reduced)return;
+  cv.width=innerWidth;cv.height=innerHeight;
+  const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+  for(let i=0;i<70;i++)parts.push({x,y,vx:(Math.random()-.5)*9,vy:-Math.random()*9-3,g:.28,s:Math.random()*6+4,c:COLORS[i%COLORS.length],r:Math.random()*6,life:80});
+  if(!raf)loop();
+}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.r+=.2;p.life--;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.globalAlpha=Math.max(0,p.life/80);cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);cx.restore()});parts=parts.filter(p=>p.life>0);raf=parts.length?requestAnimationFrame(loop):(cx.clearRect(0,0,cv.width,cv.height),null)}
+
+/* ---------- theme toggle ---------- */
+document.documentElement.dataset.theme="dark";try{localStorage.removeItem(LS+"-theme")}catch(e){}
+$("#themeBtn").remove();
+
+/* ---------- routing ---------- */
+const VIEWS=["dashboard","schedule","courses","exams","tasks","goals","cases","links","backup"];
+function route(){
+  const h=(location.hash||"").slice(1),v=VIEWS.includes(h)?h:"dashboard";
+  $$("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
+  $$("#tabs a").forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+v));
+  if(v==="dashboard")renderDash();
+}
+addEventListener("hashchange",route);
+
+setSync(false,"שמור בדפדפן");
+render();route();
+/* ---------- responsive shells ---------- */
+(function(){
+  const P={
+    dashboard:'<rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/>',
+    schedule:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    courses:'<path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zM4 21a2 2 0 012-2h13v2H6"/>',
+    exams:'<path d="M9 3h6v3H9z"/><path d="M8 4H6a1 1 0 00-1 1v15a1 1 0 001 1h12a1 1 0 001-1V5a1 1 0 00-1-1h-2"/><path d="M9 13l2 2 4-4"/>',
+    tasks:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>',
+    goals:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+    cases:'<path d="M12 3v18M7 21h10M5 7h14M5 7l-3 6a3 3 0 006 0zM19 7l-3 6a3 3 0 006 0z"/>',
+    links:'<path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/>',
+    backup:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.6 1.6 0 00-1.8-.3 1.6 1.6 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.6 1.6 0 00-1-1.5 1.6 1.6 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.6 1.6 0 00.3-1.8 1.6 1.6 0 00-1.5-1H3a2 2 0 110-4h.1a1.6 1.6 0 001.5-1 1.6 1.6 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.6 1.6 0 001.8.3H9a1.6 1.6 0 001-1.5V3a2 2 0 114 0v.1a1.6 1.6 0 001 1.5 1.6 1.6 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.6 1.6 0 00-.3 1.8V9a1.6 1.6 0 001.5 1H21a2 2 0 110 4h-.1a1.6 1.6 0 00-1.5 1z"/>',
+    more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>'
+  };
+  const ic=k=>`<span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${P[k]||""}</svg></span>`;
+  const links=$$("#tabs a");const LBL={};
+  links.forEach(a=>{const k=a.getAttribute("href").slice(1);LBL[k]=a.textContent.trim();a.innerHTML=ic(k)+`<span class="lb">${esc(LBL[k])}</span>`});
+  const nav=$("#tabs");const foot=document.createElement("div");foot.className="sidefoot";foot.textContent="LL.B · הקריה האקדמית אונו · תשפ״ז";nav.after(foot);
+  const SHORT={dashboard:"בית",schedule:"מערכת",exams:"בחינות",tasks:"מטלות"};
+  const main=["dashboard","schedule","exams","tasks"],rest=Object.keys(LBL).filter(k=>!main.includes(k));
+  const bn=document.createElement("nav");bn.id="bottomNav";bn.setAttribute("aria-label","ניווט ראשי");
+  bn.innerHTML=main.map(k=>`<a href="#${k}" data-k="${k}">${ic(k)}<span>${SHORT[k]}</span></a>`).join("")+`<button type="button" id="moreBtn" aria-haspopup="true">${ic("more")}<span>עוד</span></button>`;
+  document.body.appendChild(bn);
+  const ms=document.createElement("div");ms.id="moreSheet";ms.innerHTML=`<div class="sheet">${rest.map(k=>`<a href="#${k}" data-k="${k}">${ic(k)}<span>${esc(LBL[k])}</span></a>`).join("")}</div>`;
+  document.body.appendChild(ms);
+  $("#moreBtn").addEventListener("click",()=>ms.classList.toggle("on"));
+  ms.addEventListener("click",e=>{if(e.target===ms||e.target.closest("a"))ms.classList.remove("on")});
+  function mark(){const v=(location.hash||"#dashboard").slice(1)||"dashboard";
+    bn.querySelectorAll("a").forEach(a=>a.classList.toggle("on",a.dataset.k===v));
+    $("#moreBtn").classList.toggle("on",rest.includes(v));
+    ms.querySelectorAll("a").forEach(a=>a.classList.toggle("on",a.dataset.k===v));
+    if(matchMedia("(max-width:700px)").matches)scrollTo({top:0,behavior:"instant"});}
+  addEventListener("hashchange",mark);mark();
+  /* label table cells so phone layout can show them as cards */
+  function label(tb){const t=tb.closest("table");if(!t)return;const H=[...t.querySelectorAll("thead th")].map(th=>th.textContent.trim());
+    tb.querySelectorAll("tr").forEach(tr=>[...tr.children].forEach((td,i)=>{if(H[i]&&!td.hasAttribute("colspan"))td.setAttribute("data-l",H[i])}))}
+  $$(".tbl tbody").forEach(tb=>{label(tb);new MutationObserver(()=>label(tb)).observe(tb,{childList:true})});
+})();
+
+/* ---------- opening cover ---------- */
+(function(){
+  const cv=$("#cover");if(!cv)return;
+  const t=$("#cvTitle");const words=t.textContent.trim().split(" ");
+  t.innerHTML=words.map((w,i)=>`<span style="animation-delay:${2+i*.28}s">${w}</span>`).join(" ");
+  const shineT=()=>setTimeout(()=>t.classList.add("shine"),reduced?0:3600);
+  const now=new Date();
+  const gem=n=>{const L=[[400,"ת"],[300,"ש"],[200,"ר"],[100,"ק"],[90,"צ"],[80,"פ"],[70,"ע"],[60,"ס"],[50,"נ"],[40,"מ"],[30,"ל"],[20,"כ"],[10,"י"],[9,"ט"],[8,"ח"],[7,"ז"],[6,"ו"],[5,"ה"],[4,"ד"],[3,"ג"],[2,"ב"],[1,"א"]];let r="";n%=1000;for(const[v,c]of L)while(n>=v){r+=c;n-=v}r=r.replace("יה","טו").replace("יו","טז");return r.length>1?r.slice(0,-1)+"״"+r.slice(-1):r+"׳"};
+  let heb="";try{const pt=new Intl.DateTimeFormat("he-IL-u-ca-hebrew",{day:"numeric",month:"long",year:"numeric"}).formatToParts(now);const g=k=>(pt.find(x=>x.type===k)||{}).value||"";heb=`${gem(+g("day"))} ב${g("month").replace(/^ב/,"")} ${gem(+g("year"))}`}catch(e){}
+  $("#cvDate").textContent=`יום ${HEB_D[now.getDay()]}, ${now.getDate()} ב${HEB_M[now.getMonth()]} ${now.getFullYear()}${heb?" · "+heb:""}`;
+  function fill(){return;
+    const t0=iso(today());
+    const nx=S.exams.filter(e=>!e.done&&e.date&&e.date>=t0).sort((a,b)=>(a.date+(a.time||"")).localeCompare(b.date+(b.time||"")))[0];
+    const chips=[];
+    if(nx){const d=Math.round((parse(nx.date)-today())/864e5);chips.push(`הבחינה הבאה: ${esc(cName(nx.courseId))} · ${d===0?"<b>היום</b>":`בעוד <b>${d}</b> ימים`}`)}
+    let les=[];try{les=lessonsOn(t0)||[]}catch(e){}
+    if(les.length)chips.push(`היום <b>${les.length}</b> שיעורים`);
+    chips.push(`<b>${S.tasks.filter(x=>!x.done).length}</b> מטלות פתוחות`);
+    if(S.cases.length)chips.push(`פסיקה: <b>${S.cases.filter(c=>c.read).length}</b> מתוך ${S.cases.length} נקראו`);
+    $("#cvStudy").innerHTML=chips.map(c=>`<span>${c}</span>`).join("");
+  }
+  fill();
+  const dust=cv.querySelector(".dust");
+  const IC=[
+    '<path d="M14 4l6 6M11 7l6 6M12.5 5.5l-4 4M17.5 10.5l-4 4M10.5 11.5L3 19l2 2 7.5-7.5M2 23h10"/>',
+    '<path d="M12 3v18M7 21h10M5 7h14M5 7l-3 6a3 3 0 006 0zM19 7l-3 6a3 3 0 006 0z"/><circle cx="12" cy="4" r="1"/>',
+    '<path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zM4 21a2 2 0 012-2h13v2H6"/><path d="M9 7h6M9 10.5h6"/>',
+    '<path d="M3 9l9-5 9 5M4 9h16M6 9v9M10 9v9M14 9v9M18 9v9M3 21h18M4 18h16"/>',
+    '<path d="M7 3h11a2 2 0 012 2v2h-4M7 3a2 2 0 00-2 2v12a2 2 0 01-2 2h11a2 2 0 002-2V5a2 2 0 012-2M8 8h5M8 12h5"/>',
+    '<path d="M20 4C14 4 8 9 7 17l-3 3M20 4c0 7-5 12-12 13M10 14l4-4"/>'];
+  dust.innerHTML=Array.from({length:16},(_,i)=>`<i style="right:${(i*53+7)%94}%;width:${20+(i*7)%20}px;animation-duration:${15+(i*5)%12}s;animation-delay:${-((i*1.9)%15)}s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${IC[i%IC.length]}</svg></i>`).join("");
+  document.documentElement.style.overflow="hidden";shineT();
+  let closing=false;
+  function close(){if(closing||cv.classList.contains("gone"))return;closing=true;cv.classList.add("open");document.documentElement.style.overflow="";setTimeout(()=>{const hc=$("#heroCount");if(hc&&typeof tickHero==="function"){hc.dataset.d="";tickHero()}},reduced?0:700);setTimeout(()=>{cv.classList.add("gone");cv.classList.remove("open");closing=false},reduced?0:1400)}
+  function show(){fill();t.classList.remove("shine");cv.classList.remove("gone");document.documentElement.style.overflow="hidden";
+    cv.querySelectorAll("*").forEach(el=>{el.style.animation="none"});void cv.offsetWidth;cv.querySelectorAll("*").forEach(el=>{el.style.animation=""});
+    words.forEach((w,i)=>{const sp=t.children[i];if(sp)sp.style.animationDelay=(2+i*.28)+"s"});shineT();setTimeout(()=>{try{$("#cvEnter").focus({preventScroll:true})}catch(e){}},50)}
+  cv.addEventListener("click",close);
+  addEventListener("keydown",e=>{if(!cv.classList.contains("gone")&&(e.key==="Enter"||e.key==="Escape"||e.key===" ")){e.preventDefault();close()}});
+  setTimeout(()=>{try{$("#cvEnter").focus({preventScroll:true})}catch(e){}},100);
+  const seal=document.querySelector(".brand .seal");if(seal){seal.style.cursor="pointer";seal.title="עמוד הפתיחה";seal.setAttribute("role","button");seal.tabIndex=0;seal.addEventListener("click",show);seal.addEventListener("keydown",e=>{if(e.key==="Enter"){e.stopPropagation();show()}})}
+})();
+
+connect();
+})();
+</script>
+
+<script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+</body>
+</html>
