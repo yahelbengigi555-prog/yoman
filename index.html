@@ -282,7 +282,7 @@ td{background:var(--bg2)}
 .caseGrp summary::after{content:"⌄";color:var(--muted);transition:.2s}.caseGrp[open] summary::after{transform:rotate(180deg)}
 .caseGrp .list{padding:0 12px 12px}.caseChk{margin-top:4px;width:18px;height:18px;accent-color:var(--teal);flex:none}
 .exGrade{width:84px;text-align:center;font-family:var(--mono);padding:6px 8px}
-#examRows tr.exdone td{opacity:.6}#examRows tr.exdone td:first-child,#examRows tr.exdone td:nth-child(6){opacity:1}
+.examRows tr.exdone td{opacity:.6}.examRows tr.exdone td:first-child,.examRows tr.exdone td:nth-child(5){opacity:1}.exGrp+.exGrp{margin-top:18px}.exH{display:flex;align-items:center;gap:12px;margin-bottom:12px}.exBadge{font-size:18px;padding:6px 16px;border-radius:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--teal) 22%,transparent),color-mix(in srgb,var(--cobalt) 22%,transparent));border:1px solid color-mix(in srgb,var(--teal) 45%,transparent);box-shadow:0 0 18px -8px var(--teal)}#exGB .exBadge{background:linear-gradient(135deg,color-mix(in srgb,var(--cobalt) 22%,transparent),color-mix(in srgb,var(--pink) 22%,transparent));border-color:color-mix(in srgb,var(--pink) 45%,transparent);box-shadow:0 0 18px -8px var(--pink)}#exGC .exBadge,#exGM .exBadge{background:linear-gradient(135deg,color-mix(in srgb,var(--pink) 20%,transparent),color-mix(in srgb,var(--coral) 22%,transparent));border-color:color-mix(in srgb,var(--coral) 45%,transparent);box-shadow:0 0 18px -8px var(--coral)}.exH small{font:500 13px var(--body);color:var(--muted)}.examRows td:nth-child(3){white-space:nowrap}
 
 .count .days b.bounce{display:inline-block;transform-origin:50% 100%;animation:dayIn .9s cubic-bezier(.3,1.6,.5,1) both}
 .count .days b.hop{animation:dayHop 1s ease-out 1 both}
@@ -360,14 +360,15 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
   .tbl td:empty{display:none}
   #credRows tr{grid-template-columns:repeat(3,1fr)}
   #credRows td:nth-child(4),#credRows td:nth-child(6){grid-column:1/-1}
-  #examRows tr{position:relative;grid-template-columns:1fr 1fr;gap:10px 12px}
-  #examRows td:first-child{position:absolute;left:12px;top:12px}
-  #examRows td:nth-child(2){grid-column:1/-1;padding-left:40px!important;order:1}
-  #examRows td:nth-child(4){grid-column:1/-1;order:2}
-  #examRows td:nth-child(5){grid-column:1/-1;order:3}
-  #examRows td:nth-child(3){order:4}#examRows td:nth-child(6){order:5}
-  #examRows td:nth-child(7){grid-column:1/-1;order:6}
-  #examRows td:nth-child(7) .acts{justify-content:flex-start}
+  .examRows tr{position:relative;grid-template-columns:1fr 1fr;gap:10px 12px}
+  .examRows td:first-child{position:absolute;left:12px;top:12px}
+  .examRows td:nth-child(2){grid-column:1/-1;padding-left:40px!important;order:1}
+  .examRows td:nth-child(3){grid-column:1/-1;order:2}
+  .examRows td:nth-child(4){grid-column:1/-1;order:3}
+  .examRows td:nth-child(5){order:4}
+  .examRows td:nth-child(6){order:5;align-self:end}
+  .examRows td:nth-child(6) .acts{justify-content:flex-end}
+  .examRows td[colspan]{grid-column:1/-1;position:static!important}
 }
 /* ---------- opening cover ---------- */
 #cover{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px;background:var(--bg);color:var(--fg);perspective:1800px;overflow:hidden;cursor:pointer}
@@ -583,8 +584,11 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
 <!-- EXAMS -->
 <section class="view" id="v-exams">
   <div class="vhead"><h2>בחינות</h2><button class="btn" data-add="exam" type="button">+ בחינה</button>
-    <p>מועדי א׳, ב׳ ומיוחד מהידיעון, עם תאריך, שעה, מיקום וספירה לאחור.</p></div>
-  <div class="card tbl"><table><thead><tr><th style="width:70px">בוצע</th><th>קורס</th><th>מועד</th><th>תאריך ושעה</th><th>מיקום</th><th style="width:110px">ציון</th><th></th></tr></thead><tbody id="examRows"></tbody></table></div>
+    <p>הבחינות מחולקות לפי מועד א׳, ב׳ ו־ג׳, עם תאריך, שעה, מיקום וספירה לאחור.</p></div>
+  <div class="card tbl exGrp" id="exGA"><h3 class="exH"><span class="exBadge">מועד א׳</span><small id="exNA"></small></h3><table><thead><tr><th style="width:70px">בוצע</th><th>קורס</th><th>תאריך ושעה</th><th>מיקום</th><th style="width:110px">ציון</th><th></th></tr></thead><tbody class="examRows" id="exRA"></tbody></table></div>
+  <div class="card tbl exGrp" id="exGB"><h3 class="exH"><span class="exBadge">מועד ב׳</span><small id="exNB"></small></h3><table><thead><tr><th style="width:70px">בוצע</th><th>קורס</th><th>תאריך ושעה</th><th>מיקום</th><th style="width:110px">ציון</th><th></th></tr></thead><tbody class="examRows" id="exRB"></tbody></table></div>
+  <div class="card tbl exGrp" id="exGC"><h3 class="exH"><span class="exBadge">מועד ג׳</span><small id="exNC"></small></h3><table><thead><tr><th style="width:70px">בוצע</th><th>קורס</th><th>תאריך ושעה</th><th>מיקום</th><th style="width:110px">ציון</th><th></th></tr></thead><tbody class="examRows" id="exRC"></tbody></table></div>
+  <div class="card tbl exGrp" id="exGM"><h3 class="exH"><span class="exBadge">מועד מיוחד</span><small id="exNM"></small></h3><table><thead><tr><th style="width:70px">בוצע</th><th>קורס</th><th>תאריך ושעה</th><th>מיקום</th><th style="width:110px">ציון</th><th></th></tr></thead><tbody class="examRows" id="exRM"></tbody></table></div>
 </section>
 
 <!-- TASKS -->
@@ -989,7 +993,12 @@ document.addEventListener("change",e=>{const c=e.target.closest("[data-exdone]")
 document.addEventListener("change",e=>{const c=e.target.closest("[data-exgrade]");if(!c)return;const x=S.exams.find(k=>k.id===c.dataset.exgrade);if(!x)return;let v=c.value.trim();if(v!==""){v=Math.max(0,Math.min(100,Math.round(+v)));c.value=v}x.grade=v===""?"":String(v);if(v!==""&&!x.done){x.done=true}save();renderExams();renderDash();if(v!=="")toast("הציון נשמר")});
 function renderExams(){
   const ex=[...S.exams].sort((a,b)=>(a.date||"9").localeCompare(b.date||"9"));
-  $("#examRows").innerHTML=ex.length?ex.map(e=>`<tr class="${e.done?"exdone":""}"><td><input type="checkbox" class="caseChk" data-exdone="${e.id}"${e.done?" checked":""} aria-label="בוצע"></td><td><span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${cColor(e.courseId)};margin-inline-end:8px"></span><b>${esc(cName(e.courseId))}</b></td><td>מועד ${esc(e.moed)}</td><td>${whenChip(e.date)} <span class="mono" style="font-size:12px">${esc(e.time)}</span></td><td>${esc(e.place)||"—"}</td><td><input type="number" min="0" max="100" step="1" inputmode="numeric" class="exGrade" data-exgrade="${e.id}" value="${esc(e.grade)}" placeholder="—" aria-label="ציון"></td><td><div class="acts"><button type="button" data-open="exam:${e.id}">עריכה</button></div></td></tr>`).join(""):`<tr><td colspan="7"><div class="empty" style="border:0"><b>אין בחינות עדיין</b>הוסיפי את לוח הבחינות של סמסטר א׳ מהידיעון.</div></td></tr>`;
+  const row=e=>`<tr class="${e.done?"exdone":""}"><td><input type="checkbox" class="caseChk" data-exdone="${e.id}"${e.done?" checked":""} aria-label="בוצע"></td><td><span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${cColor(e.courseId)};margin-inline-end:8px"></span><b>${esc(cName(e.courseId))}</b></td><td>${whenChip(e.date)} <span class="mono" style="font-size:12px">${esc(e.time)}</span></td><td>${esc(e.place)||"—"}</td><td><input type="number" min="0" max="100" step="1" inputmode="numeric" class="exGrade" data-exgrade="${e.id}" value="${esc(e.grade)}" placeholder="—" aria-label="ציון"></td><td><div class="acts"><button type="button" data-open="exam:${e.id}">עריכה</button></div></td></tr>`;
+  const G={A:"א׳",B:"ב׳",C:"ג׳",M:"מיוחד"};
+  Object.entries(G).forEach(([k,m])=>{const L=ex.filter(e=>(e.moed||"א׳")===m);const card=$("#exG"+k);
+    card.style.display=(L.length||k!=="M")?"":"none";
+    $("#exN"+k).textContent=L.length?`${L.length} בחינות${L.filter(e=>e.done).length?" · "+L.filter(e=>e.done).length+" בוצעו":""}`:"";
+    $("#exR"+k).innerHTML=L.length?L.map(row).join(""):`<tr><td colspan="6"><div class="empty" style="border:0"><b>אין בחינות במועד ${m}</b>${k==="C"?"מועד ג׳ מתפרסם בידיעון רק לחלק מהקורסים.":"אפשר להוסיף עם הכפתור למעלה."}</div></td></tr>`});
 }
 
 /* tasks */
