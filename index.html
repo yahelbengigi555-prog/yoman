@@ -282,7 +282,7 @@ td{background:var(--bg2)}
 .caseGrp summary::after{content:"⌄";color:var(--muted);transition:.2s}.caseGrp[open] summary::after{transform:rotate(180deg)}
 .caseGrp .list{padding:0 12px 12px}.caseChk{margin-top:4px;width:18px;height:18px;accent-color:var(--teal);flex:none}
 .exGrade{width:84px;text-align:center;font-family:var(--mono);padding:6px 8px}
-.examRows tr.exdone td{opacity:.6}.examRows tr.exdone td:first-child,.examRows tr.exdone td:nth-child(5){opacity:1}.exGrp+.exGrp{margin-top:18px}.exH{display:flex;align-items:center;gap:12px;margin-bottom:12px}.exBadge{font-size:18px;padding:6px 16px;border-radius:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--teal) 22%,transparent),color-mix(in srgb,var(--cobalt) 22%,transparent));border:1px solid color-mix(in srgb,var(--teal) 45%,transparent);box-shadow:0 0 18px -8px var(--teal)}#exGB .exBadge{background:linear-gradient(135deg,color-mix(in srgb,var(--cobalt) 22%,transparent),color-mix(in srgb,var(--pink) 22%,transparent));border-color:color-mix(in srgb,var(--pink) 45%,transparent);box-shadow:0 0 18px -8px var(--pink)}#exGC .exBadge,#exGM .exBadge{background:linear-gradient(135deg,color-mix(in srgb,var(--pink) 20%,transparent),color-mix(in srgb,var(--coral) 22%,transparent));border-color:color-mix(in srgb,var(--coral) 45%,transparent);box-shadow:0 0 18px -8px var(--coral)}.exH small{font:500 13px var(--body);color:var(--muted)}.examRows td:nth-child(3){white-space:nowrap}
+.examRows tr.exdone td{opacity:.6}.examRows tr.exdone td:first-child,.examRows tr.exdone td:nth-child(5){opacity:1}.exGrp+.exGrp{margin-top:18px}.exH{display:flex;align-items:center;gap:12px;margin-bottom:12px}.exBadge{font-size:18px;padding:6px 16px;border-radius:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--teal) 22%,transparent),color-mix(in srgb,var(--cobalt) 22%,transparent));border:1px solid color-mix(in srgb,var(--teal) 45%,transparent);box-shadow:0 0 18px -8px var(--teal)}#exGB .exBadge{background:linear-gradient(135deg,color-mix(in srgb,var(--cobalt) 22%,transparent),color-mix(in srgb,var(--pink) 22%,transparent));border-color:color-mix(in srgb,var(--pink) 45%,transparent);box-shadow:0 0 18px -8px var(--pink)}#exGC .exBadge,#exGM .exBadge{background:linear-gradient(135deg,color-mix(in srgb,var(--pink) 20%,transparent),color-mix(in srgb,var(--coral) 22%,transparent));border-color:color-mix(in srgb,var(--coral) 45%,transparent);box-shadow:0 0 18px -8px var(--coral)}.exH small{font:500 13px var(--body);color:var(--muted)}.examRows td:nth-child(3){white-space:nowrap}.tbl th,.tbl td.mono,.tbl tfoot td{white-space:nowrap}.mlist{white-space:nowrap}.tbl small.src{white-space:nowrap}
 
 .count .days b.bounce{display:inline-block;transform-origin:50% 100%;animation:dayIn .9s cubic-bezier(.3,1.6,.5,1) both}
 .count .days b.hop{animation:dayHop 1s ease-out 1 both}
@@ -527,7 +527,7 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
   <div class="grid">
     <div class="card stat c3"><div class="big num" data-count="sOpen">0</div><div class="lbl">מטלות פתוחות</div><div class="bar"><i id="sOpenBar"></i></div></div>
     <div class="card stat c3"><div class="big num" data-count="sWeek">0</div><div class="lbl">ימים עד סוף הסמסטר</div><div class="bar"><i id="sSemBar" style="background:linear-gradient(90deg,var(--cobalt),var(--pink))"></i></div></div>
-    <div class="card stat c3"><div class="big num" data-count="sCredits">0</div><div class="lbl" id="sCreditsLbl">נ״ז בשנה א׳</div><div class="bar"><i id="sCredBar" style="background:linear-gradient(90deg,var(--gold),var(--coral))"></i></div></div>
+    <div class="card stat c3"><div class="big num" data-count="sCredits">0</div><div class="lbl" id="sCreditsLbl">נק״ז בשנה א׳</div><div class="bar"><i id="sCredBar" style="background:linear-gradient(90deg,var(--gold),var(--coral))"></i></div></div>
     <div class="card stat c3"><div class="big num" data-count="sAvg">—</div><div class="lbl" id="sAvgLbl">ממוצע משוקלל</div><div class="bar"><i id="sAvgBar" style="background:linear-gradient(90deg,var(--pink),var(--gold))"></i></div></div>
 
     <div class="card c7">
@@ -543,7 +543,7 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
     </div>
 
     <div class="card c12"><h3>נקודות זכות לפי קורס</h3><div class="chartbox" style="height:340px"><canvas id="chCredits"></canvas></div></div>
-    <div class="card c12"><h3>נקודות זכות, בחינות ומטלות לפי קורס</h3><div class="tbl"><table><thead><tr><th>קורס</th><th>סמסטר</th><th>נ״ז</th><th>הבחינה הבאה</th><th>בחינות</th><th>מטלות פתוחות</th><th>ציון</th></tr></thead><tbody id="credRows"></tbody></table></div></div>
+    <div class="card c12"><h3>נקודות זכות, מועדי בחינה ומטלות לפי קורס</h3><div class="tbl"><table><thead><tr><th>קורס</th><th>סמסטר</th><th>נק״ז</th><th>הבחינה הבאה</th><th>מועדי בחינה</th><th>מטלות פתוחות</th><th>ציון</th></tr></thead><tbody id="credRows"></tbody></table></div></div>
 
   </div>
 </section>
@@ -647,7 +647,7 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
         <label class="f">מוסד<input id="pInst"></label>
         <label class="f">תואר<select id="pDegree"><option>LL.B</option><option>LL.B + BA</option><option>LL.M</option></select></label>
         <label class="f">שנה<select id="pYear"><option>א׳</option><option>ב׳</option><option>ג׳</option><option>ד׳</option><option>התמחות</option></select></label>
-        <label class="f">נ״ז נדרשות לתואר<input id="pTotal" type="number" min="0"></label>
+        <label class="f">נק״ז נדרשות לתואר<input id="pTotal" type="number" min="0"></label>
         <label class="f">ממוצע יעד<input id="pTarget" type="number" min="0" max="100"></label>
         <div class="full frow"><button class="btn" type="submit">שמירה</button></div>
       </form></div>
@@ -860,7 +860,7 @@ function renderDash(){
   if(semEnd&&semStart){const tot=(parse(semEnd.start)-parse(semStart.start))/864e5;$("#sSemBar").style.width=Math.max(0,Math.min(100,(1-left/tot)*100))+"%"}
   const cred=S.courses.reduce((a,c)=>a+(parseFloat(c.credits)||0),0);
   countUp($('[data-count="sCredits"]'),cred,cred%1?1:0);
-  $("#sCreditsLbl").textContent=p.total?`נ״ז מתוך ${p.total} לתואר`:"נ״ז בקורסים שלי";
+  $("#sCreditsLbl").textContent=p.total?`נק״ז מתוך ${p.total} לתואר`:"נק״ז בקורסים שלי";
   $("#sCredBar").style.width=(p.total?Math.min(100,cred/p.total*100):0)+"%";
   const avg=weightedAvg();
   countUp($('[data-count="sAvg"]'),avg,1);
@@ -904,14 +904,16 @@ function drawCharts(){
   const grad=(ctx,c)=>{const a=ctx.chart.chartArea;if(!a)return SEMC[semOf(c)][0];const g=ctx.chart.ctx.createLinearGradient(a.right,0,a.left,0);g.addColorStop(0,SEMC[semOf(c)][1]);g.addColorStop(1,SEMC[semOf(c)][0]);return g};
   const valLbl={id:"valLbl",afterDatasetsDraw(ch){const {ctx}=ch;ctx.save();ctx.font="700 12px "+getComputedStyle(document.body).fontFamily;ctx.fillStyle=css("--fg");ctx.textBaseline="middle";ctx.textAlign="left";ch.getDatasetMeta(0).data.forEach((b,i)=>ctx.fillText(String(cc[i].credits),b.x+6,b.y));ctx.restore()}};
   const sems=[...new Set(cc.map(semOf))];
-  mk("chCredits",{type:"bar",plugins:[valLbl],data:{labels:cc.map(c=>c.name.length>22?c.name.slice(0,21)+"…":c.name),datasets:[{data:cc.map(c=>+c.credits),backgroundColor:x=>grad(x,cc[x.dataIndex]),borderColor:cc.map(c=>SEMC[semOf(c)][0]),borderWidth:{right:0,left:3,top:0,bottom:0},borderSkipped:false,borderRadius:0,barPercentage:.72,categoryPercentage:.9}]},options:{...base,indexAxis:"y",layout:{padding:{right:24}},plugins:{legend:{display:true,position:"bottom",labels:{boxWidth:12,boxHeight:12,font:{size:11},generateLabels:()=>sems.map(k=>({text:"סמסטר "+k,fillStyle:SEMC[k][0],strokeStyle:SEMC[k][0],lineWidth:0,fontColor:fg}))},onClick:null},tooltip:{callbacks:{label:x=>x.raw+" נ״ז · סמסטר "+cc[x.dataIndex].sem}}},scales:{x:{beginAtZero:true,ticks:{precision:0,stepSize:1},grid:{color:grid},border:{display:false},title:{display:true,text:"נ״ז"}},y:{grid:{display:false},border:{color:grid},ticks:{font:{size:11},color:css("--fg")}}}}});
+  mk("chCredits",{type:"bar",plugins:[valLbl],data:{labels:cc.map(c=>c.name.length>22?c.name.slice(0,21)+"…":c.name),datasets:[{data:cc.map(c=>+c.credits),backgroundColor:x=>grad(x,cc[x.dataIndex]),borderColor:cc.map(c=>SEMC[semOf(c)][0]),borderWidth:{right:0,left:3,top:0,bottom:0},borderSkipped:false,borderRadius:0,barPercentage:.72,categoryPercentage:.9}]},options:{...base,indexAxis:"y",layout:{padding:{right:24}},plugins:{legend:{display:true,position:"bottom",labels:{boxWidth:12,boxHeight:12,font:{size:11},generateLabels:()=>sems.map(k=>({text:"סמסטר "+k,fillStyle:SEMC[k][0],strokeStyle:SEMC[k][0],lineWidth:0,fontColor:fg}))},onClick:null},tooltip:{callbacks:{label:x=>x.raw+" נק״ז · סמסטר "+cc[x.dataIndex].sem}}},scales:{x:{beginAtZero:true,ticks:{precision:0,stepSize:1},grid:{color:grid},border:{display:false},title:{display:true,text:"נק״ז"}},y:{grid:{display:false},border:{color:grid},ticks:{font:{size:11},color:css("--fg")}}}}});
 }
+const MOEDS=["א׳","ב׳","ג׳","מיוחד"];
+function moedList(ex){const m=[...new Set(ex.map(e=>e.moed||"א׳"))].sort((a,b)=>MOEDS.indexOf(a)-MOEDS.indexOf(b));return m.length?m.join(" · "):"—"}
 function renderCredRows(){
   const ds=iso(today());const sems=["א׳","ב׳","קיץ","שנתי"];
   const rows=[...S.courses].sort((a,b)=>sems.indexOf(a.sem)-sems.indexOf(b.sem));
   let tot=0;
   const h=rows.map(c=>{tot+=parseFloat(c.credits)||0;const ex=S.exams.filter(e=>e.courseId===c.id);const nx=ex.filter(e=>!e.done&&e.date>=ds).sort((a,b)=>a.date.localeCompare(b.date))[0];const open=S.tasks.filter(t=>t.courseId===c.id&&!t.done);
-    return `<tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${c.color};margin-inline-end:8px"></span><b>${esc(c.name)}</b></td><td>${c.sem==="שנתי"?"שנתי":esc(c.sem)}</td><td class="mono">${esc(c.credits)||"—"}</td><td>${nx?whenChip(nx.date)+" <small class='src'>מועד "+esc(nx.moed)+"</small>":"—"}</td><td class="mono">${ex.length}</td><td>${open.length?open.map(t=>`<div style="font-size:13px">• ${esc(t.title)}</div>`).join(""):"—"}</td><td class="mono">${isNaN(courseGrade(c))?"—":courseGrade(c)}</td></tr>`}).join("");
+    return `<tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${c.color};margin-inline-end:8px"></span><b>${esc(c.name)}</b></td><td>${c.sem==="שנתי"?"שנתי":esc(c.sem)}</td><td class="mono">${esc(c.credits)||"—"}</td><td>${nx?whenChip(nx.date)+" <small class='src'>מועד "+esc(nx.moed)+"</small>":"—"}</td><td class="mlist">${moedList(ex)}</td><td>${open.length?open.map(t=>`<div style="font-size:13px">• ${esc(t.title)}</div>`).join(""):"—"}</td><td class="mono">${isNaN(courseGrade(c))?"—":courseGrade(c)}</td></tr>`}).join("");
   $("#credRows").innerHTML=h+`<tr><td><b>סה״כ</b></td><td></td><td class="mono"><b>${tot}</b>${S.profile.total?" מתוך "+S.profile.total:""}</td><td colspan="4"></td></tr>`;
 }
 
@@ -982,10 +984,10 @@ function renderCourses(){
     return `<div class="course" style="--cc:${c.color}"><div class="meta"><span class="chip">${esc(c.type||"")}</span><span class="chip">${c.sem==="שנתי"?"שנתי":"סמסטר "+esc(c.sem)}</span>${c.code?`<span class="chip mono">${esc(c.code)}</span>`:""}${c.ono?'<span class="chip" style="color:var(--teal)">ידיעון</span>':""}</div>
     <h3>${esc(c.name)}</h3>
     <div class="row"><span>מרצה</span><b style="font-family:var(--body)">${esc(c.lecturer)||"—"}</b></div>
-    <div class="row"><span>נ״ז</span><b>${esc(c.credits)||"—"}</b></div>
+    <div class="row"><span>נק״ז</span><b>${esc(c.credits)||"—"}</b></div>
     <div style="display:grid;gap:4px;margin:4px 0 6px">${c.slots.map(x=>`<div class="row"><span>${esc(x.kind||"שיעור")} · ${HEB_D[+x.day]} ⁦${x.start}–${x.end}⁩</span><b style="font-family:var(--body);font-weight:500">${esc(x.room||"")}</b></div>`).join("")}${c.online?`<div class="row"><span>${esc(c.online)}</span></div>`:""}${!c.slots.length&&!c.online?'<div class="row"><span>אין שיעורים קבועים</span></div>':""}</div>
     <div class="row"><span>מטלות פתוחות</span><b>${open}</b></div>
-    <div class="row"><span>בחינות</span><b>${ex.length}</b></div>
+    <div class="row"><span>מועדי בחינה</span><b>${moedList(ex)}</b></div>
     <div class="row"><span>ציון</span><b>${esc(c.grade)||"—"}</b></div>
     <div class="acts"><button type="button" data-addfor="slot:${c.id}">+ שיעור</button><button type="button" data-addfor="task:${c.id}">+ מטלה</button><button type="button" data-addfor="exam:${c.id}">+ בחינה</button><button type="button" data-open="course:${c.id}">עריכה</button></div></div>`}).join("")||'<div class="empty"><b>אין קורסים</b>הוסיפי את הקורס הראשון שלך.</div>';
 }
