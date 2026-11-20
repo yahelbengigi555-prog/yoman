@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="theme-color" content="#070C18">
+<meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -10,7 +10,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
-<style>html,body{background:#070C18}</style>
+<style>html,body{background:#000}</style>
 <title>יומן משפטים שנה א׳</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,6 +36,8 @@
 html,body{color:var(--fg)}html{background:var(--bg)}body{margin:0;min-height:100vh;min-height:100dvh}
 body{font-family:var(--body);font-size:15px;line-height:1.55;direction:rtl;overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+body{padding-top:env(safe-area-inset-top,0px)}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
 .wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 60px}
 h1,h2,h3{font-family:var(--display);font-weight:400;text-wrap:balance;margin:0;letter-spacing:.2px}
 .mono,.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
@@ -468,6 +470,114 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
 #cover .rule i{transform:scaleX(1)}#cover .rule b{transform:rotate(45deg) scale(1)}#cover .quote{clip-path:none}
 #cover .frame{animation:cvSpin 8s linear infinite!important}#cover .enter{animation:cvPulse 2.4s 1s infinite!important}
 @media (prefers-reduced-motion:reduce){#cover *,#cover *::before,#cover *::after{animation-duration:.01s!important;animation-delay:0s!important;animation-iteration-count:1!important}#cover .book{transition:none}#cover .dust{display:none}}
+
+/* ===== Apple-style theme: dark mode, clean, frosted glass ===== */
+:root{
+  --bg:#000000; --bg2:rgba(255,255,255,.05); --card:rgba(28,28,30,.78); --solid:#1C1C1E; --line:rgba(255,255,255,.10); --fg:#F5F5F7; --muted:#98989D;
+  --gold:#FF9F0A; --coral:#FF375F; --teal:#0A84FF; --cobalt:#5E5CE6; --lime:#30D158; --pink:#BF5AF2;
+  --ok:#30D158; --warn:#FF9F0A; --bad:#FF453A; --glow:rgba(10,132,255,.25); --grid:transparent;
+  --display:"Heebo","Assistant",-apple-system,"SF Pro Display",Arial,sans-serif;
+  --body:"Heebo","Assistant",-apple-system,"SF Pro Text",Arial,sans-serif;
+  --mono:"Heebo",-apple-system,"SF Pro Display",Arial,sans-serif;
+  --shadow:0 1px 0 rgba(255,255,255,.04) inset,0 8px 30px rgba(0,0,0,.5);
+  color-scheme:dark;
+}
+html{background:#000!important;background-image:none!important}
+body{background:transparent;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+body::before{background:#000}
+.aurora,#grid{display:none!important}
+h1,h2,h3{font-weight:700!important;letter-spacing:-.02em}
+.vhead h2{font-size:34px}
+.mono,.num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+/* glass surfaces */
+.card,.stat,.course,.item,.hero,details,.ymap .y,.planTop .card,table{border-radius:20px!important}
+.card,.stat,.course,.item,.ymap .y{background:#1C1C1E!important;border:1px solid rgba(255,255,255,.06)!important;box-shadow:var(--shadow)!important}
+.card::before,.card::after,.stat::before,.stat::after,.course::before{display:none!important}
+.ymap .y.cur{border-color:rgba(10,132,255,.6)!important;box-shadow:0 0 0 3px rgba(10,132,255,.18),var(--shadow)!important}
+/* top bar & sidebar */
+.top{background:rgba(0,0,0,.72)!important;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(255,255,255,.08)!important;box-shadow:none!important}
+nav.tabs a{color:#A1A1A6!important}
+nav.tabs a:hover{color:#F5F5F7!important;background:rgba(255,255,255,.06);border-color:transparent!important}
+nav.tabs a.on{background:rgba(10,132,255,.16)!important;color:#0A84FF!important;border-color:transparent!important;box-shadow:none!important;font-weight:600}
+nav.tabs a.on .ic,#bottomNav .on .ic{color:#0A84FF!important;filter:none!important}
+#bottomNav{background:rgba(22,22,24,.82)!important;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-top:1px solid rgba(255,255,255,.08)!important;box-shadow:none!important}
+#bottomNav .on{color:#0A84FF!important}
+.seal{background:linear-gradient(180deg,#3A3A3C,#2C2C2E)!important;border:0!important;box-shadow:0 2px 8px rgba(0,0,0,.18)!important;color:#fff!important}
+.seal svg{filter:none!important}
+.seal svg path,.seal svg circle{stroke:#fff}
+.seal svg circle{fill:#fff}
+/* buttons: pill, blue */
+.btn{background:#0A84FF!important;color:#fff!important;border-radius:980px!important;font-weight:600!important;box-shadow:none!important}
+.btn:hover{background:#409CFF!important;transform:none!important}
+.btn.ghost{background:rgba(255,255,255,.08)!important;color:#F5F5F7!important;border:0!important}
+.btn.ghost:hover{background:rgba(255,255,255,.14)!important}
+.btn.danger{background:#FF453A!important;color:#fff!important}
+.iconbtn{background:rgba(255,255,255,.08);border:0}
+input,select,textarea{background:#2C2C2E!important;border:1px solid transparent!important;border-radius:12px!important;color:#F5F5F7!important}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#0A84FF!important;box-shadow:0 0 0 4px rgba(10,132,255,.25)!important;background:#2C2C2E!important}
+:focus-visible{outline-color:#0A84FF}
+/* hero: big, clean, dark card like product tiles */
+.hero{background:linear-gradient(160deg,#1C1C1E,#2C2C2E)!important;border:1px solid rgba(255,255,255,.08)!important;color:#F5F5F7!important;border:0!important;box-shadow:0 20px 50px -20px rgba(0,0,0,.35)!important}
+.hero::before,.hero::after{display:none!important}
+.hero h1{background:none!important;-webkit-text-fill-color:#F5F5F7!important;color:#F5F5F7!important}
+.hero .sub,.hero small{color:#A1A1A6!important;opacity:1}
+.count div{background:rgba(255,255,255,.08)!important;border:0!important;border-radius:16px!important}
+.count b{color:#2997FF!important;text-shadow:none!important;font-weight:700}
+.stat .big{background:none!important;-webkit-text-fill-color:#F5F5F7!important;color:#F5F5F7!important;font-weight:700!important;letter-spacing:-.03em}
+.clock{background:none!important;-webkit-text-fill-color:#F5F5F7!important;filter:none!important;text-shadow:none!important}
+.bar{background:rgba(255,255,255,.10)!important}.bar>i{background:#0A84FF!important;box-shadow:none!important}
+.ring{--c:#0A84FF!important;box-shadow:none!important}
+.when.soon{background:#FF453A!important;color:#fff!important}.when.mid{background:#FF9F0A!important;color:#fff!important}
+.chk:checked{background:#0A84FF!important;border-color:#0A84FF!important}.chk:checked::after{color:#fff!important}
+.slot,.ev{color:#fff!important;box-shadow:none!important;border-radius:10px!important}
+.exBadge,#exGB .exBadge,#exGC .exBadge,#exGM .exBadge{background:rgba(10,132,255,.16)!important;border-color:transparent!important;color:#0A84FF!important;box-shadow:none!important}
+#exGB .exBadge{background:rgba(94,92,230,.2)!important;color:#7D7AFF!important}
+#exGC .exBadge,#exGM .exBadge{background:rgba(191,90,242,.18)!important;color:#BF5AF2!important}
+.star.on{color:#FF9F0A!important;text-shadow:none!important}
+.halacha{border-inline-start-color:#0A84FF}
+.tgrp h4{color:#0A84FF}
+th{color:#98989D!important;font-weight:600!important}
+tr{border-color:rgba(255,255,255,.07)!important}
+dialog,.dlg{background:rgba(30,30,32,.94)!important;-webkit-backdrop-filter:blur(30px);backdrop-filter:blur(30px);color:#F5F5F7!important;border:0!important;border-radius:22px!important;box-shadow:0 30px 80px rgba(0,0,0,.7)!important}
+dialog::backdrop{background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+*{text-shadow:none}
+/* cover */
+#cover{background:#000!important}
+#cover::before,#cover .frame::before,#cover .dust,#cover .corner{display:none!important}
+#cover .frame{background:#1C1C1E!important;border:1px solid rgba(255,255,255,.08)!important;box-shadow:0 30px 80px -30px rgba(0,0,0,.9)!important;animation:none!important}
+#cover .emblem{filter:none!important}
+#cover h1.title{filter:none!important;letter-spacing:-.03em;font-weight:800}
+#cover h1.title span{background:linear-gradient(180deg,#FFFFFF,#C7C7CC)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;animation:none!important}
+#cover .rule i{background:rgba(255,255,255,.14)!important;box-shadow:none!important}
+#cover .rule b{background:#0A84FF!important;box-shadow:none!important}
+#cover .study b{color:#0A84FF!important;text-shadow:none!important}
+#cover .enter{background:#0A84FF!important;color:#fff!important;border-radius:980px!important;box-shadow:none!important;animation:none!important;font-weight:600!important;letter-spacing:0!important}
+#cover .kicker{background:rgba(255,255,255,.08)!important;border:0!important;color:#98989D!important;box-shadow:none!important}
+#cover .sub,#cover .date,#cover .src{color:#98989D!important}
+#cover .quote{color:#F5F5F7!important}
+#cover .blobs,#cover .frame::after{display:none!important}
+#cover .kicker{letter-spacing:.08em!important;font-family:var(--body)!important;font-weight:600!important}
+#cover .kicker::before{background:#0A84FF!important;box-shadow:none!important}
+#cover .src{color:#98989D!important;letter-spacing:.1em!important}
+#cover .emblem svg *{stroke:#F5F5F7}
+.hero .side,.hero li,.hero p{color:#E8E8ED}
+.hero .btn.ghost{background:rgba(255,255,255,.14)!important;color:#fff!important}.hero .btn.ghost:hover{background:rgba(255,255,255,.22)!important}
+
+.count b{color:#0A84FF!important}.hero{box-shadow:0 20px 60px -20px rgba(0,0,0,.9)!important}
+
+.slot{font-size:13px!important;line-height:1.3!important;padding:7px 9px!important;overflow:hidden;white-space:normal;word-break:break-word}
+.slot small{font-size:11.5px!important;line-height:1.35!important;margin-top:3px}
+.slot.grow{z-index:3;box-shadow:0 8px 24px rgba(0,0,0,.55)!important}
+
+#cover h1.title span{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;color:#22E3C4!important;-webkit-text-fill-color:#22E3C4!important;text-shadow:0 0 18px rgba(34,227,196,.55),0 0 42px rgba(34,227,196,.3)!important}
+#cover h1.title{filter:none!important}
+
+.titem{grid-template-columns:1fr auto auto auto auto}
+.tfbtn{all:unset;cursor:pointer;font-size:12px;color:var(--muted);padding:3px 9px;border-radius:99px;border:1px solid var(--line);white-space:nowrap}.tfbtn:hover,.tfbtn[aria-expanded="true"]{color:var(--fg);border-color:var(--teal)}.tfbtn.has{color:var(--teal);border-color:color-mix(in srgb,var(--teal) 45%,transparent)}
+.tfiles{grid-column:1/-1;margin-top:8px;padding:12px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);display:grid;gap:8px}
+.tf{display:flex;align-items:center;gap:10px}.tf .tfname{all:unset;cursor:pointer;font-weight:600;color:var(--teal);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%}.tf .tfname:hover{text-decoration:underline}.tf small{margin-inline-start:auto}.tf .ic{flex:none}
+.tfadd{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.tfadd input{flex:1;min-width:140px}.tfup{cursor:pointer}.tfnote{font-size:12px}
+@media(max-width:700px){.titem{grid-template-columns:auto auto auto 1fr}.tfbtn{grid-column:auto}}
 </style>
 
 </head>
@@ -491,12 +601,11 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
           <g class="panR"><path d="M86 48l-9 17M86 48l9 17"/><path d="M75 65q11 9 22 0z" fill="#5B8CFF" fill-opacity=".18"/></g>
         </g>
       </svg>
-      <div class="kicker">LL.B · תיק לימודים</div>
-      <h1 class="title" id="cvTitle">יומן לימודי משפטים</h1>
-      <div class="sub" id="cvSub">הקריה האקדמית אונו · תואר ראשון במשפטים · שנה א׳</div>
+      <h1 class="title" id="cvTitle">יומן לימודים אישי</h1>
+      <div class="sub" id="cvSub">הקריה האקדמית אונו · תואר ראשון במשפטים · LL.B</div>
       <div class="rule" aria-hidden="true"><i></i><b></b><i></i></div>
-      <div class="quote">שָׁמֹעַ בֵּין אֲחֵיכֶם וּשְׁפַטְתֶּם צֶדֶק</div>
-      <div class="src">דברים א, טז</div>
+      <div class="quote">שֹׁפְטִים וְשֹׁטְרִים תִּתֶּן לְךָ בְּכָל שְׁעָרֶיךָ</div>
+      <div class="src">דברים טז, יח</div>
       <div class="date" id="cvDate"></div>
       <button type="button" class="enter" id="cvEnter">פתיחת התיק</button>
     </div>
@@ -509,7 +618,7 @@ nav.tabs a .ic svg{width:100%;height:100%;display:block}
 <header class="top">
   <div class="wrap" style="padding-block:0">
     <div class="topin">
-      <div class="brand"><div class="seal" aria-label="יומן משפטים"><svg viewBox="12 8 96 96" fill="none" stroke="url(#sealG)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs><linearGradient id="sealG" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#22E3C4"/><stop offset=".55" stop-color="#5B8CFF"/><stop offset="1" stop-color="#FF4FD8"/></linearGradient></defs><path d="M60 22v64"/><path d="M42 90h36"/><path d="M26 42h68"/><circle cx="60" cy="42" r="4" fill="#5B8CFF" stroke="none"/><path d="M32 44l-12 24M32 44l12 24"/><path d="M17 68q15 13 30 0z"/><path d="M88 44l-12 24M88 44l12 24"/><path d="M73 68q15 13 30 0z"/></svg></div><div><b id="brandName">היומן של יהל</b><small id="brandSub"><span>LL.B · שנה א׳</span><span>הקריה האקדמית אונו</span></small></div></div>
+      <div class="brand"><div class="seal" aria-label="יומן משפטים"><svg viewBox="12 8 96 96" fill="none" stroke="url(#sealG)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs><linearGradient id="sealG" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#22E3C4"/><stop offset=".55" stop-color="#5B8CFF"/><stop offset="1" stop-color="#FF4FD8"/></linearGradient></defs><path d="M60 22v64"/><path d="M42 90h36"/><path d="M26 42h68"/><circle cx="60" cy="42" r="4" fill="#5B8CFF" stroke="none"/><path d="M32 44l-12 24M32 44l12 24"/><path d="M17 68q15 13 30 0z"/><path d="M88 44l-12 24M88 44l12 24"/><path d="M73 68q15 13 30 0z"/></svg></div><div><b id="brandName">היומן שלי</b><small id="brandSub"><span>LL.B · שנה א׳</span><span>הקריה האקדמית אונו</span></small></div></div>
       <span class="sync" id="sync">שמור בדפדפן</span>
       <button class="iconbtn" id="themeBtn" type="button" aria-label="החלפת מצב תאורה">◐</button>
     </div>
@@ -726,23 +835,24 @@ const SYL=[["1116","כריתת חוזה › כוונה ליצור יחסים מ�
 const EXAMPLE_CASES=ONO.cases.map(c=>c[0]);
 function sylCases(){const n={};return SYL.map(([code,topic,cite,name])=>{n[code]=(n[code]||0)+1;return {id:"syl-"+code+"-"+n[code],name,num:cite,area:topic,summary:"",courseId:"ono-c-"+code,syl:true,read:false}})}
 const DEG_REQ=["אנגלית: פטור או השלמת רמות","סמינריון ראשון","סמינריון שני","קליניקה או סדנה מעשית","השלמת קורסי בחירה","מחויבות קהילתית או פטור","הכנה להתמחות: קורות חיים וראיונות"];
-function sylTopics(code){const seen=new Set(),out=[];if(code!=="1116")return out;SYL.forEach(a=>{if(a[0]===code&&!seen.has(a[1])){seen.add(a[1]);out.push({id:"t-"+code+"-"+out.length,t:a[1],learned:false,reviewed:false})}});return out}
+const SYL_TOPICS={"1136": ["מושגי יסוד במשפט › הגדרת המשפט, תפקידיו וגבולותיו", "מושגי יסוד במשפט › ענפי המשפט", "מושגי יסוד במשפט › חובות וזכויות משפטיות", "מושגי יסוד במשפט › המדרג הנורמטיבי", "שורשי המשפט הישראלי › השיטה העותומנית", "שורשי המשפט הישראלי › השיטה המנדטורית", "שורשי המשפט הישראלי › מגילת העצמאות", "שורשי המשפט הישראלי › פקודת סדרי השלטון והמשפט", "מקורות המשפט › המקורות הנורמטיביים: חקיקה, פסיקה ומנהג", "מקורות המשפט › המקורות ההיסטוריים", "החקיקה › החוק הישראלי: הגדרה, פרסום, תחילת תוקף וחתימה", "החקיקה › ההליכים לקבלת חוק בכנסת", "חקיקת המשנה › תקנות: הגדרה, פרסום ותחילת תוקף", "חקיקת המשנה › היחס בין תקנה לחוק", "מערכת בתי המשפט ובתי הדין › בית המשפט העליון: סמכויות והרכב", "מערכת בתי המשפט ובתי הדין › בית המשפט המחוזי: סמכויות והרכב", "מערכת בתי המשפט ובתי הדין › בית משפט השלום: סמכויות והרכב", "מערכת בתי המשפט ובתי הדין › בתי המשפט המיוחדים", "מערכת בתי המשפט ובתי הדין › בתי הדין: עבודה, דתיים, צבאיים ומשמעתיים", "פרשנות חקיקה › חוק יסודות המשפט, התש\"ם-1980", "פרשנות חקיקה › הוראת ההשלמה: עקרונות מורשת ישראל", "פרשנות חקיקה › מקורות היסטוריים, מקורות עזר ומקום המשפט העברי", "עקרון התקדים המחייב › הגדרה", "עקרון התקדים המחייב › סעיף 20 לחוק יסוד: השפיטה", "עקרון התקדים המחייב › טעם הפסק מול אמרת אגב"], "8445": ["חקיקה › חוק לא תעמוד על דם רעך, התשנ\"ח-1998", "חקיקה › חוק המקרקעין, התשכ\"ט-1969 (ס' 61, 65, 69 ותוספת ראשונה)", "חקיקה › חוק למניעת הטרדה מינית, התשנ\"ח-1998", "חקיקה › חוק איסור הפליה במוצרים, בשירותים ובכניסה למקומות בידור ולמקומות ציבוריים, התשס\"א-2000", "חקיקה › חוק פיצויי פיטורים, התשכ\"ג-1963 (ס' 1 ו־11(א))", "פסיקה › ע\"פ 281/69 בר שלום נ' מדינת ישראל", "פסיקה › ע\"פ 194/75 קינזי נ' מדינת ישראל", "פסיקה › בג\"ץ 11339/05 מדינת ישראל נ' בית המשפט המחוזי באר שבע", "פסיקה › רע\"א 4984/17 חיים נ' נציגות הבית המשותף סוקולוב 48 קרית אתא", "פסיקה › בש\"פ 977/19 מדינת ישראל נ' אבו כף", "פסיקה › רע\"פ 10141/09 בן חיים נ' מדינת ישראל", "פסיקה › ת\"א 35096-07-18 רוסו נ' שגב אקספרס", "פסיקה › ת\"א 2320-04-19 שמחי נ' אגד תעבורה", "פסיקה › דב\"ע מח/2-3 גנני נ' \"אמירים\"", "מטלות › עבודת אמצע סמסטר (עובר/נכשל)", "מטלות › בחינה סופית רב־ברירתית בחומר סגור (90%)"], "2271": ["יחידות הקורס › יחידה 1: קריאה, האזנה, כתיבה ושיחה", "יחידות הקורס › יחידה 2: קריאה, האזנה, כתיבה ושיחה", "יחידות הקורס › יחידה 3: קריאה, האזנה, כתיבה ושיחה", "יחידות הקורס › יחידה 4: קריאה, האזנה, כתיבה ושיחה", "יחידות הקורס › יחידה 5: קריאה, האזנה, כתיבה ושיחה", "יחידות הקורס › יחידה 6: קריאה, האזנה, כתיבה ושיחה", "דרישות › 30 בחנים (5 בכל יחידה), ציון מעבר 60", "דרישות › בחינה מסכמת (40%), ציון מינימום 60"]};
+function sylTopics(code){const seen=new Set(),out=[];if(SYL_TOPICS[code])return SYL_TOPICS[code].map((t,i)=>({id:"t-"+code+"-"+i,t,learned:false,reviewed:false}));if(code!=="1116")return out;SYL.forEach(a=>{if(a[0]===code&&!seen.has(a[1])){seen.add(a[1]);out.push({id:"t-"+code+"-"+out.length,t:a[1],learned:false,reviewed:false})}});return out}
 function addV7(o){o.profile=o.profile||{};if(o.profile.passGrade==null||o.profile.passGrade==="")o.profile.passGrade=60;
   (o.courses||[]).forEach(c=>{if(!c.year)c.year="א׳";if(c.absences==null)c.absences=0;if(c.maxAbs==null)c.maxAbs=Array.isArray(c.meets)&&c.meets.length?Math.floor(c.meets.length*0.2):"";if(!Array.isArray(c.topics))c.topics=sylTopics(c.code||"")});
   if(!Array.isArray(o.degreeReq))o.degreeReq=DEG_REQ.map((t,i)=>({id:"dr"+i,t,done:false}));
   (o.cases||[]).forEach(c=>{if(c.halacha==null)c.halacha="";if(c.important==null)c.important=false});return o}
 function addContracts(o){o.exams=o.exams||[];if(!o.exams.some(e=>e.id==="ono-x-1116-a"))o.exams.push({id:"ono-x-1116-a",courseId:"ono-c-1116",moed:"א׳",date:"",time:"",place:"מרכז בחינות ממוחשב · תאריך אישי, יש לבצע רישום דרך מרכז הבחינות",ready:0,grade:"",personal:true});return o}
 function mergeSylCases(old){const prev={};(old||[]).forEach(c=>{if(c.syl)prev[c.id]=c});const fresh=sylCases().map(c=>{const q=prev[c.id];if(q){c.read=!!q.read;c.summary=q.summary||""}return c});const mine=(old||[]).filter(c=>!c.syl&&!EXAMPLE_CASES.includes(c.name));return fresh.concat(mine)}
-function starter(){return addV7(addContracts(starter0()))}
+function starter(){const o=addV8(addV7(addContracts(starter0())));o.v=8;return o}
 function starter0(){
   const toSlots=c=>c.sessions.map(x=>{const m=x.when.match(/יום (\S+) (\d\d:\d\d)–(\d\d:\d\d)/);return m?{day:String(HEB_D.indexOf(m[1])),start:m[2],end:m[3],kind:x.kind,room:x.place,who:x.who}:null}).filter(Boolean);
-  const courses=ONO.courses.map((c,i)=>({id:c.id,code:c.code,name:c.name,type:c.type,sem:c.sem,credits:c.credits,lecturer:c.lecturer,grade:"",color:COLORS[i%COLORS.length],slots:toSlots(c),meets:c.meets,online:c.sessions.filter(x=>!/^יום/.test(x.when)).map(x=>x.when).join(", "),ono:true}));
+  const courses=ONO.courses.filter(c=>c.code!=="2271").map((c,i)=>({id:c.id,code:c.code,name:c.name,type:c.type,sem:c.sem,credits:c.credits,lecturer:c.lecturer,grade:"",color:COLORS[i%COLORS.length],slots:toSlots(c),meets:c.meets,online:c.sessions.filter(x=>!/^יום/.test(x.when)).map(x=>x.when).join(", "),ono:true}));
   const byName=n=>(courses.find(c=>c.name===n)||{}).id||"";
   const ev=(title,start,end,kind,src)=>({id:uid(),title,start,end:end||"",kind,src});
   return {v:7,syncedAt:"2026-11-19",
-    profile:{name:"יהל",inst:"הקריה האקדמית אונו",degree:"LL.B",year:"א׳",total:ONO.profile.targetCredits,target:ONO.profile.avgGoal,campus:"LLB ערב · קמפוס ירושלים החדש"},
+    profile:{name:"",inst:"",degree:"",year:"",total:"",target:"",campus:""},
     courses,
-    exams:ONO.exams.map(e=>({id:e.id,courseId:byName(e.course),moed:e.moed,date:e.date,time:e.time,place:/^ono-x-2271/.test(e.id)?"בחינה מקוונת/כללי · מיקום טרם נקבע":"בחינה פרונטלית בקמפוס · חדר טרם נקבע",ready:0,grade:""})),
+    exams:ONO.exams.filter(e=>!/^ono-x-2271/.test(e.id)).map(e=>({id:e.id,courseId:byName(e.course),moed:e.moed,date:e.date,time:e.time,place:/^ono-x-2271/.test(e.id)?"בחינה מקוונת/כללי · מיקום טרם נקבע":"בחינה פרונטלית בקמפוס · חדר טרם נקבע",ready:0,grade:""})),
     tasks:ONO.tasks.map(t=>({id:t.id,title:t.title,courseId:byName(t.course),kind:t.kind,due:"",done:false,priority:"גבוהה",notes:""})),
     sessions:[],goals:[],
     cases:sylCases(),casesSrc:"syllabus-2026-11-19",
@@ -771,7 +881,9 @@ function starter0(){
 const DROP_COURSES=["ono-c-1275"];
 function dropCourses(o){const bad=new Set((o.courses||[]).filter(c=>DROP_COURSES.includes(c.id)||/מחוי?יבות קהילתית/.test(c.name||"")).map(c=>c.id));DROP_COURSES.forEach(x=>bad.add(x));
   o.courses=(o.courses||[]).filter(c=>!bad.has(c.id));["exams","tasks","cases","sessions"].forEach(k=>{if(Array.isArray(o[k]))o[k]=o[k].filter(x=>!bad.has(x.courseId))});return o}
-function migrate(o){
+function addV8(o){(o.courses||[]).forEach(c=>{const L=SYL_TOPICS[c.code||""];if(!L)return;if(!Array.isArray(c.topics))c.topics=[];const have=new Set(c.topics.map(t=>t.id));L.forEach((t,i)=>{const id="t-"+c.code+"-"+i;if(!have.has(id))c.topics.push({id,t,learned:false,reviewed:false})})});return o}
+function migrate(o){o=migrate7(o);if(o&&o.v===7){addV8(o);o.v=8;o.updated=Date.now()}return o}
+function migrate7(o){
   if(o&&o.v>=7)return o;
   if(o&&o.v===6){addV7(o);o.v=7;o.updated=Date.now();return o}
   if(o&&o.v===5){addContracts(o);addV7(o);o.v=7;o.updated=Date.now();return o}
@@ -823,7 +935,7 @@ async function connect(){
     dbDoc=ref;
     if(snap.exists&&snap.data()&&snap.data().s){
       const raw=snap.data().s,remote=migrate(raw);
-      if(raw.v<7){S=remote;render();flush()}
+      if(raw.v<8){S=remote;render();flush()}
       else if(!S.updated||remote.updated>=S.updated||!localStorage.getItem(LS)){S=remote;render()}
       else flush();
     } else flush();
@@ -877,8 +989,8 @@ function onDay(it,ds){return it.end?(it.date<=ds&&ds<=it.end):it.date===ds}
 const charts={};
 function render(){
   const p=S.profile;
-  $("#brandName").textContent="היומן של "+(p.name||"שלי");
-  $("#brandSub").innerHTML=[`${p.degree} · שנה ${p.year}`,p.inst,S.syncedAt?"עודכן מהידיעון "+fmt(S.syncedAt):""].filter(Boolean).map(x=>`<span>${esc(x)}</span>`).join("");
+  $("#brandName").textContent=p.name?"היומן של "+p.name:"היומן שלי";
+  $("#brandSub").innerHTML=[[p.degree,p.year?"שנה "+p.year:""].filter(Boolean).join(" · "),p.inst,S.syncedAt?"עודכן מהידיעון "+fmt(S.syncedAt):""].filter(Boolean).map(x=>`<span>${esc(x)}</span>`).join("");
   renderDash();renderCal();renderWeek();renderCourses();renderExams();renderPlan();renderTasks();renderStudy();renderGoals();renderCases();renderLinks();renderProfile();
 }
 function renderDash(){
@@ -1016,19 +1128,22 @@ function lessonsOn(ds){
 function semActive(sem){return sem==="שנתי"||sem===semSel||!sem}
 function renderWeek(){
   $("#semFilter").innerHTML=["א׳","ב׳","קיץ"].map(s=>`<button type="button" class="${semSel===s?"on":""}" data-sem="${s}">סמסטר ${s}</button>`).join("");
-  const H0=8,H1=22,PX=44,days=[0,1,2,3,4,5],dow=new Date().getDay();
+  const days=[0,1,2,3,4,5],dow=new Date().getDay(),PX=92;const _tm=t=>{const[a,b]=(t||"0:0").split(":").map(Number);return a*60+b};
+  let _mn=24*60,_mx=0;S.courses.filter(c=>semActive(c.sem)).forEach(c=>c.slots.forEach(s=>{if(days.includes(+s.day)){_mn=Math.min(_mn,_tm(s.start));_mx=Math.max(_mx,_tm(s.end))}}));
+  const H0=_mx?Math.max(7,Math.floor(_mn/60)):8,H1=_mx?Math.min(24,Math.ceil(_mx/60)):22;
   let h='<div class="h"></div>'+days.map(d=>`<div class="h">${HEB_D[d]}</div>`).join("");
-  h+='<div>'+Array.from({length:H1-H0},(_,i)=>`<div class="hr">${pad(H0+i)}:00</div>`).join("")+'</div>';
+  h+='<div>'+Array.from({length:H1-H0},(_,i)=>`<div class="hr" style="height:${PX}px">${pad(H0+i)}:00</div>`).join("")+'</div>';
   let any=false;
   days.forEach(d=>{
     let slots="";
     S.courses.filter(c=>semActive(c.sem)).forEach(c=>c.slots.forEach((s,si)=>{if(+s.day!==d)return;any=true;
       const toM=t=>{const[a,b]=(t||"0:0").split(":").map(Number);return a*60+b};
       const top=(toM(s.start)-H0*60)/60*PX,ht=Math.max(28,(toM(s.end)-toM(s.start))/60*PX-3);
-      slots+=`<div class="slot" style="top:${top}px;height:${ht}px;background:${c.color}" data-slot="${c.id}:${si}">${esc(c.name)}<small>⁦${s.start}–${s.end}⁩${s.room?" · "+esc(s.room):""}${s.kind?" · "+esc(s.kind):""}</small></div>`}));
-    h+=`<div class="col${d===dow?" today":""}">${Array.from({length:H1-H0},()=>'<div class="ln"></div>').join("")}${slots}</div>`;
+      slots+=`<div class="slot" data-h="${ht}" style="top:${top}px;height:${ht}px;background:${c.color}" data-slot="${c.id}:${si}">${esc(c.name)}<small>⁦${s.start}–${s.end}⁩</small>${(s.room||s.kind)?`<small>${[s.room?"\u2068"+esc(s.room)+"\u2069":"",s.kind?esc(s.kind):""].filter(Boolean).join(" · ")}</small>`:""}</div>`}));
+    h+=`<div class="col${d===dow?" today":""}">${Array.from({length:H1-H0},()=>`<div class="ln" style="height:${PX}px"></div>`).join("")}${slots}</div>`;
   });
   $("#week").innerHTML=h;
+  requestAnimationFrame(()=>document.querySelectorAll("#week .slot").forEach(e=>{if(e.scrollHeight>e.clientHeight+1){e.style.height="auto";e.style.minHeight=e.dataset.h+"px";e.classList.add("grow")}}));
   $("#weekAgenda").innerHTML=days.map(d=>{const L=[];S.courses.filter(c=>semActive(c.sem)).forEach(c=>c.slots.forEach((s,si)=>{if(+s.day===d)L.push({c,s,si})}));if(!L.length)return"";L.sort((a,b)=>a.s.start.localeCompare(b.s.start));
     return `<div class="card agDay${d===dow?" today":""}"><h3>יום ${HEB_D[d]}${d===dow?' <span class="chip">היום</span>':""}</h3><div class="list">${L.map(({c,s,si})=>`<div class="item" data-slot="${c.id}:${si}" style="cursor:pointer;align-items:flex-start"><span class="dot" style="background:${c.color};margin-top:7px"></span><div class="t"><b>${esc(c.name)}</b><small>${esc(s.kind||"שיעור")}${s.who?" · "+esc(s.who):""}${s.room?" · "+esc(s.room):""}</small></div><span class="when mono">⁦${s.start}–${s.end}⁩</span></div>`).join("")}</div></div>`}).join("")||'<div class="empty"><b>אין שיעורים בסמסטר הזה</b></div>';
   if(!any)$("#week").insertAdjacentHTML("afterend","");
@@ -1081,10 +1196,10 @@ function renderExams(){
 let planCourse=null;
 function nextExamOf(cid){const ds=iso(today());return S.exams.filter(e=>e.courseId===cid&&!e.done&&!examSkip(e)&&e.date&&e.date>=ds).sort((a,b)=>a.date.localeCompare(b.date))[0]}
 function renderPlan(){
-  const cs=S.courses.filter(c=>(c.topics&&c.topics.length)||S.exams.some(e=>e.courseId===c.id));
+  const SO={"א׳":1,"שנתי":2,"ב׳":3,"קיץ":4};const cs=S.courses.slice().sort((a,b)=>(SO[a.sem]||5)-(SO[b.sem]||5));
   if(!cs.length){$("#planCourses").innerHTML="";$("#planBody").innerHTML='<div class="empty"><b>אין קורסים עם בחינות</b>הוסיפי קורס ובחינה כדי לבנות תוכנית למידה.</div>';return}
   if(!planCourse||!cs.some(c=>c.id===planCourse)){const w=cs.find(c=>c.topics&&c.topics.length)||cs[0];planCourse=w.id}
-  $("#planCourses").innerHTML=cs.map(c=>{const t=c.topics||[];return `<button type="button" class="${planCourse===c.id?"on":""}" data-pcourse="${c.id}"><span class="dot" style="background:${c.color}"></span>${esc(c.name)}${t.length?` <span class="mono">${t.filter(x=>x.reviewed).length}/${t.length}</span>`:""}</button>`}).join("");
+  $("#planCourses").innerHTML=cs.map(c=>{const t=c.topics||[];return `<button type="button" class="${planCourse===c.id?"on":""}" data-pcourse="${c.id}"><span class="dot" style="background:${c.color}"></span>${esc(c.name)}${c.sem?` <small class="src">סמ׳ ${esc(c.sem)}</small>`:""}${t.length?` <span class="mono">${t.filter(x=>x.reviewed).length}/${t.length}</span>`:""}</button>`}).join("");
   const c=course(planCourse),T=c.topics||[];const nx=nextExamOf(c.id),passed=passedExam(c.id);
   const ln=T.filter(t=>t.learned).length,rv=T.filter(t=>t.reviewed).length;
   const days=nx?dayDiff(nx.date):null;
@@ -1109,16 +1224,43 @@ function renderPlan(){
   h+=`</div>`;
   // topics list
   h+=`<div class="card"><h3>נושאי הסילבוס · ${esc(c.name)}</h3>`;
-  if(c.code==="1116"&&T.length)h+=`<div class="src">הנושאים נלקחו מהסילבוס של הקורס בידיעון.</div>`;
+  if((c.code==="1116"||SYL_TOPICS[c.code])&&T.length)h+=`<div class="src">הנושאים נלקחו מהסילבוס של הקורס בידיעון. אפשר לצרף לכל נושא סיכומים בכפתור 📎.</div>`;else if(!T.length)h+=`<div class="src">הסילבוס של הקורס הזה עוד לא פורסם בידיעון. אפשר להוסיף נושאים בעצמך למטה.</div>`;
   const groups={};T.forEach(t=>{const g=t.t.includes(" › ")?t.t.split(" › ")[0]:"נושאים";(groups[g]=groups[g]||[]).push(t)});
-  h+=Object.entries(groups).map(([g,L])=>`<div class="tgrp"><h4>${esc(g)}</h4>${L.map(t=>`<div class="titem${t.reviewed?" rev":""}"><b>${esc(t.t.split(" › ").pop())}</b><label><input type="checkbox" data-tl="${t.id}" ${t.learned?"checked":""}> למדתי</label><label><input type="checkbox" data-tr="${t.id}" ${t.reviewed?"checked":""}> חזרתי</label><button type="button" class="x" data-tdel="${t.id}" aria-label="מחיקת נושא">×</button></div>`).join("")}</div>`).join("")||'<div class="src">אין עדיין נושאים לקורס הזה.</div>';
+  h+=Object.entries(groups).map(([g,L])=>`<div class="tgrp"><h4>${esc(g)}</h4>${L.map(t=>`<div class="titem${t.reviewed?" rev":""}"><b>${esc(t.t.split(" › ").pop())}</b><label><input type="checkbox" data-tl="${t.id}" ${t.learned?"checked":""}> למדתי</label><label><input type="checkbox" data-tr="${t.id}" ${t.reviewed?"checked":""}> חזרתי</label><button type="button" class="tfbtn${(t.files||[]).length?" has":""}" data-tfopen="${t.id}" aria-expanded="${openTopic===t.id}">📎 ${(t.files||[]).length?(t.files||[]).length+" סיכומים":"סיכום"}</button><button type="button" class="x" data-tdel="${t.id}" aria-label="מחיקת נושא">×</button>${openTopic===t.id?topicFilesHtml(t):""}</div>`).join("")}</div>`).join("")||'<div class="src">אין עדיין נושאים לקורס הזה.</div>';
   h+=`<div class="addrow"><input id="topicNew" placeholder="נושא חדש, למשל: הצעה וקיבול"><button class="btn sm" id="topicAdd" type="button">הוספה</button></div></div>`;
   $("#planBody").innerHTML=h;
 }
+
+/* topic summaries (attachments) */
+let openTopic="";
+const FDB={db:null,open(){if(this.db)return Promise.resolve(this.db);return new Promise((res,rej)=>{let r;try{r=indexedDB.open("yoman-files",1)}catch(e){rej(e);return}r.onupgradeneeded=()=>r.result.createObjectStore("f");r.onsuccess=()=>{this.db=r.result;res(this.db)};r.onerror=()=>rej(r.error)})},
+  async put(k,v){const d=await this.open();return new Promise((res,rej)=>{const t=d.transaction("f","readwrite");t.objectStore("f").put(v,k);t.oncomplete=res;t.onerror=()=>rej(t.error)})},
+  async get(k){const d=await this.open();return new Promise((res,rej)=>{const q=d.transaction("f").objectStore("f").get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})},
+  async del(k){const d=await this.open();return new Promise(res=>{const t=d.transaction("f","readwrite");t.objectStore("f").delete(k);t.oncomplete=res;t.onerror=res})}};
+const fsize=n=>n>1048576?(n/1048576).toFixed(1)+" MB":Math.max(1,Math.round(n/1024))+" KB";
+function topicFilesHtml(t){const F=t.files||[];
+  return `<div class="tfiles" data-tfwrap="${t.id}">${F.length?F.map(f=>`<div class="tf"><span class="ic">${f.kind==="link"?"🔗":"📄"}</span><button type="button" class="tfname" data-tfget="${t.id}:${f.id}">${esc(f.name)}</button><small class="src">${f.kind==="link"?"קישור":fsize(f.size||0)+" · שמור במכשיר הזה"}</small><button type="button" class="x" data-tfdel="${t.id}:${f.id}" aria-label="הסרת סיכום">×</button></div>`).join(""):`<div class="src">עוד אין סיכומים לנושא הזה.</div>`}
+  <div class="tfadd"><label class="btn sm ghost tfup">📄 צירוף קובץ<input type="file" data-tfup="${t.id}" hidden accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.rtf,.odt,.pages,.key,.jpg,.jpeg,.png,.heic,.webp"></label>
+  <input class="tflinkName" data-tfln="${t.id}" placeholder="שם הסיכום"><input class="tflinkUrl" data-tflu="${t.id}" placeholder="קישור (Google Drive, Dropbox...)" dir="ltr"><button type="button" class="btn sm" data-tfaddlink="${t.id}">הוספת קישור</button></div>
+  <div class="src tfnote">קובץ שמצרפים נשמר רק במכשיר הזה (עד 25MB) ולא עובר בגיבוי. כדי שהסיכום יהיה זמין בכל המכשירים, עדיף לצרף קישור.</div></div>`}
+async function topicFileEvent(e){
+  const c=course(planCourse);if(!c)return false;const T=c.topics||[];
+  const op=e.target.closest("[data-tfopen]");if(op){openTopic=openTopic===op.dataset.tfopen?"":op.dataset.tfopen;renderPlan();return true}
+  const al=e.target.closest("[data-tfaddlink]");if(al){const id=al.dataset.tfaddlink,t=T.find(x=>x.id===id);const n=$(`[data-tfln="${id}"]`).value.trim(),u=$(`[data-tflu="${id}"]`).value.trim();
+    if(!u){toast("צריך להדביק קישור לסיכום");return true}const url=/^https?:\/\//i.test(u)?u:"https://"+u;(t.files=t.files||[]).push({id:uid(),kind:"link",name:n||u.replace(/^https?:\/\//,"").slice(0,40),url});save();renderPlan();toast("הסיכום נוסף");return true}
+  const g=e.target.closest("[data-tfget]");if(g){const[tid,fid]=g.dataset.tfget.split(":");const t=T.find(x=>x.id===tid),f=t&&(t.files||[]).find(x=>x.id===fid);if(!f)return true;
+    if(f.kind==="link"){window.open(f.url,"_blank","noopener");return true}
+    try{const b=await FDB.get(f.id);if(!b){toast("הקובץ לא נמצא במכשיר הזה. הוא נשמר רק במכשיר שבו צורף.");return true}const url=URL.createObjectURL(b);const w=window.open(url,"_blank");if(!w){const a=document.createElement("a");a.href=url;a.download=f.name;document.body.appendChild(a);a.click();a.remove()}setTimeout(()=>URL.revokeObjectURL(url),60000)}catch(err){toast("לא הצלחתי לפתוח את הקובץ")}return true}
+  const d=e.target.closest("[data-tfdel]");if(d){const[tid,fid]=d.dataset.tfdel.split(":");const t=T.find(x=>x.id===tid);if(!t)return true;const f=(t.files||[]).find(x=>x.id===fid);t.files=(t.files||[]).filter(x=>x.id!==fid);if(f&&f.kind==="file")FDB.del(f.id).catch(()=>{});save();renderPlan();return true}
+  return false}
+async function topicFileUpload(inp){const id=inp.dataset.tfup;const c=course(planCourse);const t=c&&(c.topics||[]).find(x=>x.id===id);const file=inp.files&&inp.files[0];if(!t||!file)return;
+  if(file.size>25*1048576){toast("הקובץ גדול מ־25MB. אפשר לצרף אותו כקישור.");return}
+  const fid="f"+uid();try{await FDB.put(fid,file)}catch(err){toast("לא הצלחתי לשמור את הקובץ במכשיר הזה. נסי לצרף קישור.");return}
+  (t.files=t.files||[]).push({id:fid,kind:"file",name:file.name,size:file.size,type:file.type||""});save();renderPlan();toast("הסיכום צורף")}
 $("#planCourses").addEventListener("click",e=>{const b=e.target.closest("[data-pcourse]");if(b){planCourse=b.dataset.pcourse;renderPlan()}});
-$("#planBody").addEventListener("change",e=>{const l=e.target.closest("[data-tl],[data-tr]");if(!l)return;const c=course(planCourse);const id=l.dataset.tl||l.dataset.tr;const t=c.topics.find(x=>x.id===id);if(!t)return;
+$("#planBody").addEventListener("change",e=>{if(e.target.matches("[data-tfup]")){topicFileUpload(e.target);return}const l=e.target.closest("[data-tl],[data-tr]");if(!l)return;const c=course(planCourse);const id=l.dataset.tl||l.dataset.tr;const t=c.topics.find(x=>x.id===id);if(!t)return;
   if(l.dataset.tl)t.learned=l.checked;else{t.reviewed=l.checked;if(l.checked)t.learned=true}save();renderPlan();renderCourses();if(l.checked)confetti(l)});
-$("#planBody").addEventListener("click",e=>{const d=e.target.closest("[data-tdel]");const c=course(planCourse);if(d){c.topics=c.topics.filter(x=>x.id!==d.dataset.tdel);save();renderPlan();renderCourses();return}
+$("#planBody").addEventListener("click",async e=>{if(e.target.closest("[data-tfopen],[data-tfaddlink],[data-tfget],[data-tfdel]")){await topicFileEvent(e);return}const d=e.target.closest("[data-tdel]");const c=course(planCourse);if(d){c.topics=c.topics.filter(x=>x.id!==d.dataset.tdel);save();renderPlan();renderCourses();return}
   if(e.target.closest("#topicAdd")){const v=$("#topicNew").value.trim();if(!v)return;(c.topics=c.topics||[]).push({id:uid(),t:v,learned:false,reviewed:false});save();renderPlan();renderCourses();setTimeout(()=>{const i=$("#topicNew");i&&i.focus()},20)}});
 $("#planBody").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="topicNew"){e.preventDefault();$("#topicAdd").click()}});
 
