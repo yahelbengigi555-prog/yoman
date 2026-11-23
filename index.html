@@ -1293,7 +1293,7 @@ function drawCharts(){
   const mk=(id,cfg)=>{if(charts[id])charts[id].destroy();charts[id]=new Chart(document.getElementById(id),cfg)};
   // credits per course
   const cc=S.courses.filter(c=>parseFloat(c.credits)>0);
-  const SEMC={"א׳":["#00F0FF","#0077FF"],"ב׳":["#FF3DF5","#7B2CFF"],"שנתי":["#FFE14D","#FF7A00"],"קיץ":["#7CFF6B","#00B894"]};
+  const SEMC={"א׳":["#AED9F2","#8EC3EA"],"ב׳":["#F6BCD3","#EE9FC0"],"שנתי":["#F7DAB0","#EFC48E"],"קיץ":["#BDE6CB","#9ED6B2"]}; /* pastel (23.11.2026) */
   const semOf=c=>SEMC[c.sem]?c.sem:"א׳";
   const grad=(ctx,c)=>{const a=ctx.chart.chartArea;if(!a)return SEMC[semOf(c)][0];const g=ctx.chart.ctx.createLinearGradient(a.right,0,a.left,0);g.addColorStop(0,SEMC[semOf(c)][1]);g.addColorStop(1,SEMC[semOf(c)][0]);return g};
   const valLbl={id:"valLbl",afterDatasetsDraw(ch){const {ctx}=ch;ctx.save();ctx.font="700 12px "+getComputedStyle(document.body).fontFamily;ctx.fillStyle=css("--fg");ctx.textBaseline="middle";ctx.textAlign="left";ch.getDatasetMeta(0).data.forEach((b,i)=>ctx.fillText(String(cc[i].credits),b.x+6,b.y));ctx.restore()}};
