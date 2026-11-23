@@ -598,6 +598,14 @@ dialog::backdrop{background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(6px);bac
 #cover .enter:focus,#cover .enter:focus-visible{outline:none!important}
 #cover .skip{opacity:.5!important}
 </style>
+<style id="tools-css">
+#legalDlg{max-width:640px;width:calc(100% - 32px);max-height:86dvh;overflow:auto;padding:0;border-radius:16px;color:var(--fg)}
+#legalDlg .legal{padding:24px;line-height:1.65}
+#legalDlg h3{margin:0}#legalDlg h4{margin:20px 0 4px;font-size:15px}
+#legalDlg p,#legalDlg li{font-size:14px;color:var(--muted)}#legalDlg ul{padding-inline-start:18px;margin:4px 0}
+#legalDlg .frow{margin-top:20px}
+#legalDlg::backdrop{background:rgba(0,0,0,.6)}
+</style>
 <style id="glass">
 /* Apple-style (23.11.2026): solid content cards, glass only on navigation layers (top bar, tab bar, sheets, dialogs) over a dark night-blue wallpaper */
 html{background:#05060B!important}body{background:transparent!important}
@@ -623,6 +631,7 @@ input,select,textarea{background:rgba(255,255,255,.06)!important;border-color:rg
 .accCard .accList li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
 .accCard .accList span{direction:ltr;font-family:var(--mono);font-size:13px;overflow-wrap:anywhere}
 .accCard .accList li .btn{padding:6px 14px;flex-shrink:0}
+#acc .legalNote{margin:14px 0 0;font-size:12px;color:#8E8E93;text-align:center}#acc .legalNote a{color:inherit;text-decoration:underline}
 </style>
 <div id="acc" role="dialog" aria-modal="true" aria-labelledby="accT">
 <style>
@@ -678,6 +687,7 @@ input,select,textarea{background:rgba(255,255,255,.06)!important;border-color:rg
 <button class="go" id="accB" type="submit">כניסה</button>
 <div class="row"><button class="lk" id="accTog" type="button">אין לך חשבון? הרשמה</button><button class="lk" id="accFor" type="button">שכחתי סיסמה</button></div>
 <p class="err" id="accErr" aria-live="polite"></p>
+<p class="legalNote">בכניסה ליומן את/ה מסכים/ה ל<a href="#" data-legal>תנאי השימוש ומדיניות הפרטיות</a>.</p>
 </form>
 <div data-v="wait">
 <h2>ממתין לאישור</h2>
@@ -704,7 +714,7 @@ input,select,textarea{background:rgba(255,255,255,.06)!important;border-color:rg
 import {initializeApp,getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,sendPasswordResetEmail,signOut,getFirestore,doc,getDoc,setDoc,deleteDoc,collection,getDocs} from "./fb.js";
 const Y=window.__yoman;
 const app=initializeApp({"apiKey": "AIzaSyBhy74f3pN-E92d3_ohqik_w56N3OAuLQw", "authDomain": "application-a5298.firebaseapp.com", "projectId": "application-a5298", "storageBucket": "application-a5298.firebasestorage.app", "messagingSenderId": "954581038703", "appId": "1:954581038703:web:0a65e99b0879a4780eff9a"});
-const auth=getAuth(app),fdb=getFirestore(app);
+const auth=getAuth(app),fdb=getFirestore(app);auth.languageCode="he";
 const A=document.getElementById("acc"),$a=id=>document.getElementById(id);
 const OK="yoman-acc-ok",OWN=Y.LS+"-owner";
 const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
@@ -979,14 +989,42 @@ onAuthStateChanged(auth,check);
       <ul><li><b>אייפון:</b> פותחים את היומן בספארי (לא באפליקציה שעל מסך הבית), לוחצים "ייצוא ליומן" ואז "הוספת הכול".</li><li><b>אנדרואיד:</b> הקובץ יורד לטלפון. פותחים אותו מההורדות ובוחרים "יומן Google". אם זה לא עובד, נכנסים במחשב ל־calendar.google.com, הגדרות, "ייבוא וייצוא", ומעלים את הקובץ.</li><li>אחרי שינויים גדולים כדאי לייצא שוב. כדי לא ליצור כפילויות, מוחקים קודם את האירועים הישנים או מייבאים ליומן נפרד.</li></ul></div>
     <div class="card c6"><h3>גיבוי ושחזור</h3>
       <p class="src" id="syncNote" style="margin-top:0"></p>
-      <div class="frow"><button class="btn" id="copyBtn" type="button">העתקת גיבוי</button><button class="btn ghost" id="restoreBtn" type="button">שחזור מהטקסט</button><button class="btn danger" id="resetBtn" type="button">איפוס היומן</button></div>
+      <div class="frow"><button class="btn" id="copyBtn" type="button">העתקת גיבוי</button><button class="btn ghost" id="restoreBtn" type="button">שחזור מהטקסט</button></div>
+      <div class="frow" style="margin-top:8px"><button class="btn" id="dlBackup" type="button">הורדת קובץ גיבוי</button><button class="btn ghost" id="upBackup" type="button">שחזור מקובץ</button><input type="file" id="upFile" accept=".json,application/json" hidden></div>
+      <p class="src" id="lastBk"></p>
+      <div class="frow" style="margin-top:8px"><button class="btn danger" id="resetBtn" type="button">איפוס היומן</button></div>
       <textarea id="backupText" style="margin-top:10px" placeholder="כאן מופיע הגיבוי. להדבקת גיבוי קודם ולשחזור, מדביקים כאן ולוחצים ״שחזור מהטקסט״."></textarea>
       <div id="resetConfirm" hidden class="notice" style="margin-top:10px">האיפוס מוחק את כל הנתונים ביומן. <div class="frow" style="margin-top:8px"><button class="btn danger sm" id="resetYes" type="button">כן, למחוק הכול</button><button class="btn ghost sm" id="resetNo" type="button">ביטול</button></div></div>
+    </div>
+    <div class="card c6"><h3>עזרה ותמיכה</h3>
+      <p style="margin-top:0">משהו לא עובד, או שיש לך שאלה על היומן? אפשר לכתוב לי ישירות בוואטסאפ.</p>
+      <div class="frow"><a class="btn" id="waBtn" target="_blank" rel="noopener" hidden>תמיכה בוואטסאפ</a><button class="btn ghost" type="button" data-legal>תנאי שימוש ופרטיות</button></div>
     </div>
   </div>
 </section>
 </main>
 
+<dialog id="legalDlg" aria-labelledby="legalT"><div class="legal">
+<h3 id="legalT">תנאי שימוש ומדיניות פרטיות</h3>
+<p class="src">עודכן: 23 בנובמבר 2026</p>
+<h4>מה זה היומן</h4>
+<p>יומן לימודים אישי לסטודנטים במסלול הערב לתואר LL.B בקריה האקדמית אונו, קמפוס ירושלים. היומן הוא מיזם פרטי של סטודנטית במסלול, והוא אינו מטעם הקריה האקדמית אונו ואינו קשור אליה.</p>
+<h4>דיוק המידע</h4>
+<p>מערכת השעות, הבחינות והסילבוסים נלקחו מהידיעון של אונו. מועדים וחדרים יכולים להשתנות, והמקור המחייב הוא תמיד הידיעון והודעות המוסד. האחריות לבדוק מועדים לפני בחינה או הגשה היא של המשתמש.</p>
+<h4>הרכישה והשימוש</h4>
+<p>הגישה ליומן ניתנת אחרי תשלום חד פעמי, לחשבון אישי אחד לפי כתובת האימייל. אין להעביר את החשבון לאחרים, לשתף את פרטי הכניסה או להעתיק את היומן ולהפיץ אותו. היומן ניתן כפי שהוא (AS IS), ואין התחייבות שיעבוד בלי תקלות בכל רגע.</p>
+<h4>איזה מידע נשמר</h4>
+<ul><li>כתובת האימייל והסיסמה (הסיסמה נשמרת מוצפנת אצל Google, ואין לי גישה אליה).</li><li>מה שאת או אתה מזינים ביומן: מטלות, ציונים, הערות, סימוני התקדמות ופרטי הפרופיל.</li><li>קבצים שמצרפים לנושא נשמרים רק במכשיר עצמו ולא עולים לשרת.</li></ul>
+<h4>איפה ואיך</h4>
+<p>הנתונים נשמרים בשירות Firebase של Google, בשרתים שעשויים להיות מחוץ לישראל. כל משתמש יכול לקרוא ולשנות רק את היומן שלו. אין ביומן פרסומות, אין מעקב או אנליטיקה, והמידע לא נמכר ולא מועבר לאף אחד.</p>
+<h4>מה עושה מנהלת היומן</h4>
+<p>המנהלת רואה רק את רשימת כתובות האימייל שאושרו לכניסה, כדי לנהל את הגישה. היא לא נכנסת לתוכן היומנים של המשתמשים.</p>
+<h4>הזכויות שלך</h4>
+<p>אפשר לבקש לראות את המידע שנשמר עליך, לתקן אותו או למחוק את החשבון והיומן לגמרי. הבקשה נשלחת דרך כפתור התמיכה, והיא מטופלת תוך 30 יום. אפשר גם להוריד בכל רגע קובץ גיבוי מלא מ"הגדרות וגיבוי".</p>
+<h4>שינויים</h4>
+<p>אם התנאים ישתנו, התאריך למעלה יתעדכן, ושינוי מהותי יוצג ביומן.</p>
+<div class="frow"><button class="btn" type="button" id="legalClose">סגירה</button></div>
+</div></dialog>
 <dialog id="dlg"><form id="dlgForm" method="dialog"><h3 id="dlgTitle"></h3><div class="fgrid" id="dlgFields"></div><div class="frow"><button class="btn" type="submit" id="dlgSave">שמירה</button><button class="btn ghost" type="button" id="dlgCancel">ביטול</button><button class="btn danger" type="button" id="dlgDel" hidden style="margin-inline-start:auto">מחיקה</button></div></form></dialog>
 <div class="toast" id="toast" role="status"></div>
 
@@ -1558,6 +1596,24 @@ function renderProfile(){const p=S.profile;$("#pName").value=p.name||"";$("#pIns
 $("#profileForm").onsubmit=e=>{e.preventDefault();Object.assign(S.profile,{name:$("#pName").value.trim(),inst:$("#pInst").value.trim(),degree:$("#pDegree").value,year:$("#pYear").value,total:+$("#pTotal").value||"",target:+$("#pTarget").value||"",passGrade:$("#pPass").value===""?60:+$("#pPass").value});save();render();toast("הפרטים נשמרו")};
 $("#copyBtn").onclick=()=>{const txt=JSON.stringify(S);$("#backupText").value=txt;try{navigator.clipboard.writeText(txt).then(()=>toast("הגיבוי הועתק"),()=>{$("#backupText").select();toast("יש לסמן ולהעתיק את הטקסט")})}catch(e){$("#backupText").select();toast("יש לסמן ולהעתיק את הטקסט")}};
 $("#restoreBtn").onclick=()=>{try{const o=JSON.parse($("#backupText").value);if(!o||!o.courses)throw 0;S=migrate(Object.assign(starter(),o));save();render();toast("היומן שוחזר מהגיבוי")}catch(e){toast("הטקסט אינו גיבוי תקין של היומן")}};
+
+/* backup file, support, legal (23.11.2026) */
+const SUPPORT_WA="972542345702";
+(function(){const b=$("#waBtn");if(SUPPORT_WA){b.href="https://wa.me/"+SUPPORT_WA+"?text="+encodeURIComponent("היי, אני משתמש/ת ביומן הלימודים ויש לי שאלה:\n");b.hidden=false}})();
+document.addEventListener("click",e=>{if(e.target.closest("[data-legal]")){e.preventDefault();const d=$("#legalDlg");d.showModal();d.scrollTop=0}});
+$("#legalClose").onclick=()=>$("#legalDlg").close();
+const BK="yoman-last-backup";
+function showLastBk(){let t=null;try{t=+localStorage.getItem(BK)||null}catch(e){}const el=$("#lastBk");if(!el)return;if(!t){el.textContent="עוד לא הורדת קובץ גיבוי מהמכשיר הזה.";return}const d=Math.floor((Date.now()-t)/864e5);el.textContent="גיבוי אחרון: "+new Date(t).toLocaleDateString("he-IL")+(d>=14?" · כדאי להוריד גיבוי חדש":"")}
+showLastBk();
+$("#dlBackup").onclick=()=>{
+  if(window.claude&&window.claude.use){toast("הורדת קובץ עובדת באפליקציה. אפשר בינתיים להשתמש ב״העתקת גיבוי״.");return}
+  const d=new Date(),pad=n=>String(n).padStart(2,"0");
+  const name="yoman-backup-"+d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+".json";
+  const blob=new Blob([JSON.stringify(S,null,1)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);
+  try{localStorage.setItem(BK,String(Date.now()))}catch(e){}showLastBk();toast("קובץ הגיבוי ירד")};
+$("#upBackup").onclick=()=>$("#upFile").click();
+$("#upFile").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const o=JSON.parse(await f.text());if(!o||!o.courses)throw 0;S=migrate(Object.assign(starter(),o));save();render();toast("היומן שוחזר מהקובץ")}catch(err){toast("הקובץ אינו גיבוי תקין של היומן")}};
 $("#resetBtn").onclick=()=>{$("#resetConfirm").hidden=false};
 $("#resetNo").onclick=()=>{$("#resetConfirm").hidden=true};
 $("#resetYes").onclick=()=>{S=starter();save();render();$("#resetConfirm").hidden=true;toast("היומן אופס")};
