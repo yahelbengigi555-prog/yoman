@@ -582,6 +582,12 @@ dialog::backdrop{background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(6px);bac
 
 </head>
 <body>
+<style>
+.accCard .accList{list-style:none;padding:0;margin:10px 0 0;max-height:320px;overflow:auto}
+.accCard .accList li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
+.accCard .accList span{direction:ltr;font-family:var(--mono);font-size:13px;overflow-wrap:anywhere}
+.accCard .accList li .btn{padding:6px 14px;flex-shrink:0}
+</style>
 <div id="acc" role="dialog" aria-modal="true" aria-labelledby="accT">
 <style>
 #acc{position:fixed;inset:0;z-index:99999;background:#000;color:#F5F5F7;font-family:"Heebo","Segoe UI",Arial,sans-serif;direction:rtl;display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));overflow-y:auto}
@@ -604,9 +610,6 @@ dialog::backdrop{background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(6px);bac
 #acc .note p{margin:0 0 6px}
 #acc .spin{width:34px;height:34px;border:3px solid #3A3A3C;border-top-color:#0A84FF;border-radius:50%;margin:10px auto;animation:accs 0.9s linear infinite}
 @keyframes accs{to{transform:rotate(360deg)}}
-.accCard .accList{list-style:none;padding:0;margin:10px 0 0;max-height:320px;overflow:auto}
-.accCard .accList li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
-.accCard .accList span{direction:ltr;font-family:var(--mono);font-size:13px;overflow-wrap:anywhere}
 </style>
 <div class="box">
 <img src="icons/icon-192.png" alt="">
@@ -709,7 +712,7 @@ async function addCard(){
     document.getElementById("accCnt").textContent=rows.length+" מאושרים";
     rows.forEach(r=>{const li=document.createElement("li");const s=document.createElement("span");s.textContent=r.id+(r.name?"  ·  "+r.name:"");const b=document.createElement("button");b.className="btn ghost";b.type="button";b.textContent="הסרה";
       b.onclick=async()=>{if(r.id===(me.email||"").toLowerCase()){Y.toast("אי אפשר להסיר את עצמך");return}try{await deleteDoc(doc(fdb,"allowed",r.id));Y.toast("הגישה הוסרה");load()}catch(e){Y.toast("ההסרה נכשלה")}};
-      li.append(s,b);L.append(li)})}
+      li.append(s);if(r.id!==(me.email||"").toLowerCase())li.append(b);L.append(li)})}
   document.getElementById("accAdd").onsubmit=async ev=>{ev.preventDefault();const e=document.getElementById("accNew").value.trim().toLowerCase();if(!e)return;
     try{await setDoc(doc(fdb,"allowed",e),{added:Date.now(),name:document.getElementById("accName").value.trim()});document.getElementById("accNew").value="";document.getElementById("accName").value="";Y.toast("הגישה אושרה ✓");load()}catch(x){Y.toast("האישור נכשל")}};
   load();
