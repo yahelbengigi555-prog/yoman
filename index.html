@@ -582,6 +582,141 @@ dialog::backdrop{background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(6px);bac
 
 </head>
 <body>
+<div id="acc" role="dialog" aria-modal="true" aria-labelledby="accT">
+<style>
+#acc{position:fixed;inset:0;z-index:99999;background:#000;color:#F5F5F7;font-family:"Heebo","Segoe UI",Arial,sans-serif;direction:rtl;display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));overflow-y:auto}
+#acc .box{width:100%;max-width:400px;background:#1C1C1E;border-radius:22px;padding:30px 22px 22px;text-align:center}
+#acc img{width:76px;height:76px;border-radius:18px;display:block;margin:0 auto 14px}
+#acc h1{font-size:25px;font-weight:800;margin:0 0 4px;color:#22E3C4}
+#acc .sub{color:#A1A1A6;font-size:14px;margin:0 0 20px}
+#acc [data-v]{display:none}#acc[data-s="load"] [data-v="load"],#acc[data-s="form"] [data-v="form"],#acc[data-s="wait"] [data-v="wait"],#acc[data-s="off"] [data-v="off"]{display:block}
+#acc label{display:block;text-align:right;font-size:14px;font-weight:600;margin:0 0 12px}
+#acc input{display:block;width:100%;margin-top:6px;font:500 16px "Heebo",Arial,sans-serif;direction:ltr;text-align:left;background:#2C2C2E;color:#F5F5F7;border:1.5px solid #3A3A3C;border-radius:14px;padding:12px 14px;outline:none}
+#acc input:focus{border-color:#0A84FF}
+#acc .go{width:100%;margin-top:6px;font:700 16px "Heebo",Arial,sans-serif;background:#0A84FF;color:#fff;border:0;border-radius:999px;padding:13px;cursor:pointer}
+#acc .go:disabled{opacity:.6}
+#acc .lk{background:none;border:0;color:#0A84FF;font:500 14px "Heebo",Arial,sans-serif;cursor:pointer;padding:8px 4px}
+#acc .row{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
+#acc .err{color:#FF453A;font-size:14px;min-height:20px;margin:8px 0 0}
+#acc .msg{font-size:15px;line-height:1.6;margin:0 0 16px}
+#acc .mail{direction:ltr;color:#22E3C4;font-weight:700}
+#acc .note{color:#A1A1A6;font-size:13px;line-height:1.55;text-align:right;margin:18px 0 0;padding-top:14px;border-top:1px solid #2C2C2E}
+#acc .note p{margin:0 0 6px}
+#acc .spin{width:34px;height:34px;border:3px solid #3A3A3C;border-top-color:#0A84FF;border-radius:50%;margin:10px auto;animation:accs 0.9s linear infinite}
+@keyframes accs{to{transform:rotate(360deg)}}
+.accCard .accList{list-style:none;padding:0;margin:10px 0 0;max-height:320px;overflow:auto}
+.accCard .accList li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
+.accCard .accList span{direction:ltr;font-family:var(--mono);font-size:13px;overflow-wrap:anywhere}
+</style>
+<div class="box">
+<img src="icons/icon-192.png" alt="">
+<h1 id="accT">יומן לימודים אישי</h1>
+<p class="sub">משפטים · שנה א׳ · מסלול ערב · תשפ״ז</p>
+<div data-v="load"><div class="spin"></div><p class="msg" id="accLoadT">טוען…</p></div>
+<form data-v="form" id="accF" autocomplete="on" novalidate>
+<label>אימייל<input id="accE" type="email" autocomplete="email" required></label>
+<label>סיסמה<input id="accP" type="password" autocomplete="current-password" minlength="6" required></label>
+<button class="go" id="accB" type="submit">כניסה</button>
+<div class="row"><button class="lk" id="accTog" type="button">אין לך חשבון? הרשמה</button><button class="lk" id="accFor" type="button">שכחתי סיסמה</button></div>
+<p class="err" id="accErr" aria-live="polite"></p>
+</form>
+<div data-v="wait">
+<p class="msg">החשבון <span class="mail" id="accWM"></span> נוצר, ועדיין לא אושר.<br>אחרי התשלום יהל תאשר אותו, והיומן ייפתח.</p>
+<button class="go" id="accRe" type="button">בדיקה שוב</button>
+<div class="row" style="justify-content:center"><button class="lk" data-out type="button">התנתקות</button></div>
+</div>
+<div data-v="off">
+<p class="msg">אין חיבור לאינטרנט. בכניסה הראשונה צריך חיבור, ואחר כך היומן עובד גם בלעדיו.</p>
+<button class="go" type="button" onclick="location.reload()">לנסות שוב</button>
+</div>
+<div class="note">
+<p>היומן כולל מראש את מערכת השעות, הבחינות והסילבוסים של הקורסים בשנה א׳ במסלול הערב. מועדים יכולים להשתנות, ולכן תמיד כדאי לבדוק מול הידיעון.</p>
+<p>היומן נשמר בחשבון שלך ומסתנכרן בין הטלפון למחשב. רק את/ה רואה את הנתונים.</p>
+</div>
+</div>
+</div>
+<script>
+(function(){document.documentElement.style.overflow="hidden";
+  /* offline fallback: an approved device opens even if the sign-in code can't load */
+  setTimeout(function(){var a0=document.getElementById("acc");if(window.__accDone||!a0||a0.dataset.s!=="load")return;var ok=null;try{ok=localStorage.getItem("yoman-acc-ok")}catch(e){}
+    var a=document.getElementById("acc");if(!a)return;if(ok){window.__accDone=1;document.documentElement.style.overflow="";a.remove()}else a.dataset.s="off"},9000);
+  document.getElementById("acc").dataset.s="load";})();
+</script>
+<script type="module">
+import {initializeApp,getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,sendPasswordResetEmail,signOut,getFirestore,doc,getDoc,setDoc,deleteDoc,collection,getDocs} from "./fb.js";
+const Y=window.__yoman;
+const app=initializeApp({"apiKey": "AIzaSyBhy74f3pN-E92d3_ohqik_w56N3OAuLQw", "authDomain": "application-a5298.firebaseapp.com", "projectId": "application-a5298", "storageBucket": "application-a5298.firebasestorage.app", "messagingSenderId": "954581038703", "appId": "1:954581038703:web:0a65e99b0879a4780eff9a"});
+const auth=getAuth(app),fdb=getFirestore(app);
+const A=document.getElementById("acc"),$a=id=>document.getElementById(id);
+const OK="yoman-acc-ok",OWN=Y.LS+"-owner";
+const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+const show=s=>{if(A.isConnected)A.dataset.s=s};
+const T=(p,ms)=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r(new Error("timeout")),ms||10000))]);
+let signup=false,me=null;
+const ERR={"auth/invalid-email":"כתובת האימייל לא תקינה","auth/missing-password":"צריך להקליד סיסמה","auth/weak-password":"הסיסמה צריכה לכלול לפחות 6 תווים","auth/email-already-in-use":"כבר יש חשבון עם האימייל הזה. אפשר להיכנס","auth/invalid-credential":"האימייל או הסיסמה לא נכונים","auth/wrong-password":"האימייל או הסיסמה לא נכונים","auth/user-not-found":"אין חשבון עם האימייל הזה","auth/too-many-requests":"יותר מדי ניסיונות. נסו שוב בעוד כמה דקות","auth/network-request-failed":"אין חיבור לאינטרנט","auth/configuration-not-found":"ההתחברות עוד לא הופעלה. נסו שוב מאוחר יותר","auth/operation-not-allowed":"ההתחברות עוד לא הופעלה. נסו שוב מאוחר יותר"};
+const err=t=>{$a("accErr").textContent=t||""};
+function mode(up){signup=up;$a("accB").textContent=up?"הרשמה":"כניסה";$a("accTog").textContent=up?"כבר יש לך חשבון? כניסה":"אין לך חשבון? הרשמה";$a("accP").autocomplete=up?"new-password":"current-password";err("")}
+$a("accTog").onclick=()=>mode(!signup);
+$a("accFor").onclick=async()=>{const e=$a("accE").value.trim();if(!e){err("הקלידו את האימייל ואז לחצו שוב");return}
+  try{await sendPasswordResetEmail(auth,e);err("");$a("accErr").textContent="נשלח מייל לאיפוס סיסמה ✓"}catch(x){err(ERR[x.code]||"לא הצלחנו לשלוח מייל איפוס")}};
+$a("accF").onsubmit=async ev=>{ev.preventDefault();const e=$a("accE").value.trim(),p=$a("accP").value;err("");$a("accB").disabled=true;
+  try{if(signup)await createUserWithEmailAndPassword(auth,e,p);else await signInWithEmailAndPassword(auth,e,p)}catch(x){err(ERR[x.code]||"משהו השתבש ("+(x.code||"")+")")}
+  $a("accB").disabled=false};
+A.querySelectorAll("[data-out]").forEach(b=>b.onclick=()=>signOut(auth));
+$a("accRe").onclick=()=>check(auth.currentUser);
+function openApp(){window.__accDone=1;document.documentElement.style.overflow="";if(A.isConnected)A.remove();addCard()}
+async function check(u){
+  if(!u){show("form");return}
+  me=u;const em=(u.email||"").toLowerCase();$a("accWM").textContent=em;$a("accLoadT").textContent="בודק את החשבון…";show("load");
+  let ok;
+  try{ok=(await T(getDoc(doc(fdb,"allowed",em)))).exists()}
+  catch(e){if(e&&e.code==="permission-denied")ok=false;else{if(ls.get(OK)===u.uid){openApp();Y.setSync(false,"לא מחובר כרגע · שמור במכשיר")}else show("off");return}}
+  if(!ok){ls.del(OK);show("wait");return}
+  ls.set(OK,u.uid);await startSync(u);openApp();
+}
+async function startSync(u){
+  const ref=doc(fdb,"planners",u.uid);
+  const adapter={set:o=>setDoc(ref,{s:JSON.stringify(o.s),updated:o.s.updated||Date.now(),email:(u.email||"").toLowerCase()})};
+  const owner=ls.get(OWN);
+  try{
+    const snap=await T(getDoc(ref));Y.setDb(adapter);
+    if(snap.exists()&&snap.data().s){
+      const remote=Y.migrate(JSON.parse(snap.data().s));
+      if(owner!==u.uid||!Y.S.updated||remote.updated>=Y.S.updated){Y.S=remote;try{localStorage.setItem(Y.LS,JSON.stringify(Y.S))}catch(e){}Y.render()}
+      else Y.flush();
+    }else{
+      if(owner&&owner!==u.uid){Y.S=Y.starter();try{localStorage.setItem(Y.LS,JSON.stringify(Y.S))}catch(e){}Y.render()}
+      Y.flush();
+    }
+    ls.set(OWN,u.uid);Y.setSync(true,"מסונכרן לחשבון ✓");
+  }catch(e){if(owner===u.uid||!owner){Y.setDb(adapter);ls.set(OWN,u.uid)}Y.setSync(false,"שמור במכשיר · יסתנכרן כשיהיה חיבור")}
+}
+async function out(){try{if(Y.getDb())await Y.flush()}catch(e){}Y.setDb(null);ls.del(OK);ls.del(Y.LS);ls.del(OWN);await signOut(auth);location.reload()}
+async function addCard(){
+  if(document.getElementById("accCard"))return;
+  const grid=document.getElementById("syncNote")&&document.getElementById("syncNote").closest(".grid");if(!grid||!me)return;
+  const c=document.createElement("div");c.className="card c6 accCard";c.id="accCard";
+  c.innerHTML='<h3>החשבון שלי</h3><p class="src" style="margin-top:0;direction:ltr;text-align:right"></p><div class="frow"><button class="btn ghost" type="button" id="accOut">התנתקות</button></div>';
+  c.querySelector("p").textContent=me.email;grid.prepend(c);document.getElementById("accOut").onclick=out;
+  let admin=false;try{admin=(await getDoc(doc(fdb,"admins",(me.email||"").toLowerCase()))).exists()}catch(e){}
+  if(!admin)return;
+  const m=document.createElement("div");m.className="card c6 accCard";
+  m.innerHTML='<h3>ניהול קונים</h3><p class="src" style="margin-top:0">מי שברשימה יכול להיכנס ליומן. מוסיפים את האימייל שאיתו הקונה נרשם (או יירשם).</p><form class="frow" id="accAdd"><input type="email" id="accNew" placeholder="email@example.com" style="direction:ltr;flex:1;min-width:180px" required><input id="accName" placeholder="שם (לא חובה)" style="flex:1;min-width:120px"><button class="btn" type="submit">אישור גישה</button></form><p class="src" id="accCnt"></p><ul class="accList" id="accL"></ul>';
+  grid.prepend(m);
+  const L=document.getElementById("accL");
+  async function load(){L.innerHTML="";let qs;try{qs=await getDocs(collection(fdb,"allowed"))}catch(e){document.getElementById("accCnt").textContent="לא הצלחתי לטעון את הרשימה";return}
+    const rows=[];qs.forEach(d=>rows.push({id:d.id,...d.data()}));rows.sort((a,b)=>(b.added||0)-(a.added||0));
+    document.getElementById("accCnt").textContent=rows.length+" מאושרים";
+    rows.forEach(r=>{const li=document.createElement("li");const s=document.createElement("span");s.textContent=r.id+(r.name?"  ·  "+r.name:"");const b=document.createElement("button");b.className="btn ghost";b.type="button";b.textContent="הסרה";
+      b.onclick=async()=>{if(r.id===(me.email||"").toLowerCase()){Y.toast("אי אפשר להסיר את עצמך");return}try{await deleteDoc(doc(fdb,"allowed",r.id));Y.toast("הגישה הוסרה");load()}catch(e){Y.toast("ההסרה נכשלה")}};
+      li.append(s,b);L.append(li)})}
+  document.getElementById("accAdd").onsubmit=async ev=>{ev.preventDefault();const e=document.getElementById("accNew").value.trim().toLowerCase();if(!e)return;
+    try{await setDoc(doc(fdb,"allowed",e),{added:Date.now(),name:document.getElementById("accName").value.trim()});document.getElementById("accNew").value="";document.getElementById("accName").value="";Y.toast("הגישה אושרה ✓");load()}catch(x){Y.toast("האישור נכשל")}};
+  load();
+}
+onAuthStateChanged(auth,check);
+</script>
+
 <div id="cover" role="dialog" aria-modal="true" aria-label="עמוד פתיחה">
   <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="dust" aria-hidden="true"></div>
@@ -739,23 +874,7 @@ dialog::backdrop{background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(6px);bac
   <div class="list" id="taskList"></div>
 </section>
 
-<!-- STUDY -->
-<section class="view" id="v-study">
-  <div class="vhead"><h2>שעון לימוד</h2><p>מפעילים את השעון כשמתחילים ללמוד, והזמן נרשם לקורס שנבחר.</p></div>
-  <div class="grid" style="margin-top:0">
-    <div class="card c6"><div class="timer" id="timerBox">
-      <label class="f" style="width:min(320px,100%)">קורס<select id="timerCourse"></select></label>
-      <div class="clock" id="clock">00:00:00</div>
-      <div class="frow" style="justify-content:center"><button class="btn" id="timerBtn" type="button">התחלה</button><button class="btn ghost" id="manualBtn" type="button">הוספה ידנית</button></div>
-    </div></div>
-    <div class="card c6">
-      <h3>השבוע</h3>
-      <div class="rings"><div><div class="ring" id="rWeek" style="--c:var(--lime)"><span>0</span></div><small>שעות השבוע</small></div>
-      <div style="display:grid;gap:8px;align-content:center;text-align:right"><label class="f">יעד שבועי (שעות)<input type="number" id="weeklyGoal" min="1" max="80"></label><div class="src" id="weekNote"></div></div></div>
-    </div>
-    <div class="card c12"><h3>יומן שעות</h3><div class="list" id="sessList"></div></div>
-  </div>
-</section>
+
 
 <!-- GOALS -->
 <section class="view" id="v-goals">
@@ -907,8 +1026,8 @@ function migrate7(o){
 const LS="yoman-law-v1";
 let S=null, dbDoc=null, saving=false, pendingSave=false, saveT=null;
 try{S=JSON.parse(localStorage.getItem(LS)||"null")}catch(e){}
-const S0v=S&&S.v;S=migrate(S&&S.v?S:null);if(S0v&&S0v!==S.v){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
-function setSync(on,txt){const el=$("#sync");el.textContent=txt;el.classList.toggle("on",on);$("#syncNote").textContent=on?"היומן נשמר בחשבון Claude שלך ונגיש מכל מכשיר שבו את מחוברת. רק את רואה את הנתונים. מומלץ גם להעתיק גיבוי מדי פעם.":"היומן נשמר בדפדפן הזה בלבד. העתיקי גיבוי מדי פעם כדי לא לאבד נתונים."}
+window.__yoman={get S(){return S},set S(v){S=v},setDb(a){dbDoc=a},getDb(){return dbDoc},LS,migrate,starter,render,flush,setSync,toast};const S0v=S&&S.v;S=migrate(S&&S.v?S:null);if(S0v&&S0v!==S.v){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
+function setSync(on,txt){const el=$("#sync");el.textContent=txt;el.classList.toggle("on",on);$("#syncNote").textContent=on?"היומן נשמר בחשבון שלך ונגיש מכל מכשיר שבו נכנסים איתו. רק את/ה רואה את הנתונים. מומלץ גם להעתיק גיבוי מדי פעם.":"היומן נשמר בדפדפן הזה בלבד. העתיקי גיבוי מדי פעם כדי לא לאבד נתונים."}
 function save(){
   S.updated=Date.now();
   try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}
@@ -1311,34 +1430,8 @@ function renderTasks(){
 $("#taskFilter").addEventListener("click",e=>{const b=e.target.closest("[data-tf]");if(b){tf=b.dataset.tf;renderTasks()}});
 document.addEventListener("change",e=>{const c=e.target.closest("[data-done]");if(!c)return;const t=S.tasks.find(x=>x.id===c.dataset.done);t.done=c.checked;save();if(c.checked){confetti(c);toast("כל הכבוד! מטלה הושלמה")}setTimeout(()=>{renderTasks();renderDash();renderCal()},c.checked?450:0)});
 
-/* study timer */
-let tInt=null;
-function renderStudy(){
-  const sel=$("#timerCourse"),cur=sel.value||(S.timer&&S.timer.courseId)||"";
-  sel.innerHTML='<option value="">כללי</option>'+S.courses.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");sel.value=cur;
-  $("#weeklyGoal").value=S.weeklyGoal||"";
-  const wh=weekHours();ring($("#rWeek"),S.weeklyGoal?wh/S.weeklyGoal*100:0,wh.toFixed(1));
-  $("#weekNote").textContent=S.weeklyGoal?`${wh.toFixed(1)} מתוך ${S.weeklyGoal} שעות. ${wh>=S.weeklyGoal?"עמדת ביעד!":"נשארו "+(S.weeklyGoal-wh).toFixed(1)+" שעות."}`:"";
-  const ss=[...S.sessions].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,20);
-  $("#sessList").innerHTML=ss.length?ss.map(x=>`<div class="item"><span class="dot" style="background:${cColor(x.courseId)}"></span><div class="t"><b>${esc(cName(x.courseId))}</b><small>${HEB_D[parse(x.date).getDay()]}</small></div><span class="when">${fmt(x.date)} · ${Math.floor(x.min/60)}:${pad(x.min%60)} ש׳</span><div class="acts"><button type="button" data-delsess="${x.id}">מחיקה</button></div></div>`).join(""):'<div class="empty"><b>עוד לא נרשמו שעות</b>לחצי ״התחלה״ כשאת מתחילה ללמוד.</div>';
-  syncTimer();
-}
-function syncTimer(){
-  const run=!!S.timer;$("#timerBox").classList.toggle("run",run);$("#timerBtn").textContent=run?"עצירה ושמירה":"התחלה";
-  clearInterval(tInt);
-  const upd=()=>{const ms=run?Date.now()-S.timer.start:0;const s=Math.floor(ms/1000);$("#clock").textContent=pad(Math.floor(s/3600))+":"+pad(Math.floor(s/60)%60)+":"+pad(s%60)};
-  upd();if(run)tInt=setInterval(upd,1000);
-}
-$("#timerBtn").onclick=()=>{
-  if(S.timer){const min=Math.round((Date.now()-S.timer.start)/6e4);if(min>=1){S.sessions.push({id:uid(),date:iso(new Date(S.timer.start)),min,courseId:S.timer.courseId});toast(`נרשמו ${min} דקות לימוד`)}else toast("פחות מדקה, לא נרשם");S.timer=null}
-  else S.timer={start:Date.now(),courseId:$("#timerCourse").value};
-  save();renderStudy();renderDash();
-};
-$("#timerCourse").onchange=()=>{if(S.timer){S.timer.courseId=$("#timerCourse").value;save()}};
-$("#manualBtn").onclick=()=>openForm("session");
-$("#weeklyGoal").onchange=e=>{S.weeklyGoal=+e.target.value||0;save();renderStudy();renderDash()};
-document.addEventListener("click",e=>{const b=e.target.closest("[data-delsess]");if(b){S.sessions=S.sessions.filter(x=>x.id!==b.dataset.delsess);save();renderStudy();renderDash()}});
-
+/* study timer was taken out on 20.11.2026 */
+function renderStudy(){}
 /* goals */
 function renderDegree(){
   const p=S.profile,tot=+p.total||0,YS=["א׳","ב׳","ג׳","ד׳"];
