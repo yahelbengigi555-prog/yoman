@@ -582,6 +582,7 @@ dialog::backdrop{background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(6px);bac
 
 <style id="quiet-cover">
 /* quieter cover (23.11.2026): no glow, no frame card, one accent */
+#cover{display:none!important}
 #cover .frame{background:transparent!important;border:0!important;box-shadow:none!important}
 #cover .emblem{width:56px!important;height:56px!important}
 #cover .emblem,#cover .emblem *{stroke:#8E8E93!important}
@@ -1764,6 +1765,7 @@ render();route();
 
 /* ---------- opening cover ---------- */
 (function(){
+  {const c0=$("#cover");if(c0)c0.remove();document.documentElement.style.overflow="";return;} /* opening cover removed 23.11.2026: open straight to the dashboard */
   const cv=$("#cover");if(!cv)return;
   const t=$("#cvTitle");const words=t.textContent.trim().split(" ");
   t.innerHTML=words.map((w,i)=>`<span style="animation-delay:${2+i*.28}s">${w}</span>`).join(" ");
