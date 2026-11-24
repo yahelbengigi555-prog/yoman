@@ -997,6 +997,13 @@ onAuthStateChanged(auth,check);
       <textarea id="backupText" style="margin-top:10px" placeholder="כאן מופיע הגיבוי. להדבקת גיבוי קודם ולשחזור, מדביקים כאן ולוחצים ״שחזור מהטקסט״."></textarea>
       <div id="resetConfirm" hidden class="notice" style="margin-top:10px">האיפוס מוחק את כל הנתונים ביומן. <div class="frow" style="margin-top:8px"><button class="btn danger sm" id="resetYes" type="button">כן, למחוק הכול</button><button class="btn ghost sm" id="resetNo" type="button">ביטול</button></div></div>
     </div>
+    <div class="card c6" id="onoCard"><h3>סנכרון אוטומטי מהידיעון</h3>
+      <p style="margin-top:0">מערכת השעות, הבחינות והחגים שלך מתעדכנים לבד מהידיעון של אונו. מדביקים פעם אחת את קישור היומן האישי, וכל שינוי בידיעון נכנס ליומן בפתיחה הבאה. ציונים, סימונים ומטלות שלך לא נמחקים.</p>
+      <details class="src"><summary>איפה מוצאים את הקישור?</summary><ol style="margin:6px 0 0;padding-inline-start:18px"><li>נכנסים לידיעון (תחנת המידע לסטודנטים).</li><li>בתפריט: מערכת שעות ← יומן ומערכת שעות.</li><li>פותחים את "הנחיות לביצוע סינכרון ליומן של גוגל" ולוחצים "העתק" בשלב 1.</li><li>מדביקים כאן ולוחצים "שמירה וסנכרון".</li></ol></details>
+      <label class="f" style="margin-top:10px">קישור היומן שלי מהידיעון<input id="onoUrl" dir="ltr" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://yedion.ono.ac.il/…"></label>
+      <div class="frow" style="margin-top:8px"><button class="btn" type="button" id="onoSave">שמירה וסנכרון</button><button class="btn ghost" type="button" id="onoNow" hidden>סנכרון עכשיו</button><button class="btn ghost" type="button" id="onoOff" hidden>ניתוק</button></div>
+      <p class="src" id="onoStatus" style="margin-bottom:0"></p>
+    </div>
     <div class="card c6"><h3>עזרה ותמיכה</h3>
       <p style="margin-top:0">משהו לא עובד, או שיש לך שאלה על היומן? אפשר לכתוב לי ישירות בוואטסאפ.</p>
       <div class="frow"><a class="btn" id="waBtn" target="_blank" rel="noopener" hidden>תמיכה בוואטסאפ</a><button class="btn ghost" type="button" data-legal>תנאי שימוש ופרטיות</button></div>
@@ -1020,7 +1027,7 @@ onAuthStateChanged(auth,check);
 <p>הנתונים נשמרים בשירות Firebase של Google, בשרתים שעשויים להיות מחוץ לישראל. כל משתמש יכול לקרוא ולשנות רק את היומן שלו. אין ביומן פרסומות, אין מעקב או אנליטיקה, והמידע לא נמכר ולא מועבר לאף אחד.</p>
 <h4>מה עושה מנהלת היומן</h4>
 <p>המנהלת רואה רק את רשימת כתובות האימייל שאושרו לכניסה, כדי לנהל את הגישה. היא לא נכנסת לתוכן היומנים של המשתמשים.</p>
-<h4>הזכויות שלך</h4>
+<h4>סנכרון מהידיעון</h4> <p>אם בחרת לחבר את קישור היומן שלך מהידיעון, הקישור נשמר רק ביומן שלך. הוא משמש רק כדי למשוך את מערכת השעות, הבחינות והחגים שלך, דרך שרת מתווך שלא שומר דבר. אפשר לנתק בכל רגע ב"הגדרות וגיבוי".</p> <h4>הזכויות שלך</h4>
 <p>אפשר לבקש לראות את המידע שנשמר עליך, לתקן אותו או למחוק את החשבון והיומן לגמרי. הבקשה נשלחת דרך כפתור התמיכה, והיא מטופלת תוך 30 יום. אפשר גם להוריד בכל רגע קובץ גיבוי מלא מ"הגדרות וגיבוי".</p>
 <h4>שינויים</h4>
 <p>אם התנאים ישתנו, התאריך למעלה יתעדכן, ושינוי מהותי יוצג ביומן.</p>
@@ -1120,6 +1127,136 @@ function migrate7(o){
       (o.courses||[]).forEach(c=>{const m=n.courses.find(x=>x.id===c.id);if(m){if(c.grade)m.grade=c.grade;m.color=c.color||m.color}else if(!/^ono-/.test(c.id))n.courses.push(c)});
     }}
   dropCourses(n);n.updated=Date.now();return n;
+}
+
+/* ---------- Ono yedion sync ---------- */
+/* ---------- Ono yedion calendar feed: parse + merge (no state writes inside parse) ---------- */
+const ONO_MOED=["א׳","ב׳","ג׳","ד׳"];
+function onoNorm(s){return String(s||"").replace(/["'״׳`]/g,"").replace(/[-–:,.\/()]/g," ").replace(/\s+/g," ").trim()}
+function onoHash(s){let h=5381;for(const ch of String(s))h=((h*33)^ch.charCodeAt(0))>>>0;return h.toString(36)}
+function onoParseICS(text){
+  const t=String(text||"").replace(/\r?\n[ \t]/g,"");
+  const un=v=>v.replace(/\\n/gi," ").replace(/\\([,;\\])/g,"$1").trim();
+  return t.split("BEGIN:VEVENT").slice(1).map(b=>{
+    const g=k=>{const m=b.match(new RegExp("(?:^|\\n)"+k+"(?:;[^:\\r\\n]*)?:([^\\r\\n]*)"));return m?un(m[1]):""};
+    const dt=v=>{const m=v.match(/^(\d{4})(\d\d)(\d\d)(?:T(\d\d)(\d\d))?/);return m?{d:m[1]+"-"+m[2]+"-"+m[3],t:m[4]?m[4]+":"+m[5]:""}:null};
+    return {sum:g("SUMMARY"),desc:g("DESCRIPTION"),loc:g("LOCATION"),s:dt(g("DTSTART")),e:dt(g("DTEND"))};
+  }).filter(x=>x.s&&x.sum);
+}
+const ONO_TITLE=/\s(?:ד"ר|ד״ר|עו"ד|עו״ד|פרופ'|פרופ׳|גב'|גב׳|מר|הרב|מרכז)\s|\sE-Learning\b/;
+/* classify feed events, match lessons/exams to courses by normalized name */
+function onoAnalyze(evs,courses,ignore){
+  const cs=courses.map(c=>({c,n:onoNorm(c.name)})).filter(x=>x.n.length>2).sort((a,b)=>b.n.length-a.n.length);
+  const ign=new Set(ignore||[]);
+  const lessons={},exams=[],events=[],extra={};
+  const sem=d=>d<"2027-02-07"?"א׳":d<"2027-07-01"?"ב׳":"קיץ";
+  evs.forEach(x=>{
+    const desc=x.desc,sum=x.sum,ns=onoNorm(sum);
+    if(/סוג מפגש/.test(desc)){                       // a lesson
+      if(/בוטל|מבוטל/.test(desc))return;
+      let hit=cs.find(y=>ns.startsWith(y.n)),key,name;
+      if(hit){key=hit.c.id;name=hit.c.name}
+      else{const cut=sum.search(ONO_TITLE);name=(cut>0?sum.slice(0,cut):sum).trim();key="new:"+onoNorm(name)}
+      if(ign.has(onoNorm(name)))return;
+      const wc=sum.search(ONO_TITLE),who=wc>=0?sum.slice(wc).replace(/^\s*E-Learning\s*,?\s*/,"").trim():"";
+      const kind=/תרגיל/.test(desc)?"T":"L";
+      const online=/מקוון/.test(desc)||/zoom/i.test(x.loc);
+      (lessons[key]=lessons[key]||{name,list:[]}).list.push({d:x.s.d,st:x.s.t,en:(x.e&&x.e.t)||x.s.t,kind,room:x.loc,who,online});
+      return}
+    const em=sum.match(/^(?:מבחן\s+)?מועד\s+(\d)/);
+    if(em){                                             // an exam
+      const hit=cs.find(y=>ns.endsWith(y.n)||ns.includes(" "+y.n));
+      const comp=/מרכז בחינות ממוחשב/.test(sum+" "+desc);
+      const online=/E-Learning|מקוון/.test(sum);
+      exams.push({courseId:hit?hit.c.id:"",courseName:hit?hit.c.name:"",moed:ONO_MOED[+em[1]-1]||em[1],date:x.s.d,time:comp?"":x.s.t,comp,
+        place:comp?"מרכז בחינות ממוחשב · תאריך אישי, יש לבצע רישום דרך מרכז הבחינות":online?"בחינה מקוונת":(/פרונטלית/.test(sum)?"בחינה פרונטלית בקמפוס":"")+(x.loc&&!/טרם נקבע/.test(x.loc)?" · "+x.loc:"")});
+      return}
+    if(/הפסקה פעילה/.test(sum))return;                  // daily campus break notes
+    const title=sum.replace(/(\s*-\s*אין לימודים)+$/," · אין לימודים").replace(/\s+/g," ").trim();
+    const kind=/סמסטר/.test(desc+sum)?"academic":"holiday";
+    events.push({title,d:x.s.d,kind});
+  });
+  const firstL=Object.values(lessons).reduce((a,v)=>v.list.reduce((b,l)=>l.d<b?l.d:b,a),"9999");
+  if(firstL<"9999"){const lim=new Date(firstL+"T12:00:00");lim.setDate(lim.getDate()-3);const ls=lim.toISOString().slice(0,10);for(let i=events.length-1;i>=0;i--)if(events[i].d<ls)events.splice(i,1)}
+  // collapse consecutive days with the same title into one ranged event
+  events.sort((a,b)=>(a.title+a.d).localeCompare(b.title+b.d));
+  const ranges=[];const next=d=>{const x=new Date(d+"T12:00:00");x.setDate(x.getDate()+1);return x.toISOString().slice(0,10)};
+  events.forEach(e=>{const r=ranges[ranges.length-1];if(r&&r.title===e.title&&(next(r.end||r.start)===e.d||((r.end||r.start)===e.d))){r.end=e.d}else ranges.push({title:e.title,start:e.d,end:"",kind:e.kind})});
+  ranges.forEach(r=>{if(r.end===r.start)r.end=""});
+  return {lessons,exams,events:ranges,sem};
+}
+function onoSlots(list){
+  const m={};list.forEach(l=>{const day=new Date(l.d+"T12:00:00").getDay();const k=day+"|"+l.st+"|"+l.en+"|"+l.kind;(m[k]=m[k]||{n:0,rooms:{},who:l.who,online:l.online}).n++;m[k].rooms[l.room]=(m[k].rooms[l.room]||0)+1});
+  return Object.entries(m).filter(([k,v])=>v.n>=2||Object.keys(m).length===1).map(([k,v])=>{const[day,start,end,kind]=k.split("|");const room=Object.entries(v.rooms).sort((a,b)=>b[1]-a[1])[0][0];return {day,start,end,kind:kind==="T"?"תרגיל":"הרצאה",room:v.online&&!room?"זום":room,who:v.who,src:"ono"}}).sort((a,b)=>(a.day+a.start).localeCompare(b.day+b.start));
+}
+const onoMeet=l=>l.d.slice(2).replace(/-/g,"")+l.st.replace(":","")+l.en.replace(":","")+" "+l.kind;
+/* merge into state o; never touches grades, ready marks, absences, topics, tasks */
+function onoMerge(o,A,opts){
+  const now=(opts&&opts.now)||Date.now(),rep={added:0,updated:0,exams:0,newExams:0,events:0};
+  o.courses=o.courses||[];o.exams=o.exams||[];o.events=o.events||[];
+  const used=new Set(o.courses.map(c=>c.color));
+  Object.entries(A.lessons).forEach(([key,v])=>{
+    const list=v.list.sort((a,b)=>(a.d+a.st).localeCompare(b.d+b.st));
+    const meets=list.map(onoMeet),slots=onoSlots(list);
+    let c=key.startsWith("new:")?o.courses.find(x=>onoNorm(x.name)===key.slice(4)):o.courses.find(x=>x.id===key);
+    if(!c){
+      const col=(typeof COLORS!=="undefined"?COLORS:["#5B8CFF"]).find(x=>!used.has(x))||"#5B8CFF";used.add(col);
+      c={id:"feed-c-"+onoHash(onoNorm(v.name)),code:"",name:v.name,type:"",sem:A.sem(list[0].d),credits:"",lecturer:(list.find(l=>l.kind==="L")||list[0]).who||"",grade:"",color:col,slots:[],meets:[],online:"",ono:true,feed:true,year:(o.profile&&o.profile.year)||"א׳",absences:0,maxAbs:Math.floor(meets.length*0.2),topics:[]};
+      o.courses.push(c);rep.added++}
+    else rep.updated++;
+    const changed=JSON.stringify(c.meets||[])!==JSON.stringify(meets);
+    c.meets=meets;
+    if(c.ono||c.feed||!(c.slots||[]).length){const mine=(c.slots||[]).filter(s=>s.src!=="ono"&&!c.ono);c.slots=slots.concat(mine)}
+    if(changed&&(c.maxAbs===""||c.maxAbs==null))c.maxAbs=Math.floor(meets.length*0.2);
+    c.onoAt=now;
+  });
+  A.exams.forEach(x=>{
+    let cid=x.courseId;
+    if(!cid&&x.courseName)cid=(o.courses.find(c=>onoNorm(c.name)===onoNorm(x.courseName))||{}).id;
+    if(!cid)return;
+    const c=o.courses.find(y=>y.id===cid);
+    let e=o.exams.find(y=>y.courseId===cid&&y.moed===x.moed);
+    if(!e){const code=c&&c.code;e={id:code?"ono-x-"+code+"-"+("abcd"["א׳ב׳ג׳ד׳".indexOf(x.moed)/2|0]||"x"):"feed-x-"+onoHash(cid+x.moed),courseId:cid,moed:x.moed,date:"",time:"",place:"",ready:0,grade:""};
+      if(o.exams.some(y=>y.id===e.id))e.id+="-"+onoHash(cid+x.moed+now);o.exams.push(e);rep.newExams++}
+    if(x.comp){e.personal=true;e.place=x.place}           // personal date at the computerized center: keep the date the student set
+    else{e.date=x.date;e.time=x.time;if(x.place)e.place=x.place;delete e.personal}
+    e.onoAt=now;rep.exams++;
+  });
+  const fresh=A.events.map(r=>({id:"feed-e-"+onoHash(r.title+r.start),title:r.title,start:r.start,end:r.end,kind:r.kind,src:"הידיעון"}));
+  const kept=o.events.filter(e=>!/^feed-e-/.test(e.id));
+  const w1=s=>onoNorm(s).split(" ")[0];
+  const dup=f=>kept.some(e=>e.start&&Math.abs((new Date(e.start)-new Date(f.start))/864e5)<=1&&w1(e.title)===w1(f.title));
+  o.events=kept.concat(fresh.filter(f=>!dup(f)));rep.events=o.events.length-kept.length;
+  return rep;
+}
+const ONO_PROXY="https://script.google.com/macros/s/AKfycbyoRHICPiBc1WWD9dnWeupQwz0YrwFVh7RaBrGYLFv3LLESHLlsdULgErbUdhg4kOoMRQ/exec";
+const ONO_ON=/^https:\/\/script\.google\.com\//.test(ONO_PROXY)&&!/claude|anthropic|usercontent/.test(location.host);
+let onoBusy=false;
+function onoAgo(t){const m=Math.round((Date.now()-t)/6e4);return m<1?"עכשיו":m<60?"לפני "+m+" דק׳":m<1440?"לפני "+Math.round(m/60)+" שע׳":"לפני "+Math.round(m/1440)+" ימים"}
+function onoRender(busy){
+  const card=document.getElementById("onoCard");if(!card)return;
+  const u=(S.profile&&S.profile.onoFeed)||"",inp=$("#onoUrl");
+  if(document.activeElement!==inp)inp.value=u?"✓ מחובר · "+u.slice(0,34)+"…":"";
+  inp.readOnly=!!u;$("#onoSave").hidden=!!u;$("#onoNow").hidden=!u;$("#onoOff").hidden=!u;
+  let m=busy||"";
+  if(!m){if(!ONO_ON)m="הסנכרון האוטומטי פועל באפליקציה המותקנת.";else if(!u)m="עוד לא מחובר.";else if(S.onoErr)m="הסנכרון האחרון לא הצליח. ננסה שוב בפתיחה הבאה.";else if(S.onoAt)m="עודכן מהידיעון "+onoAgo(S.onoAt)+" · מתעדכן לבד בכל פתיחה";else m="ממתין לסנכרון ראשון…"}
+  $("#onoStatus").textContent=m;
+}
+async function onoSync(force){
+  const u=(S.profile&&S.profile.onoFeed)||"";
+  if(!u||onoBusy||!ONO_ON)return;
+  if(!force&&S.onoAt&&Date.now()-S.onoAt<30*6e4)return;
+  onoBusy=true;onoRender("מסנכרן מהידיעון…");
+  try{
+    const r=await fetch(ONO_PROXY,{method:"POST",body:u,cache:"no-store"});
+    const t=await r.text();
+    if(!/BEGIN:VCALENDAR/.test(t))throw new Error(t.slice(0,30)||"empty");
+    const A=onoAnalyze(onoParseICS(t),S.courses||[],S.onoIgnore);
+    if(!Object.keys(A.lessons).length&&!A.exams.length)throw new Error("no events");
+    const rep=onoMerge(S,A);S.onoAt=Date.now();S.onoErr="";save();render();
+    if(force)toast("עודכן מהידיעון ✓ "+(rep.updated+rep.added)+" קורסים · "+rep.exams+" בחינות");
+  }catch(e){S.onoErr=String(e&&e.message||e).slice(0,60);try{localStorage.setItem(LS,JSON.stringify(S))}catch(x){}if(force)toast("לא הצלחתי למשוך מהידיעון. כדאי לבדוק את הקישור.")}
+  onoBusy=false;onoRender();
 }
 
 /* ---------- storage: account db (private per user) with browser fallback ---------- */
@@ -1594,7 +1731,7 @@ function renderLinks(){
 }
 
 /* profile & backup */
-function renderProfile(){const p=S.profile;$("#pName").value=p.name||"";$("#pInst").value=p.inst||"";$("#pDegree").value=p.degree||"LL.B";$("#pYear").value=p.year||"א׳";$("#pTotal").value=p.total||"";$("#pTarget").value=p.target||"";$("#pPass").value=p.passGrade??60}
+function renderProfile(){onoRender();const p=S.profile;$("#pName").value=p.name||"";$("#pInst").value=p.inst||"";$("#pDegree").value=p.degree||"LL.B";$("#pYear").value=p.year||"א׳";$("#pTotal").value=p.total||"";$("#pTarget").value=p.target||"";$("#pPass").value=p.passGrade??60}
 $("#profileForm").onsubmit=e=>{e.preventDefault();Object.assign(S.profile,{name:$("#pName").value.trim(),inst:$("#pInst").value.trim(),degree:$("#pDegree").value,year:$("#pYear").value,total:+$("#pTotal").value||"",target:+$("#pTarget").value||"",passGrade:$("#pPass").value===""?60:+$("#pPass").value});save();render();toast("הפרטים נשמרו")};
 $("#copyBtn").onclick=()=>{const txt=JSON.stringify(S);$("#backupText").value=txt;try{navigator.clipboard.writeText(txt).then(()=>toast("הגיבוי הועתק"),()=>{$("#backupText").select();toast("יש לסמן ולהעתיק את הטקסט")})}catch(e){$("#backupText").select();toast("יש לסמן ולהעתיק את הטקסט")}};
 $("#restoreBtn").onclick=()=>{try{const o=JSON.parse($("#backupText").value);if(!o||!o.courses)throw 0;S=migrate(Object.assign(starter(),o));save();render();toast("היומן שוחזר מהגיבוי")}catch(e){toast("הטקסט אינו גיבוי תקין של היומן")}};
@@ -1681,7 +1818,7 @@ $("#dlgDel").onclick=()=>{
   const {kind,id}=cur,F=FORMS[kind];
   if(kind==="slot"){const[cid,si]=id.split(":");course(cid).slots.splice(+si,1)}
   else if(kind==="stage"){S.road=S.road.filter(x=>x.id!==id)}
-  else{S[F.coll]=S[F.coll].filter(x=>x.id!==id);if(kind==="course"){S.exams=S.exams.filter(x=>x.courseId!==id);S.tasks.forEach(t=>{if(t.courseId===id)t.courseId=""})}}
+  else{if(kind==="course"){const dc=S.courses.find(x=>x.id===id);if(dc&&(dc.ono||dc.feed))(S.onoIgnore=S.onoIgnore||[]).push(onoNorm(dc.name))}S[F.coll]=S[F.coll].filter(x=>x.id!==id);if(kind==="course"){S.exams=S.exams.filter(x=>x.courseId!==id);S.tasks.forEach(t=>{if(t.courseId===id)t.courseId=""})}}
   save();$("#dlg").close();render();toast("נמחק");
 };
 document.addEventListener("click",e=>{
@@ -1721,6 +1858,12 @@ function route(){
   if(v==="dashboard"){renderDash();requestAnimationFrame(()=>requestAnimationFrame(fitCharts))}
 }
 addEventListener("hashchange",route);
+$("#onoSave").onclick=()=>{const v=$("#onoUrl").value.trim();if(!/^https:\/\/yedion\.ono\.ac\.il\//.test(v)){toast("צריך להדביק את הקישור מהידיעון (מתחיל ב-https://yedion.ono.ac.il/)");return}S.profile.onoFeed=v;S.onoAt=0;S.onoErr="";save();onoRender();onoSync(true)};
+$("#onoNow").onclick=()=>onoSync(true);
+$("#onoOff").onclick=()=>{delete S.profile.onoFeed;S.onoAt=0;S.onoErr="";save();onoRender();toast("הסנכרון נותק. הנתונים שכבר נכנסו נשארים ביומן.")};
+setTimeout(()=>onoSync(false),2500);setInterval(()=>onoSync(false),6e4);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(()=>onoSync(false),800)});
+
 
 setSync(false,"שמור בדפדפן");
 render();route();
