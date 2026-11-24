@@ -687,6 +687,17 @@ html body button[data-open]{background:rgba(255,255,255,.16)!important;color:var
 html body input[type=checkbox]:not(.chk){color-scheme:light;accent-color:#5A3A22;opacity:.9}
 .item{background:var(--g-card)!important;border:1px solid var(--g-edge)!important;-webkit-backdrop-filter:blur(24px) saturate(160%)!important;backdrop-filter:blur(24px) saturate(160%)!important;border-radius:18px!important}
 .card .item{background:var(--g-inner)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+
+/* bold + hover espresso */
+/* bolder content (24.11) */
+body{font-weight:500}
+.card h3,.vhead h2,.item b,.stat b,.course b,.slot{font-weight:800!important}
+.item small,.card p,.stat small,.src{font-weight:500!important}
+body{text-shadow:0 1px 2px rgba(40,22,8,.30)}
+.card h3{font-size:1.08em}
+.card,.stat,.course,.item{transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s,border-color .22s,background-color .22s!important}
+@media (hover:hover){html body .card:hover,html body .stat:hover,html body .course:hover,html body .item:hover{transform:scale(1.025);border-color:#5A3A22!important;box-shadow:0 0 0 2px #5A3A22,0 22px 44px -18px rgba(40,22,8,.75)!important;position:relative;z-index:2}
+html body .card .item:hover{transform:scale(1.015)}}
 </style>
 </head>
 <body>
