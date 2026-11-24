@@ -184,6 +184,17 @@ td:first-child{border-radius:0 12px 12px 0}td:last-child{border-radius:12px 0 0 
 .slot{position:absolute;inset-inline:4px;border-radius:10px;padding:5px 7px;font-size:12px;color:#100E24;font-weight:700;overflow:hidden;cursor:pointer;box-shadow:0 6px 14px -8px rgba(0,0,0,.6)}
 .slot small{display:block;font-weight:500;opacity:.8}
 .col.today{background:color-mix(in srgb,var(--gold) 8%,transparent)}
+.col.off{background:repeating-linear-gradient(135deg,transparent 0 8px,color-mix(in srgb,var(--muted) 10%,transparent) 8px 9px)}
+.week .h.now{color:var(--fg)}
+.week .h .mono{font-weight:500;opacity:.8}
+.wkb{display:block;margin:4px auto 0;max-width:100%;font-size:11px;font-weight:600;line-height:1.3;padding:2px 6px;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wkb.ev{background:color-mix(in srgb,var(--lime) 18%,transparent);color:var(--fg)}
+.wkb.ex{background:color-mix(in srgb,var(--coral) 22%,transparent);color:var(--fg);cursor:pointer}
+.wkbs{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 8px}.wkbs .wkb{display:inline-block;margin:0;white-space:normal}
+.wknav{display:flex;align-items:center;gap:8px;margin-inline-end:auto}
+.filters .wknav button{min-width:36px;color:var(--fg)}
+.wknav b{font-size:14px;min-width:120px;text-align:center}
+@media(max-width:700px){.wknav{flex-basis:100%;justify-content:center;margin-bottom:2px}}
 
 /* timer */
 .timer{display:grid;place-items:center;gap:14px;text-align:center;padding:10px}
@@ -905,7 +916,7 @@ onAuthStateChanged(auth,check);
 <!-- SCHEDULE -->
 <section class="view" id="v-schedule">
   <div class="vhead"><h2>מערכת שעות שבועית</h2><button class="btn" data-add="slot" type="button">+ שיעור</button>
-    <p>השיעורים של כל הקורסים לפי ימים ושעות. לחיצה על שיעור פותחת אותו לעריכה.</p></div>
+    <p>השיעורים לפי שבוע ותאריך, כולל חגים ובחינות. לחיצה על שיעור פותחת אותו לעריכה.</p></div>
   <div class="filters" id="semFilter"></div>
   <div class="card tbl" id="weekCard"><div class="week" id="week"></div></div>
   <div id="weekAgenda"></div>
@@ -1222,6 +1233,8 @@ function onoMerge(o,A,opts){
     else{e.date=x.date;e.time=x.time;if(x.place)e.place=x.place;delete e.personal}
     e.onoAt=now;rep.exams++;
   });
+  const td=new Date(now);const tds=td.getFullYear()+"-"+String(td.getMonth()+1).padStart(2,"0")+"-"+String(td.getDate()).padStart(2,"0");
+  o.exams.forEach(e=>{if(e.onoAt&&e.onoAt<now&&!e.personal&&e.date&&e.date>=tds&&!e.grade){e.date="";e.time="";e.place="המועד ירד מהידיעון: ייתכן שבוטל או נדחה. כדאי לבדוק בידיעון.";e.onoAt=0;rep.gone=(rep.gone||0)+1}});
   const fresh=A.events.map(r=>({id:"feed-e-"+onoHash(r.title+r.start),title:r.title,start:r.start,end:r.end,kind:r.kind,src:"הידיעון"}));
   const kept=o.events.filter(e=>!/^feed-e-/.test(e.id));
   const w1=s=>onoNorm(s).split(" ")[0];
@@ -1471,40 +1484,52 @@ $("#calPrev").onclick=()=>{calM.setMonth(calM.getMonth()-1);renderCal()};
 $("#calNext").onclick=()=>{calM.setMonth(calM.getMonth()+1);renderCal()};
 $("#calToday").onclick=()=>{const d=today();calM=new Date(d.getFullYear(),d.getMonth(),1);renderCal()};
 
-/* weekly schedule */
-let semSel=(()=>{const t=iso(today());return t<"2027-02-07"?"א׳":t<"2027-07-01"?"ב׳":"קיץ"})();
+/* weekly schedule: dated weeks with navigation */
+const semOf=ds=>ds<"2027-02-07"?"א׳":ds<"2027-07-01"?"ב׳":"קיץ";
+const wkSun=d=>{const x=new Date(d);x.setHours(0,0,0,0);if(x.getDay()===6)x.setDate(x.getDate()+1);x.setDate(x.getDate()-x.getDay());return x};
+let wkStart=wkSun(today());
+let semSel=semOf(iso(wkStart));
 function lessonsOn(ds){
-  const key=ds.slice(2).replace(/-/g,""),out=[];
+  const key=ds.slice(2).replace(/-/g,""),out=[],sem=semOf(ds);
   S.courses.forEach(c=>{
-    if(c.meets&&c.meets.length){c.meets.forEach(m=>{if(m.slice(0,6)!==key)return;const st=m.slice(6,8)+":"+m.slice(8,10),en=m.slice(10,12)+":"+m.slice(12,14),k=m.slice(15)==="T"?"תרגיל":"הרצאה";const dw=parse(ds).getDay();const sl=c.slots.find(x=>+x.day===dw&&x.start===st)||c.slots.find(x=>+x.day===dw)||{};const sk=c.slots.find(x=>x.kind===k&&x.who);out.push({c,start:st,end:en,kind:k,room:sl.room||"",who:sl.who||(sk&&sk.who)||c.lecturer||""})})}
-    else if(semActive(c.sem)){const dw=parse(ds).getDay();c.slots.forEach(x=>{if(+x.day===dw)out.push({c,start:x.start,end:x.end,kind:x.kind||"שיעור",room:x.room||"",who:x.who||c.lecturer||""})})}
+    if(c.meets&&c.meets.length){c.meets.forEach(m=>{if(m.slice(0,6)!==key)return;const st=m.slice(6,8)+":"+m.slice(8,10),en=m.slice(10,12)+":"+m.slice(12,14),k=m.slice(15)==="T"?"תרגיל":"הרצאה";const dw=parse(ds).getDay();let si=c.slots.findIndex(x=>+x.day===dw&&x.start===st);if(si<0)si=c.slots.findIndex(x=>+x.day===dw);const sl=c.slots[si]||{};const sk=c.slots.find(x=>x.kind===k&&x.who);out.push({c,si,start:st,end:en,kind:k,room:sl.room||"",who:sl.who||(sk&&sk.who)||c.lecturer||""})})}
+    else if(c.sem==="שנתי"||!c.sem||c.sem===sem){const dw=parse(ds).getDay();c.slots.forEach((x,si)=>{if(+x.day===dw)out.push({c,si,start:x.start,end:x.end,kind:x.kind||"שיעור",room:x.room||"",who:x.who||c.lecturer||""})})}
   });
   return out.sort((a,b)=>a.start.localeCompare(b.start));
 }
 function semActive(sem){return sem==="שנתי"||sem===semSel||!sem}
+function wkInfo(ds){
+  const ev=(S.events||[]).filter(e=>e.start&&e.start<=ds&&(e.end||e.start)>=ds&&e.kind!=="personal");
+  const ex=(S.exams||[]).filter(e=>e.date===ds).map(e=>{const c=S.courses.find(x=>x.id===e.courseId);return {e,c}});
+  return {ev,ex,off:ev.some(e=>/אין לימודים|אין שיעורים|חופשה|חופשת/.test(e.title))};
+}
+const dm=ds=>{const d=parse(ds);return d.getDate()+"."+(d.getMonth()+1)};
 function renderWeek(){
-  $("#semFilter").innerHTML=["א׳","ב׳","קיץ"].map(s=>`<button type="button" class="${semSel===s?"on":""}" data-sem="${s}">סמסטר ${s}</button>`).join("");
-  const days=[0,1,2,3,4,5],dow=new Date().getDay(),PX=92;const _tm=t=>{const[a,b]=(t||"0:0").split(":").map(Number);return a*60+b};
-  let _mn=24*60,_mx=0;S.courses.filter(c=>semActive(c.sem)).forEach(c=>c.slots.forEach(s=>{if(days.includes(+s.day)){_mn=Math.min(_mn,_tm(s.start));_mx=Math.max(_mx,_tm(s.end))}}));
-  const H0=_mx?Math.max(7,Math.floor(_mn/60)):8,H1=_mx?Math.min(24,Math.ceil(_mx/60)):22;
-  let h='<div class="h"></div>'+days.map(d=>`<div class="h">${HEB_D[d]}</div>`).join("");
+  semSel=semOf(iso(wkStart));
+  const days=[0,1,2,3,4,5],PX=92,tds=iso(today());
+  const D=days.map(d=>{const x=new Date(wkStart);x.setDate(x.getDate()+d);const ds=iso(x);return {d,ds,L:lessonsOn(ds),...wkInfo(ds)}});
+  const end=D[5].ds;
+  $("#semFilter").innerHTML=`<div class="wknav"><button type="button" id="wkPrev" aria-label="שבוע קודם">→</button><b class="mono">⁦${dm(D[0].ds)}–${dm(end)}.${parse(end).getFullYear()}⁩</b><button type="button" id="wkNext" aria-label="שבוע הבא">←</button>${D.some(x=>x.ds===tds)?"":`<button type="button" id="wkToday" class="ghost">לשבוע הנוכחי</button>`}</div>`+["א׳","ב׳","קיץ"].map(s=>`<button type="button" class="${semSel===s?"on":""}" data-sem="${s}">סמסטר ${s}</button>`).join("");
+  const _tm=t=>{const[a,b]=(t||"0:0").split(":").map(Number);return a*60+b};
+  let _mn=24*60,_mx=0;D.forEach(x=>x.L.forEach(l=>{_mn=Math.min(_mn,_tm(l.start));_mx=Math.max(_mx,_tm(l.end))}));
+  const H0=_mx?Math.max(7,Math.floor(_mn/60)):16,H1=_mx?Math.min(24,Math.ceil(_mx/60)):22;
+  const badges=x=>x.ev.map(e=>`<span class="wkb ev" title="${esc(e.title)}">${esc(e.title)}</span>`).join("")+x.ex.map(({e,c})=>`<span class="wkb ex" data-open="exam:${e.id}">מבחן${c?" · "+esc(c.name):""}${e.time?" ⁦"+e.time+"⁩":""}</span>`).join("");
+  let h='<div class="h"></div>'+D.map(x=>`<div class="h${x.ds===tds?" now":""}">${HEB_D[x.d]} <span class="mono">${dm(x.ds)}</span>${badges(x)}</div>`).join("");
   h+='<div>'+Array.from({length:H1-H0},(_,i)=>`<div class="hr" style="height:${PX}px">${pad(H0+i)}:00</div>`).join("")+'</div>';
-  let any=false;
-  days.forEach(d=>{
-    let slots="";
-    S.courses.filter(c=>semActive(c.sem)).forEach(c=>c.slots.forEach((s,si)=>{if(+s.day!==d)return;any=true;
-      const toM=t=>{const[a,b]=(t||"0:0").split(":").map(Number);return a*60+b};
-      const top=(toM(s.start)-H0*60)/60*PX,ht=Math.max(28,(toM(s.end)-toM(s.start))/60*PX-3);
-      slots+=`<div class="slot" data-h="${ht}" style="top:${top}px;height:${ht}px;background:${c.color}" data-slot="${c.id}:${si}">${esc(c.name)}<small>⁦${s.start}–${s.end}⁩</small>${(s.room||s.kind)?`<small>${[s.room?"\u2068"+esc(s.room)+"\u2069":"",s.kind?esc(s.kind):""].filter(Boolean).join(" · ")}</small>`:""}</div>`}));
-    h+=`<div class="col${d===dow?" today":""}">${Array.from({length:H1-H0},()=>`<div class="ln" style="height:${PX}px"></div>`).join("")}${slots}</div>`;
+  D.forEach(x=>{
+    const slots=x.L.map(l=>{const top=(_tm(l.start)-H0*60)/60*PX,ht=Math.max(28,(_tm(l.end)-_tm(l.start))/60*PX-3);
+      return `<div class="slot" data-h="${ht}" style="top:${top}px;height:${ht}px;background:${l.c.color}"${l.si>=0?` data-slot="${l.c.id}:${l.si}"`:""}>${esc(l.c.name)}<small>⁦${l.start}–${l.end}⁩</small>${(l.room||l.kind)?`<small>${[l.room?"⁨"+esc(l.room)+"⁩":"",l.kind?esc(l.kind):""].filter(Boolean).join(" · ")}</small>`:""}</div>`}).join("");
+    h+=`<div class="col${x.ds===tds?" today":""}${x.off?" off":""}">${Array.from({length:H1-H0},()=>`<div class="ln" style="height:${PX}px"></div>`).join("")}${slots}</div>`;
   });
   $("#week").innerHTML=h;
   requestAnimationFrame(()=>document.querySelectorAll("#week .slot").forEach(e=>{if(e.scrollHeight>e.clientHeight+1){e.style.height="auto";e.style.minHeight=e.dataset.h+"px";e.classList.add("grow")}}));
-  $("#weekAgenda").innerHTML=days.map(d=>{const L=[];S.courses.filter(c=>semActive(c.sem)).forEach(c=>c.slots.forEach((s,si)=>{if(+s.day===d)L.push({c,s,si})}));if(!L.length)return"";L.sort((a,b)=>a.s.start.localeCompare(b.s.start));
-    return `<div class="card agDay${d===dow?" today":""}"><h3>יום ${HEB_D[d]}${d===dow?' <span class="chip">היום</span>':""}</h3><div class="list">${L.map(({c,s,si})=>`<div class="item" data-slot="${c.id}:${si}" style="cursor:pointer;align-items:flex-start"><span class="dot" style="background:${c.color};margin-top:7px"></span><div class="t"><b>${esc(c.name)}</b><small>${esc(s.kind||"שיעור")}${s.who?" · "+esc(s.who):""}${s.room?" · "+esc(s.room):""}</small></div><span class="when mono">⁦${s.start}–${s.end}⁩</span></div>`).join("")}</div></div>`}).join("")||'<div class="empty"><b>אין שיעורים בסמסטר הזה</b></div>';
-  if(!any)$("#week").insertAdjacentHTML("afterend","");
+  $("#weekAgenda").innerHTML=D.map(x=>{if(!x.L.length&&!x.ev.length&&!x.ex.length)return"";const now=x.ds===tds;
+    return `<div class="card agDay${now?" today":""}"><h3>יום ${HEB_D[x.d]} <span class="mono" style="font-weight:500;color:var(--muted)">${dm(x.ds)}</span>${now?' <span class="chip">היום</span>':""}</h3>${(x.ev.length||x.ex.length)?`<div class="wkbs">${badges(x)}</div>`:""}<div class="list">${x.L.map(l=>`<div class="item"${l.si>=0?` data-slot="${l.c.id}:${l.si}"`:""} style="cursor:pointer;align-items:flex-start"><span class="dot" style="background:${l.c.color};margin-top:7px"></span><div class="t"><b>${esc(l.c.name)}</b><small>${esc(l.kind||"שיעור")}${l.who?" · "+esc(l.who):""}${l.room?" · "+esc(l.room):""}</small></div><span class="when mono">⁦${l.start}–${l.end}⁩</span></div>`).join("")}</div></div>`}).join("")||'<div class="empty"><b>אין שיעורים בשבוע הזה</b></div>';
 }
-$("#semFilter").addEventListener("click",e=>{const b=e.target.closest("[data-sem]");if(b){semSel=b.dataset.sem;renderWeek()}});
+function wkGo(n){wkStart=new Date(wkStart);wkStart.setDate(wkStart.getDate()+7*n);renderWeek()}
+function wkSem(s){const ds=[];S.courses.forEach(c=>(c.meets||[]).forEach(m=>{const d="20"+m.slice(0,2)+"-"+m.slice(2,4)+"-"+m.slice(4,6);if(semOf(d)===s)ds.push(d)}));ds.sort();
+  const fb={"א׳":"2026-10-25","ב׳":"2027-02-14","קיץ":"2027-07-04"}[s];const t=iso(today());const pick=semOf(t)===s?t:(ds[0]||fb);wkStart=wkSun(parse(pick));renderWeek()}
+$("#semFilter").addEventListener("click",e=>{const b=e.target.closest("[data-sem]");if(b){wkSem(b.dataset.sem);return}if(e.target.closest("#wkPrev"))wkGo(-1);else if(e.target.closest("#wkNext"))wkGo(1);else if(e.target.closest("#wkToday")){wkStart=wkSun(today());renderWeek()}});
 
 /* courses */
 let cf="הכול";
