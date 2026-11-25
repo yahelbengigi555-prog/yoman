@@ -1957,14 +1957,17 @@ document.addEventListener("keydown",e=>{if(e.key==="Enter"){const d=e.target.clo
 
 /* ---------- confetti ---------- */
 const cv=$("#confetti"),cx=cv.getContext("2d");let parts=[],raf=null;
+let lastPt=null;addEventListener("pointerdown",e=>{lastPt={x:e.clientX,y:e.clientY}},true);addEventListener("keydown",e=>{if(e.key===" "||e.key==="Enter")lastPt=null},true);
+const CONF=["#E1B866","#F4D49C","#EE9483","#92BBE4","#A3D092","#B9A7C2","#FFF4E2","#C9876A","#8FD9A4"];
 function confetti(el){
-  if(reduced)return;
   cv.width=innerWidth;cv.height=innerHeight;
-  const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
-  for(let i=0;i<70;i++)parts.push({x,y,vx:(Math.random()-.5)*9,vy:-Math.random()*9-3,g:.28,s:Math.random()*6+4,c:COLORS[i%COLORS.length],r:Math.random()*6,life:80});
+  const r=el&&el.isConnected?el.getBoundingClientRect():null;
+  let x,y;if(r&&r.width){x=r.left+r.width/2;y=r.top+r.height/2}else if(lastPt){x=lastPt.x;y=lastPt.y}else{x=innerWidth/2;y=innerHeight/2}
+  const n=reduced?40:150;
+  for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=Math.random()*11+4;parts.push({x,y,vx:Math.cos(a)*v*.9,vy:Math.sin(a)*v-7,g:.3,s:Math.random()*7+6,c:CONF[i%CONF.length],r:Math.random()*6,life:110})}
   if(!raf)loop();
 }
-function loop(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.r+=.2;p.life--;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.globalAlpha=Math.max(0,p.life/80);cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);cx.restore()});parts=parts.filter(p=>p.life>0);raf=parts.length?requestAnimationFrame(loop):(cx.clearRect(0,0,cv.width,cv.height),null)}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.r+=.2;p.life--;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.globalAlpha=Math.min(1,Math.max(0,p.life/40));cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);cx.restore()});parts=parts.filter(p=>p.life>0);raf=parts.length?requestAnimationFrame(loop):(cx.clearRect(0,0,cv.width,cv.height),null)}
 
 /* ---------- theme toggle ---------- */
 document.documentElement.dataset.theme="dark";try{localStorage.removeItem(LS+"-theme")}catch(e){}
